@@ -139,13 +139,13 @@
         </button>
       </nav>
 
-      <!-- Right Actions: Live WS Dot + Simulate Attack + Clearance Badge -->
+      <!-- Right Actions: Static Emerald Engine Pill + Simulate Attack + Clearance Badge -->
       <div class="flex items-center gap-3">
         
-        <!-- WebSocket Live Status -->
-        <div id="ws-indicator" class="flex items-center gap-2 px-2.5 py-1 rounded bg-surface-container border border-outline-variant text-[11px] font-label-sm">
-          <span id="ws-dot" class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_#6af7ba] animate-pulse"></span>
-          <span id="ws-status" class="text-secondary font-semibold">WS LIVE</span>
+        <!-- Detection Engine Status Pill (Static Emerald Demo Indicator) -->
+        <div id="ws-indicator" class="flex items-center gap-2 px-3 py-1 rounded bg-surface-container border border-tertiary/40 text-[11px] font-label-sm shadow-[0_0_12px_rgba(106,247,186,0.15)]">
+          <span id="ws-dot" class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_#6af7ba] animate-pulse"></span>
+          <span id="ws-status" class="text-tertiary font-bold tracking-wider uppercase">DETECTION ENGINE ACTIVE</span>
         </div>
 
         <!-- Simulate Reverse Attack Demo Button -->
@@ -553,7 +553,7 @@
             <span class="material-symbols-outlined text-primary text-lg">swap_vert</span>
           </div>
           <div class="flex items-baseline gap-2 my-2">
-            <span class="font-telemetry-num text-3xl font-bold text-on-surface custom-countup" id="metric-packets">--</span>
+            <span class="font-telemetry-num text-3xl font-bold text-on-surface custom-countup" id="metric-packets">2,847,291</span>
             <span class="text-xs text-primary font-mono">live stream</span>
           </div>
           <div class="w-full h-8 flex items-end gap-1 mt-1">
@@ -575,7 +575,7 @@
             </div>
           </div>
           <div class="flex items-baseline gap-2 my-2">
-            <span class="font-telemetry-num text-3xl font-bold text-error custom-countup" id="metric-threats">--</span>
+            <span class="font-telemetry-num text-3xl font-bold text-error custom-countup" id="metric-threats">37</span>
             <span class="text-xs text-error font-mono font-bold">FLAGGED</span>
           </div>
           <div class="flex items-center justify-between text-xs text-outline font-label-sm">
@@ -591,7 +591,7 @@
             <span class="material-symbols-outlined text-warning text-lg">psychology</span>
           </div>
           <div class="flex items-baseline gap-2 my-2">
-            <span class="font-telemetry-num text-3xl font-bold text-warning custom-countup" id="metric-zeroday">--</span>
+            <span class="font-telemetry-num text-3xl font-bold text-warning custom-countup" id="metric-zeroday">3</span>
             <span class="text-xs text-warning font-mono">unsupervised</span>
           </div>
           <div class="flex items-center justify-between text-xs text-outline font-label-sm">
@@ -607,7 +607,7 @@
             <span class="material-symbols-outlined text-secondary text-lg">bolt</span>
           </div>
           <div class="flex items-baseline gap-2 my-2">
-            <span class="font-telemetry-num text-3xl font-bold text-secondary custom-countup" id="metric-latency">--</span>
+            <span class="font-telemetry-num text-3xl font-bold text-secondary custom-countup" id="metric-latency">14.82</span>
             <span class="text-xs text-secondary font-mono">ms</span>
           </div>
           <div class="flex items-center justify-between text-xs text-outline font-label-sm">
@@ -714,7 +714,7 @@
             <div class="flex items-center gap-3">
               <!-- Search Input with Debounce -->
               <div class="relative">
-                <input type="text" id="soc-log-search" oninput="handleThreatSearch(this.value)" placeholder="Filter IP, Flow ID..." class="bg-surface-container-lowest text-on-surface text-xs font-mono px-3 py-1.5 pl-8 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary w-48 border border-outline-variant/50"/>
+                <input type="text" id="soc-log-search" oninput="handleThreatSearch(this.value)" placeholder="Filter IP, Flow ID, Label..." class="bg-surface-container-lowest text-on-surface text-xs font-mono px-3 py-1.5 pl-8 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary w-48 border border-outline-variant/50"/>
                 <span class="material-symbols-outlined text-sm text-outline absolute left-2 top-2">search</span>
               </div>
 
@@ -924,22 +924,114 @@
     </div>
   </div>
 
-  <!-- ============================== CORE JAVASCRIPT LOGIC ============================== -->
+  <!-- ========================================================================================= -->
+  <!--               DEMO MODE: CLIENT-SIDE SIMULATION, NO BACKEND REQUIRED                      -->
+  <!-- ========================================================================================= -->
   <script>
-    const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-      ? "http://localhost:8000"
-      : `${window.location.protocol}//${window.location.host}`;
-    
-    const WS_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-      ? "ws://localhost:8000/ws/live"
-      : `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}/ws/live`;
+    // === DEMO MODE: CLIENT-SIDE SIMULATION, NO BACKEND REQUIRED ===
+    // All real-time telemetry, threat injections, packet counts, and charts 
+    // run completely self-contained in the browser for zero-dependency demos.
 
-    let ws = null;
-    let currentFilter = "all";
-    let currentSearch = "";
-    let searchTimer = null;
+    // ── 1. In-Memory State & Seeded Threat Ledger ─────────────
+    let packetsAnalyzed = 2847291;
+    let threatsFlagged = 37;
+    let zeroDayCount = 3;
+    let avgLatency = 14.82;
+    let searchDebounceTimer = null;
+    let threatFilter = "all";
+    let threatSearchTerm = "";
 
-    // Toast Utility
+    const THREAT_TYPES = [
+      {
+        label: "DDoS SYN Flood",
+        threat_type: "ddos",
+        severity: "CRITICAL",
+        mitre: "T1498.001 - Direct Network Flood",
+        flags: ["SYN"],
+        port: 443
+      },
+      {
+        label: "Port Scan",
+        threat_type: "scans",
+        severity: "MEDIUM",
+        mitre: "T1046 - Network Service Discovery",
+        flags: ["SYN"],
+        port: 22
+      },
+      {
+        label: "C2 Beacon",
+        threat_type: "c2",
+        severity: "HIGH",
+        mitre: "T1071.001 - Web Protocols C2",
+        flags: ["PSH", "ACK"],
+        port: 8443
+      }
+    ];
+
+    let threatStore = [
+      {
+        flow_id: "flw_8b31a01",
+        timestamp: new Date().toISOString().substring(11, 19) + " UTC",
+        label: "DDoS SYN Flood",
+        threat_type: "ddos",
+        confidence: 0.984,
+        latency_ms: 14.2,
+        severity: "CRITICAL",
+        src_ip: "198.51.100.74:54210",
+        dst_port: "443 (10.0.80.12)",
+        tcp_flags: ["SYN"],
+        mitre_technique: "T1498.001 - Direct Network Flood",
+        iat_ms: 0.18,
+        iat_series: [0.22, 0.19, 0.18, 0.20, 0.17, 0.18]
+      },
+      {
+        flow_id: "flw_7c99f42",
+        timestamp: new Date().toISOString().substring(11, 19) + " UTC",
+        label: "ZERO_DAY_ANOMALY",
+        threat_type: "zero-day",
+        confidence: 0.962,
+        latency_ms: 18.5,
+        severity: "CRITICAL",
+        src_ip: "203.0.113.19:41992",
+        dst_port: "8080 (10.0.80.4)",
+        tcp_flags: ["PSH", "ACK", "URG"],
+        mitre_technique: "T1203 - Optical Ingress Anomaly",
+        iat_ms: 4.12,
+        iat_series: [8.2, 4.1, 9.8, 4.1, 7.3, 4.12]
+      },
+      {
+        flow_id: "flw_4e12c88",
+        timestamp: new Date().toISOString().substring(11, 19) + " UTC",
+        label: "Port Scan",
+        threat_type: "scans",
+        confidence: 0.945,
+        latency_ms: 12.8,
+        severity: "MEDIUM",
+        src_ip: "192.0.2.144:39811",
+        dst_port: "22 (10.0.80.20)",
+        tcp_flags: ["SYN"],
+        mitre_technique: "T1046 - Network Service Discovery",
+        iat_ms: 1.25,
+        iat_series: [1.4, 1.2, 1.3, 1.1, 1.25]
+      },
+      {
+        flow_id: "flw_2a90e31",
+        timestamp: new Date().toISOString().substring(11, 19) + " UTC",
+        label: "C2 Beacon",
+        threat_type: "c2",
+        confidence: 0.931,
+        latency_ms: 16.2,
+        severity: "HIGH",
+        src_ip: "198.51.100.205:60124",
+        dst_port: "8443 (10.0.80.8)",
+        tcp_flags: ["PSH", "ACK"],
+        mitre_technique: "T1071.001 - Web Protocols C2",
+        iat_ms: 500.0,
+        iat_series: [500.2, 499.8, 500.1, 500.0, 499.9]
+      }
+    ];
+
+    // ── 2. Toast Notifications ─────────────────────────────────
     function showToast(message, type = "info") {
       const container = document.getElementById("toast-container");
       if (!container) return;
@@ -957,7 +1049,7 @@
       }, 3500);
     }
 
-    // Tab Navigation Switcher
+    // ── 3. Navigation View Switcher ────────────────────────────
     function switchMainTab(tab) {
       const viewOverview = document.getElementById("view-overview");
       const viewSoc = document.getElementById("view-soc");
@@ -971,7 +1063,7 @@
         btnSoc.className = "font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded bg-surface-container-high text-primary font-semibold";
         btnOverview.className = "text-on-surface-variant hover:text-on-surface font-label-md text-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded";
         if (btnSecurity) btnSecurity.className = "text-on-surface-variant hover:text-on-surface font-label-md text-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded";
-        loadSocThreats();
+        renderThreatTable();
       } else {
         viewSoc.classList.add("hidden");
         viewOverview.classList.remove("hidden");
@@ -984,64 +1076,183 @@
       }
     }
 
-    // Number Count-Up Animator
-    function animateCountUp(elementId, targetValue, isDecimal = false) {
+    // ── 4. Count-Up Number Helper ──────────────────────────────
+    function updateCounterDisplay(elementId, value, isDecimal = false) {
       const el = document.getElementById(elementId);
       if (!el) return;
-      const current = parseFloat(el.innerText.replace(/,/g, "")) || 0;
-      if (current === targetValue) return;
-
-      const duration = 600;
-      const start = performance.now();
-      function step(now) {
-        const progress = Math.min(1, (now - start) / duration);
-        const val = current + (targetValue - current) * progress;
-        el.innerText = isDecimal ? val.toFixed(2) : Math.floor(val).toLocaleString();
-        if (progress < 1) requestAnimationFrame(step);
-        else el.innerText = isDecimal ? targetValue.toFixed(2) : Math.floor(targetValue).toLocaleString();
-      }
-      requestAnimationFrame(step);
+      el.innerText = isDecimal ? value.toFixed(2) : Math.floor(value).toLocaleString();
     }
 
-    // Fetch Summary Metrics
-    async function loadSummaryMetrics() {
-      try {
-        const res = await fetch(`${API_BASE}/metrics/summary`);
-        if (!res.ok) return;
-        const data = await res.json();
-        animateCountUp("metric-packets", data.packets_analyzed);
-        animateCountUp("metric-threats", data.threats_today);
-        animateCountUp("metric-zeroday", data.zero_day_count);
-        animateCountUp("metric-latency", data.avg_soc_latency_ms, true);
-      } catch (e) {
-        console.warn("Metrics fetch error:", e);
+    // ── 5. Synthetic Packet Generation Loop (400-800ms) ────────
+    function scheduleNextPacket() {
+      const delay = Math.floor(400 + Math.random() * 400); // 400-800ms
+      setTimeout(() => {
+        // Increment packet analyzed counter
+        packetsAnalyzed += Math.floor(1 + Math.random() * 3);
+        updateCounterDisplay("metric-packets", packetsAnalyzed);
+
+        // Update live packet-rate number (170-220 pkts/s)
+        const rateEl = document.getElementById("stream-flow-rate");
+        if (rateEl) {
+          const currentRate = Math.floor(175 + Math.random() * 45);
+          rateEl.innerText = `${currentRate} PKTS/S`;
+        }
+
+        // Add animated photon dot left-to-right across Live Data Flow canvas
+        spawnPhoton(false);
+
+        // Schedule next tick
+        scheduleNextPacket();
+      }, delay);
+    }
+
+    // ── 6. Client-Side Threat Generation Function ──────────────
+    function generateSyntheticThreat(isBurst = false) {
+      const choice = THREAT_TYPES[Math.floor(Math.random() * THREAT_TYPES.length)];
+      const conf = (90 + Math.random() * 9.5) / 100; // 90-99%
+      const lat = parseFloat((12 + Math.random() * 12).toFixed(1)); // 12-24ms
+      const flowId = `flw_${Math.random().toString(16).substring(2, 9)}`;
+      const nowUtc = new Date().toISOString().substring(11, 19) + " UTC";
+      const srcIp = `198.51.100.${Math.floor(2 + Math.random() * 240)}:${Math.floor(1024 + Math.random() * 60000)}`;
+
+      const newThreat = {
+        flow_id: flowId,
+        timestamp: nowUtc,
+        label: choice.label,
+        threat_type: choice.threat_type,
+        confidence: conf,
+        latency_ms: lat,
+        severity: choice.severity,
+        src_ip: srcIp,
+        dst_port: `${choice.port} (10.0.80.12)`,
+        tcp_flags: choice.flags,
+        mitre_technique: choice.mitre,
+        iat_ms: parseFloat((Math.random() * 2.5).toFixed(2)),
+        iat_series: Array.from({ length: 6 }, () => parseFloat((Math.random() * 3.0 + 0.1).toFixed(2)))
+      };
+
+      // Prepend to in-memory ledger
+      threatStore.unshift(newThreat);
+      if (threatStore.length > 100) threatStore.pop();
+
+      // Increment Threats Flagged counter
+      threatsFlagged++;
+      updateCounterDisplay("metric-threats", threatsFlagged);
+
+      // Trigger red photon packet deflection animation
+      spawnPhoton(true);
+
+      // Prepend to table visually
+      prependThreatRow(newThreat);
+
+      // Add entry to Audit timeline stream
+      const auditStream = document.getElementById("audit-timeline-stream");
+      if (auditStream) {
+        const auditEntry = document.createElement("div");
+        auditEntry.className = "flex items-start gap-2.5 p-3 bg-error-container/40 rounded-lg border border-error/50 animate-pulse";
+        auditEntry.innerHTML = `
+          <span class="material-symbols-outlined text-error text-base mt-0.5">gpp_bad</span>
+          <div class="flex-1">
+            <div class="flex justify-between items-center">
+              <span class="text-error font-bold">${choice.label.toUpperCase()} DEFLECTED</span>
+              <span class="text-error text-[10px]">JUST NOW</span>
+            </div>
+            <p class="text-on-surface text-[11px] mt-0.5">${choice.mitre} • Optical barrier: 0.00 bps passed.</p>
+          </div>
+        `;
+        auditStream.insertBefore(auditEntry, auditStream.firstChild);
+      }
+
+      if (!isBurst) {
+        showToast(`🚨 THREAT DEFLECTED: ${choice.label} (${Math.round(conf * 100)}% confidence)`, "error");
       }
     }
 
-    // Fetch & Render SOC Threats Table
-    async function loadSocThreats() {
-      try {
-        const query = new URLSearchParams({ filter: currentFilter, search: currentSearch });
-        const res = await fetch(`${API_BASE}/threats?${query.toString()}`);
-        if (!res.ok) return;
-        const data = await res.json();
-        renderThreatRows(data.threats);
-      } catch (e) {
-        console.warn("Threats fetch error:", e);
-      }
+    // Schedule regular synthetic threat every ~15-20 seconds
+    function schedulePeriodicThreat() {
+      const delay = Math.floor(15000 + Math.random() * 5000); // 15-20s
+      setTimeout(() => {
+        generateSyntheticThreat(false);
+        schedulePeriodicThreat();
+      }, delay);
     }
 
-    function renderThreatRows(threats) {
+    // ── 7. SIMULATE ATTACK Rapid Burst (5-8 Threats over ~3s) ─
+    function triggerSimulatedAttack() {
+      const btn1 = document.getElementById("simulate-attack-global-btn");
+      const btn2 = document.getElementById("trigger-attack-soc-btn");
+      const label = document.getElementById("simulate-attack-label");
+      const socLabel = document.getElementById("soc-attack-btn-text");
+
+      if (btn1) btn1.disabled = true;
+      if (btn2) btn2.disabled = true;
+
+      let countdown = 4;
+      if (label) label.innerText = `BURST (${countdown}s)`;
+      if (socLabel) socLabel.innerText = `BURST (${countdown}s)`;
+
+      const timer = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+          if (label) label.innerText = `BURST (${countdown}s)`;
+          if (socLabel) socLabel.innerText = `BURST (${countdown}s)`;
+        } else {
+          clearInterval(timer);
+          if (btn1) { btn1.disabled = false; label.innerText = "SIMULATE ATTACK"; }
+          if (btn2) { btn2.disabled = false; socLabel.innerText = "Simulate Reverse Attack"; }
+        }
+      }, 1000);
+
+      // Visual Deflection FX
+      const scrim = document.getElementById("alert-flash-scrim");
+      const barrier = document.getElementById("hardware-barrier");
+      const alertTag = document.getElementById("barrier-alert-tag");
+
+      if (scrim) {
+        scrim.classList.remove("opacity-0");
+        setTimeout(() => scrim.classList.add("opacity-0"), 400);
+      }
+      if (barrier) {
+        barrier.classList.add("bg-error/30");
+        if (alertTag) alertTag.classList.remove("hidden");
+        setTimeout(() => {
+          barrier.classList.remove("bg-error/30");
+          if (alertTag) alertTag.classList.add("hidden");
+        }, 3000);
+      }
+
+      // Fire 6-8 rapid threats over 3 seconds
+      const burstCount = Math.floor(6 + Math.random() * 3);
+      for (let i = 0; i < burstCount; i++) {
+        setTimeout(() => {
+          generateSyntheticThreat(true);
+        }, i * 380);
+      }
+
+      showToast(`⚡ ATTACK BURST DEFLECTED: ${burstCount} malicious flows intercepted by diode!`, "error");
+    }
+
+    // ── 8. Threat Table Rendering & Search ─────────────────────
+    function renderThreatTable() {
       const tbody = document.getElementById("soc-transfer-log-body");
       if (!tbody) return;
       tbody.innerHTML = "";
 
-      if (!threats || threats.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-outline text-xs">No threats matching filter.</td></tr>`;
+      let filtered = threatStore;
+      if (threatSearchTerm) {
+        filtered = filtered.filter(t => 
+          t.flow_id.toLowerCase().includes(threatSearchTerm) ||
+          t.label.toLowerCase().includes(threatSearchTerm) ||
+          t.src_ip.toLowerCase().includes(threatSearchTerm)
+        );
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-outline text-xs">No threats matching criteria.</td></tr>`;
         return;
       }
 
-      threats.forEach(t => {
+      filtered.forEach(t => {
         const tr = document.createElement("tr");
         tr.className = "hover:bg-surface-container cursor-pointer transition-colors group";
         tr.onclick = () => openDrawer(t.flow_id);
@@ -1052,18 +1263,19 @@
           <td class="py-2.5 px-3 font-bold text-white group-hover:text-primary">${t.flow_id}</td>
           <td class="py-2.5 px-3 text-outline text-[11px]">${t.timestamp}</td>
           <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded border text-[10px] font-bold ${badgeColor}">${t.label}</span></td>
-          <td class="py-2.5 px-3 text-white">${t.src_ip}:${t.dst_port}</td>
+          <td class="py-2.5 px-3 text-white">${t.src_ip}</td>
           <td class="py-2.5 px-3 text-outline">${(t.tcp_flags || []).join(",")}</td>
-          <td class="py-2.5 px-3 text-secondary font-bold">${Math.round((t.confidence || 0.95) * 100)}%</td>
+          <td class="py-2.5 px-3 text-secondary font-bold">${Math.round(t.confidence * 100)}%</td>
           <td class="py-2.5 px-3 text-right text-primary text-[11px] font-bold">Inspect →</td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    function prependThreat(t) {
+    function prependThreatRow(t) {
       const tbody = document.getElementById("soc-transfer-log-body");
       if (!tbody) return;
+
       const tr = document.createElement("tr");
       tr.className = "hover:bg-surface-container cursor-pointer transition-colors bg-error/10 animate-pulse";
       tr.onclick = () => openDrawer(t.flow_id);
@@ -1074,38 +1286,41 @@
         <td class="py-2.5 px-3 font-bold text-white">${t.flow_id}</td>
         <td class="py-2.5 px-3 text-outline text-[11px]">${t.timestamp}</td>
         <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded border text-[10px] font-bold ${badgeColor}">${t.label}</span></td>
-        <td class="py-2.5 px-3 text-white">${t.src_ip}:${t.dst_port}</td>
+        <td class="py-2.5 px-3 text-white">${t.src_ip}</td>
         <td class="py-2.5 px-3 text-outline">${(t.tcp_flags || []).join(",")}</td>
-        <td class="py-2.5 px-3 text-secondary font-bold">${Math.round((t.confidence || 0.95) * 100)}%</td>
+        <td class="py-2.5 px-3 text-secondary font-bold">${Math.round(t.confidence * 100)}%</td>
         <td class="py-2.5 px-3 text-right text-primary text-[11px] font-bold">Inspect →</td>
       `;
       tbody.insertBefore(tr, tbody.firstChild);
       setTimeout(() => tr.classList.remove("bg-error/10", "animate-pulse"), 2500);
     }
 
-    // Threat Inspection Drawer
-    async function openDrawer(flowId) {
-      try {
-        const res = await fetch(`${API_BASE}/threats/${flowId}`);
-        if (!res.ok) return;
-        const t = await res.json();
+    function handleThreatSearch(val) {
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        threatSearchTerm = val.trim().toLowerCase();
+        renderThreatTable();
+      }, 300);
+    }
 
-        document.getElementById("drawer-flow-id").innerText = t.flow_id;
-        document.getElementById("drawer-timestamp").innerText = `${t.timestamp} UTC`;
-        document.getElementById("drawer-threat-badge").innerText = t.severity || "CRITICAL";
-        document.getElementById("drawer-label").innerText = t.label;
-        document.getElementById("drawer-mitre").innerText = t.mitre_technique || "T1498.001";
-        document.getElementById("drawer-confidence").innerText = `${Math.round((t.confidence || 0.95) * 100)}%`;
-        document.getElementById("drawer-latency").innerText = `${t.latency_ms} ms`;
-        document.getElementById("drawer-src-ip").innerText = t.src_ip;
-        document.getElementById("drawer-dst-port").innerText = `${t.dst_port} (${t.dst_ip})`;
+    // ── 9. Threat Detail Drawer ────────────────────────────────
+    function openDrawer(flowId) {
+      const t = threatStore.find(x => x.flow_id === flowId);
+      if (!t) return;
 
-        renderDrawerChart(t.iat_series || [0.2, 0.18, 0.22, 0.19, 0.18]);
-        document.getElementById("drawer-iat-mean").innerText = `Mean IAT: ${t.iat_ms || 0.18} ms`;
-        document.getElementById("threat-drawer").classList.remove("translate-x-full");
-      } catch (e) {
-        console.warn("Drawer open error:", e);
-      }
+      document.getElementById("drawer-flow-id").innerText = t.flow_id;
+      document.getElementById("drawer-timestamp").innerText = `${t.timestamp}`;
+      document.getElementById("drawer-threat-badge").innerText = t.severity || "CRITICAL";
+      document.getElementById("drawer-label").innerText = t.label;
+      document.getElementById("drawer-mitre").innerText = t.mitre_technique || "T1498.001";
+      document.getElementById("drawer-confidence").innerText = `${Math.round(t.confidence * 100)}%`;
+      document.getElementById("drawer-latency").innerText = `${t.latency_ms} ms`;
+      document.getElementById("drawer-src-ip").innerText = t.src_ip;
+      document.getElementById("drawer-dst-port").innerText = t.dst_port;
+
+      renderDrawerChart(t.iat_series || [0.2, 0.18, 0.22, 0.19, 0.18]);
+      document.getElementById("drawer-iat-mean").innerText = `Mean IAT: ${t.iat_ms || 0.18} ms`;
+      document.getElementById("threat-drawer").classList.remove("translate-x-full");
     }
 
     function closeDrawer() {
@@ -1135,189 +1350,80 @@
       ctx.stroke();
     }
 
-    // Search Debouncer & CSV Download
-    function handleThreatSearch(val) {
-      clearTimeout(searchTimer);
-      searchTimer = setTimeout(() => {
-        currentSearch = val;
-        loadSocThreats();
-      }, 300);
-    }
-
+    // ── 10. Client-Side CSV Export ─────────────────────────────
     function exportCSV() {
-      showToast("Generating signed CSV export...", "info");
-      window.location.href = `${API_BASE}/threats/export`;
+      showToast("Compiling hardware threat ledger CSV...", "info");
+      let csv = "Flow ID,Timestamp,Classification,Confidence,Severity,Source IP,Target Port,Protocol,Flags,Latency (ms),MITRE ATT&CK\n";
+      threatStore.forEach(t => {
+        csv += `"${t.flow_id}","${t.timestamp}","${t.label}","${(t.confidence * 100).toFixed(1)}%","${t.severity}","${t.src_ip}","${t.dst_port}","TCP","${(t.tcp_flags || []).join('|')}","${t.latency_ms}","${t.mitre_technique}"\n`;
+      });
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `irongate_threat_log_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("Threat log CSV downloaded successfully ✓");
     }
 
-    // SIMULATE ATTACK TRIGGER
-    async function triggerSimulatedAttack() {
-      const btn1 = document.getElementById("simulate-attack-global-btn");
-      const btn2 = document.getElementById("trigger-attack-soc-btn");
-      const label = document.getElementById("simulate-attack-label");
-      const socLabel = document.getElementById("soc-attack-btn-text");
-
-      if (btn1) btn1.disabled = true;
-      if (btn2) btn2.disabled = true;
-
-      let countdown = 4;
-      if (label) label.innerText = `BURST (${countdown}s)`;
-      if (socLabel) socLabel.innerText = `BURST (${countdown}s)`;
-
-      const timer = setInterval(() => {
-        countdown--;
-        if (countdown > 0) {
-          if (label) label.innerText = `BURST (${countdown}s)`;
-          if (socLabel) socLabel.innerText = `BURST (${countdown}s)`;
-        } else {
-          clearInterval(timer);
-          if (btn1) { btn1.disabled = false; label.innerText = "SIMULATE ATTACK"; }
-          if (btn2) { btn2.disabled = false; socLabel.innerText = "Simulate Reverse Attack"; }
-        }
-      }, 1000);
-
-      // Flash deflection scrim and barrier
-      const scrim = document.getElementById("alert-flash-scrim");
-      const barrier = document.getElementById("hardware-barrier");
-      const alertTag = document.getElementById("barrier-alert-tag");
-
-      if (scrim) {
-        scrim.classList.remove("opacity-0");
-        setTimeout(() => scrim.classList.add("opacity-0"), 300);
-      }
-      if (barrier) {
-        barrier.classList.add("bg-error/30");
-        if (alertTag) alertTag.classList.remove("hidden");
-        setTimeout(() => {
-          barrier.classList.remove("bg-error/30");
-          if (alertTag) alertTag.classList.add("hidden");
-        }, 2500);
-      }
-
-      try {
-        const res = await fetch(`${API_BASE}/simulate-attack`, { method: "POST" });
-        const data = await res.json();
-        showToast(`ATTACK BURST DEFLECTED: ${data.burst_size} packets blocked at diode barrier!`, "error");
-        
-        // Add incident to Audit Stream
-        const auditStream = document.getElementById("audit-timeline-stream");
-        if (auditStream) {
-          const auditEntry = document.createElement("div");
-          auditEntry.className = "flex items-start gap-2.5 p-3 bg-error-container/40 rounded-lg border border-error/50 animate-pulse";
-          auditEntry.innerHTML = `
-            <span class="material-symbols-outlined text-error text-base mt-0.5">gpp_bad</span>
-            <div class="flex-1">
-              <div class="flex justify-between items-center">
-                <span class="text-error font-bold">REVERSE ATTACK BLOCKED</span>
-                <span class="text-error text-[10px]">JUST NOW</span>
-              </div>
-              <p class="text-on-surface text-[11px] mt-0.5">Physical optical diode prevented reverse ingress.</p>
-            </div>
-          `;
-          auditStream.insertBefore(auditEntry, auditStream.firstChild);
-        }
-      } catch (err) {
-        showToast("Simulation request failed", "error");
-      }
-    }
-
-    // WebSocket Real-time Stream
-    function connectWebSocket() {
-      const dot = document.getElementById("ws-dot");
-      const status = document.getElementById("ws-status");
-
-      try {
-        ws = new WebSocket(WS_BASE);
-        ws.onopen = () => {
-          dot.className = "w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_#6af7ba]";
-          status.innerText = "WS LIVE";
-          status.className = "text-secondary font-semibold";
-        };
-        ws.onmessage = (e) => {
-          try {
-            const msg = JSON.parse(e.data);
-            if (msg.metrics) {
-              animateCountUp("metric-packets", msg.metrics.packets_analyzed);
-              animateCountUp("metric-threats", msg.metrics.threats_today);
-              animateCountUp("metric-zeroday", msg.metrics.zero_day_count);
-              animateCountUp("metric-latency", msg.metrics.avg_soc_latency_ms, true);
-            }
-            if (msg.type === "packet_event") {
-              spawnPhoton(false);
-              const flowRate = document.getElementById("stream-flow-rate");
-              if (flowRate) flowRate.innerText = `${Math.floor(175 + Math.random() * 30)} PKTS/S`;
-            } else if (msg.type === "threat_event") {
-              spawnPhoton(true);
-              prependThreat(msg.data);
-            }
-          } catch (err) {}
-        };
-        ws.onclose = () => {
-          dot.className = "w-2 h-2 rounded-full bg-error animate-pulse";
-          status.innerText = "RECONNECTING";
-          status.className = "text-error";
-          setTimeout(connectWebSocket, 3000);
-        };
-        ws.onerror = () => ws.close();
-      } catch (err) {
-        setTimeout(connectWebSocket, 3000);
-      }
-    }
-
-    // Photon Particle Canvas
-    const particles = [];
-    let canvas, ctx;
+    // ── 11. Photon Canvas & Animation Engine ───────────────────
+    const photons = [];
+    let socCanvas, socCtx;
 
     function initPhotonCanvas() {
-      canvas = document.getElementById("soc-photon-canvas");
-      if (!canvas) return;
-      ctx = canvas.getContext("2d");
-      resize();
-      window.addEventListener("resize", resize);
+      socCanvas = document.getElementById("soc-photon-canvas");
+      if (!socCanvas) return;
+      socCtx = socCanvas.getContext("2d");
+      resizeSocCanvas();
+      window.addEventListener("resize", resizeSocCanvas);
       requestAnimationFrame(renderPhotons);
     }
 
-    function resize() {
-      if (!canvas) return;
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+    function resizeSocCanvas() {
+      if (!socCanvas) return;
+      socCanvas.width = socCanvas.offsetWidth;
+      socCanvas.height = socCanvas.offsetHeight;
     }
 
     function spawnPhoton(isThreat = false) {
-      if (!canvas) return;
-      particles.push({
+      if (!socCanvas) return;
+      photons.push({
         x: 180,
-        y: canvas.height / 2 + (Math.random() * 20 - 10),
-        speed: isThreat ? 8 : (4 + Math.random() * 2.5),
-        size: isThreat ? 4 : 2.5,
+        y: socCanvas.height / 2 + (Math.random() * 24 - 12),
+        speed: isThreat ? 7.5 : (3.5 + Math.random() * 2.5),
+        size: isThreat ? 4.5 : 2.5,
         isThreat: isThreat
       });
     }
 
     function renderPhotons() {
-      if (!canvas || !ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (!socCanvas || !socCtx) return;
+      socCtx.clearRect(0, 0, socCanvas.width, socCanvas.height);
 
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
+      for (let i = photons.length - 1; i >= 0; i--) {
+        const p = photons[i];
         p.x += p.speed;
 
-        ctx.fillStyle = p.isThreat ? "#ff4d4f" : "#00d4ff";
-        ctx.shadowColor = p.isThreat ? "rgba(255, 77, 79, 0.9)" : "rgba(0, 212, 255, 0.8)";
-        ctx.shadowBlur = 10;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
+        socCtx.fillStyle = p.isThreat ? "#ff4d4f" : "#00d4ff";
+        socCtx.shadowColor = p.isThreat ? "rgba(255, 77, 79, 0.9)" : "rgba(0, 212, 255, 0.8)";
+        socCtx.shadowBlur = p.isThreat ? 14 : 8;
+        socCtx.beginPath();
+        socCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        socCtx.fill();
+        socCtx.shadowBlur = 0;
 
-        if (p.x > canvas.width - 180) {
-          particles.splice(i, 1);
+        // Die upon crossing barrier or right exit
+        if (p.x > socCanvas.width - 180) {
+          photons.splice(i, 1);
         }
       }
       requestAnimationFrame(renderPhotons);
     }
 
-    // Background Particle Drift (Overview Page)
-    (function initBackgroundDrift() {
+    // Overview background particle drift
+    (function initOverviewDrift() {
       const c = document.getElementById('unidirectional-particles');
       if (!c) return;
       const cx = c.getContext('2d');
@@ -1356,7 +1462,14 @@
       loop();
     })();
 
-    // UTC Clock
+    // ── 12. Latency Jitter & UTC Live Clock ─────────────────────
+    // Latency jitter (12-24ms)
+    setInterval(() => {
+      avgLatency = 12 + Math.random() * 12;
+      updateCounterDisplay("metric-latency", avgLatency, true);
+    }, 1200);
+
+    // Live UTC Clock ticking every 100ms
     setInterval(() => {
       const el = document.getElementById("live-utc-clock");
       if (el) {
@@ -1369,11 +1482,17 @@
       showToast("EAL7+ Physical Attestation: 0.000 bps backscatter verified.");
     }
 
+    // ── 13. Initialization on DOM Load ─────────────────────────
     window.addEventListener("DOMContentLoaded", () => {
-      loadSummaryMetrics();
-      loadSocThreats();
-      connectWebSocket();
+      updateCounterDisplay("metric-packets", packetsAnalyzed);
+      updateCounterDisplay("metric-threats", threatsFlagged);
+      updateCounterDisplay("metric-zeroday", zeroDayCount);
+      updateCounterDisplay("metric-latency", avgLatency, true);
+
+      renderThreatTable();
       initPhotonCanvas();
+      scheduleNextPacket();
+      schedulePeriodicThreat();
     });
 
     window.addEventListener("keydown", (e) => {
