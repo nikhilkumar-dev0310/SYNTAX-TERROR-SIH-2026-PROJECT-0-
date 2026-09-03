@@ -169,7 +169,6 @@
       width: 100%;
     }
 
-    /* Range slider custom styling */
     input[type=range] {
       -webkit-appearance: none;
       background: #1e293b;
@@ -287,7 +286,7 @@
       </div>
     </div>
 
-    <!-- 3 PILLARS ANCHOR CARDS (Hover = Real Payoff) -->
+    <!-- 3 PILLARS ANCHOR CARDS -->
     <div class="relative z-10 w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 text-left">
       
       <!-- Pillar 1 -->
@@ -411,11 +410,11 @@
       </div>
 
       <!-- Live Flow Visualizer Stage with Hoverable/Clickable Telemetry -->
-      <div class="relative w-full h-80 bg-surface-container-lowest rounded-xl overflow-hidden flex items-center justify-between px-8 border border-outline-variant/80 cursor-crosshair group" id="visualizer-stage" onclick="inspectNearestPacket(event)">
+      <div class="relative w-full h-80 bg-surface-container-lowest rounded-xl overflow-hidden flex items-center justify-between px-8 border border-outline-variant/80 cursor-pointer group" id="visualizer-stage" onclick="openInspectorFromCanvas(event)">
         
         <!-- Hover Instruction Badge -->
         <div class="absolute top-3 left-4 z-30 px-3 py-1 rounded bg-surface-container-high/90 text-[10px] font-mono text-slate-300 border border-outline-variant/50 pointer-events-none">
-          💡 Click anywhere on the conduit to inspect passing packet telemetry
+          💡 Click anywhere on the conduit or packets to open the Deep Flow Inspector
         </div>
 
         <!-- Left Node: Untrusted Ingress TX -->
@@ -462,19 +461,6 @@
           <div class="flex items-center gap-1 text-tertiary font-label-sm text-[11px] font-bold">
             <span class="material-symbols-outlined text-sm">verified_user</span>
             <span>100% AIR-GAP SECURE</span>
-          </div>
-        </div>
-
-        <!-- Floating Live Packet Inspection Tooltip Card -->
-        <div id="packet-inspect-tooltip" class="absolute z-40 p-3 bg-surface-container/95 border border-primary/60 rounded-xl shadow-2xl backdrop-blur-xl font-mono text-xs hidden pointer-events-none transition-all duration-150">
-          <div class="flex justify-between items-center gap-4 text-white font-bold border-b border-outline-variant/50 pb-1 mb-2">
-            <span id="inspect-flow-id">flw_8b31a01</span>
-            <span id="inspect-verdict-badge" class="px-1.5 py-0.2 rounded bg-tertiary/20 text-tertiary text-[10px]">NORMAL</span>
-          </div>
-          <div class="space-y-1 text-slate-300 text-[11px]">
-            <div class="flex justify-between gap-3"><span>Entropy:</span><span id="inspect-entropy" class="text-white">4.12 bits</span></div>
-            <div class="flex justify-between gap-3"><span>Timing IAT:</span><span id="inspect-iat" class="text-white">2.31 ms</span></div>
-            <div class="flex justify-between gap-3"><span>Anomaly Loss:</span><span id="inspect-loss" class="text-primary font-bold">0.034</span></div>
           </div>
         </div>
 
@@ -577,7 +563,6 @@
             </div>
             <div class="w-full bg-surface-container-high h-2.5 rounded-full overflow-hidden relative">
               <div id="sandbox-loss-bar" class="h-full bg-tertiary transition-all duration-150 w-[8%]"></div>
-              <!-- Fixed 3-sigma marker -->
               <div class="absolute top-0 bottom-0 left-[25%] w-0.5 bg-error shadow-[0_0_4px_#ff4d4f]"></div>
             </div>
             <div class="flex justify-between text-[10px] font-mono text-slate-400 mt-1">
@@ -648,7 +633,7 @@
         <div class="text-[11px] text-slate-400 font-mono">0 reached secure enclave</div>
       </div>
 
-      <!-- Card 3: Live Autoencoder Sparkline with 3-Sigma Line (Preserved Chart) -->
+      <!-- Card 3: Live Autoencoder Sparkline with 3-Sigma Line -->
       <div class="hover-lift bg-surface-container-low/95 rounded-xl p-5 shadow-md border border-secondary/50 flex flex-col justify-between">
         <div class="flex items-center justify-between">
           <span class="font-label-sm text-xs text-secondary uppercase tracking-wider font-bold">Anomaly Loss ($L_{rec}$)</span>
@@ -690,12 +675,12 @@
               <span class="material-symbols-outlined text-primary text-lg">data_object</span>
               Passive Threat Intelligence Log
             </h3>
-            <p class="font-label-sm text-xs text-slate-400 mt-0.5">Click any row to inspect deep feature vectors and anomaly telemetry</p>
+            <p class="font-label-sm text-xs text-slate-400 mt-0.5">Click any row to open the Deep Flow Inspector with plain-English explainability</p>
           </div>
 
           <div class="flex items-center gap-3">
             <div class="relative">
-              <input type="text" id="soc-log-search" oninput="handleThreatSearch(this.value)" placeholder="Search IP, flow, label..." class="bg-surface-container-lowest text-white text-xs font-mono px-3 py-1.5 pl-8 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary w-48 border border-outline-variant placeholder:text-slate-500"/>
+              <input type="text" id="soc-log-search" oninput="handleThreatSearch(this.value)" placeholder="Search IP, flow, vector..." class="bg-surface-container-lowest text-white text-xs font-mono px-3 py-1.5 pl-8 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary w-48 border border-outline-variant placeholder:text-slate-500"/>
               <span class="material-symbols-outlined text-sm text-slate-400 absolute left-2 top-2">search</span>
             </div>
 
@@ -714,13 +699,13 @@
                 <th class="py-2.5 px-3">Time (UTC)</th>
                 <th class="py-2.5 px-3">Attack Vector</th>
                 <th class="py-2.5 px-3">Source IP</th>
-                <th class="py-2.5 px-3">Flags</th>
+                <th class="py-2.5 px-3">Protocol</th>
                 <th class="py-2.5 px-3">Confidence</th>
                 <th class="py-2.5 px-3 text-right">Action</th>
               </tr>
             </thead>
             <tbody id="soc-transfer-log-body" class="divide-y divide-outline-variant/30">
-              <!-- Dynamically rendered rows -->
+              <!-- Injected rows -->
             </tbody>
           </table>
         </div>
@@ -905,90 +890,175 @@
         </div>
       </div>
 
-      <div class="pt-3 border-t border-outline-variant/40 flex justify-end">
+      <div class="pt-3 border-t border-outline-variant/40 flex justify-end gap-3">
+        <button onclick="openInspectorFromVerdict()" class="btn-interactive px-4 py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright text-primary border border-primary/40 font-mono text-xs font-bold uppercase transition-colors">
+          Open Deep Flow Inspector →
+        </button>
         <button onclick="closeVerdictModal()" class="btn-interactive px-5 py-2 rounded-lg bg-error hover:bg-error-container text-white font-mono text-xs font-bold uppercase transition-colors shadow-lg">
-          Acknowledge & Dismiss
+          Dismiss
         </button>
       </div>
     </div>
   </div>
 
-  <!-- ============================== THREAT INSPECTION DRAWER (WITH PRESERVED IAT CHART) ============================== -->
-  <div id="threat-drawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-xl bg-surface-container-low border-l border-outline-variant shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
-    <div class="p-6 border-b border-outline-variant flex items-center justify-between bg-surface-container">
+  <!-- ========================================================================================= -->
+  <!--                 COMPREHENSIVE FLOW INSPECTOR PANEL (EXPLAINABLE AI REASONING)             -->
+  <!-- ========================================================================================= -->
+  <div id="flow-inspector-panel" class="fixed inset-y-0 right-0 z-50 w-full max-w-2xl bg-surface-container-low/98 backdrop-blur-2xl border-l border-primary/40 shadow-[-20px_0_60px_rgba(0,0,0,0.8)] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+    
+    <!-- Panel Header -->
+    <div class="p-6 border-b border-outline-variant flex items-center justify-between bg-surface-container/90">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-error/15 border border-error/40 flex items-center justify-center text-error">
-          <span class="material-symbols-outlined text-xl">biotech</span>
+        <div class="w-10 h-10 rounded-xl bg-primary/15 border border-primary/40 flex items-center justify-center text-primary">
+          <span class="material-symbols-outlined text-2xl">troubleshoot</span>
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <h3 id="drawer-flow-id" class="font-mono font-bold text-sm text-white">flw_xxxxxxx</h3>
-            <span id="drawer-threat-badge" class="px-2 py-0.5 rounded bg-error/20 text-error border border-error/40 text-[10px] font-mono font-bold">CRITICAL</span>
+          <div class="flex items-center gap-2.5">
+            <h3 id="fi-flow-id" class="font-mono font-black text-base text-white">flw_9e41b02</h3>
+            <span id="fi-badge" class="px-2.5 py-0.5 rounded-full bg-error/20 text-error border border-error/50 text-[10px] font-mono font-black tracking-wider">
+              CRITICAL ANOMALY
+            </span>
           </div>
-          <span id="drawer-timestamp" class="text-[11px] font-mono text-slate-400">--</span>
+          <p class="text-xs font-mono text-slate-400 mt-0.5" id="fi-timestamp">2026-09-04 01:02:14 UTC</p>
         </div>
       </div>
-      <button onclick="closeDrawer()" class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright text-slate-300 hover:text-white flex items-center justify-center transition-colors">
+      
+      <button onclick="closeFlowInspector()" class="btn-interactive w-9 h-9 rounded-lg bg-surface-container-high hover:bg-surface-bright text-slate-300 hover:text-white flex items-center justify-center transition-colors border border-outline-variant">
         <span class="material-symbols-outlined text-lg">close</span>
       </button>
     </div>
 
+    <!-- Panel Scrollable Body -->
     <div class="flex-1 overflow-y-auto p-6 space-y-6">
       
-      <!-- What Looked Suspicious (Satisfying Before/After Insight) -->
-      <div class="p-4 rounded-xl bg-surface-container border border-outline-variant space-y-3">
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-400 uppercase">Attack Vector:</span>
-          <span id="drawer-label" class="font-bold text-error">--</span>
-        </div>
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-400 uppercase">MITRE ATT&CK:</span>
-          <span id="drawer-mitre" class="text-primary font-mono font-bold">--</span>
-        </div>
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-400 uppercase">Anomaly Loss ($L_{rec}$):</span>
-          <span id="drawer-loss" class="font-bold text-secondary font-mono">--</span>
-        </div>
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-400 uppercase">Inference Latency:</span>
-          <span id="drawer-latency" class="text-white font-mono">--</span>
-        </div>
-      </div>
-
-      <div>
-        <h4 class="text-xs font-mono font-bold uppercase text-white tracking-wider mb-3">Extracted Feature Vectors</h4>
-        <div class="grid grid-cols-2 gap-3 text-xs font-mono">
-          <div class="p-3 rounded bg-surface-container border border-outline-variant">
-            <span class="text-[10px] text-slate-400 uppercase block">Source IP</span>
-            <span id="drawer-src-ip" class="text-white font-medium block mt-0.5">--</span>
+      <!-- 1. FLOW DETAILS MATRIX -->
+      <div class="bg-surface-container p-4 rounded-xl border border-outline-variant space-y-3">
+        <h4 class="text-xs font-mono font-bold uppercase text-primary tracking-widest flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">lan</span>
+          1. Industrial Telemetry Metadata
+        </h4>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs font-mono">
+          <div class="p-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50">
+            <span class="text-[10px] text-slate-400 block uppercase">Source Ingress</span>
+            <span id="fi-src" class="text-white font-bold block mt-0.5">198.51.100.74:54210</span>
           </div>
-          <div class="p-3 rounded bg-surface-container border border-outline-variant">
-            <span class="text-[10px] text-slate-400 uppercase block">Target Port</span>
-            <span id="drawer-dst-port" class="text-white font-medium block mt-0.5">--</span>
+          <div class="p-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50">
+            <span class="text-[10px] text-slate-400 block uppercase">Target Enclave</span>
+            <span id="fi-dst" class="text-white font-bold block mt-0.5">10.0.80.12:502 (SCADA)</span>
           </div>
-          <div class="p-3 rounded bg-surface-container border border-outline-variant">
-            <span class="text-[10px] text-slate-400 uppercase block">Shannon Entropy</span>
-            <span id="drawer-entropy" class="text-primary font-medium block mt-0.5">7.82 bits (high)</span>
+          <div class="p-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50">
+            <span class="text-[10px] text-slate-400 block uppercase">Protocol</span>
+            <span id="fi-protocol" class="text-tertiary font-bold block mt-0.5">Modbus TCP</span>
           </div>
-          <div class="p-3 rounded bg-surface-container border border-outline-variant">
-            <span class="text-[10px] text-slate-400 uppercase block">Anomaly Threshold</span>
-            <span class="text-tertiary font-bold block mt-0.5">&gt; 3.0σ Exceeded</span>
+          <div class="p-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50">
+            <span class="text-[10px] text-slate-400 block uppercase">Payload Size</span>
+            <span id="fi-payload-size" class="text-white font-bold block mt-0.5">1,420 bytes</span>
+          </div>
+          <div class="p-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50">
+            <span class="text-[10px] text-slate-400 block uppercase">TCP Flags</span>
+            <span id="fi-flags" class="text-secondary font-bold block mt-0.5">[PSH, ACK]</span>
+          </div>
+          <div class="p-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50">
+            <span class="text-[10px] text-slate-400 block uppercase">AI Inference Time</span>
+            <span id="fi-latency" class="text-tertiary font-bold block mt-0.5">14.1 ms</span>
           </div>
         </div>
       </div>
 
-      <!-- Preserved IAT Series Waveform Chart -->
-      <div>
-        <h4 class="text-xs font-mono font-bold uppercase text-white tracking-wider mb-3">Inter-Arrival Time (IAT) Waveform Series</h4>
-        <div class="p-4 rounded-xl bg-surface-container border border-outline-variant">
-          <canvas id="drawer-iat-canvas" class="w-full h-24 block"></canvas>
-          <div class="mt-2 flex items-center justify-between text-[10px] font-mono text-slate-400">
-            <span>Recent Sequence Waveform</span>
-            <span id="drawer-iat-mean">Mean IAT: -- ms</span>
+      <!-- 2. WHY FLAGGED (CORE EXPLAINABILITY SECTION) -->
+      <div class="bg-surface-container p-5 rounded-xl border border-error/50 space-y-4">
+        <div class="flex items-center justify-between">
+          <h4 class="text-xs font-mono font-bold uppercase text-error tracking-widest flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">psychology_alt</span>
+            2. Explainable AI Verdict
+          </h4>
+          <div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-error/20 border border-error/40 text-error text-xs font-mono font-black" id="fi-confidence-badge">
+            98.8% ANOMALOUS
+          </div>
+        </div>
+
+        <div class="p-3 bg-error-container/20 rounded-lg border border-error/30">
+          <p id="fi-verdict-headline" class="text-sm font-sans font-bold text-white leading-snug">
+            Flagged: Traffic pattern deviates sharply from learned OT/SCADA baseline.
+          </p>
+        </div>
+
+        <!-- 3-4 Specific Plain-English Reasons -->
+        <div class="space-y-2 text-xs font-sans text-slate-200" id="fi-reasons-list">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- 3. EVIDENCE PANEL: SIDE-BY-SIDE BEFORE VS THIS FLOW & RAW HEX PREVIEW -->
+      <div class="bg-surface-container p-5 rounded-xl border border-outline-variant space-y-4">
+        <h4 class="text-xs font-mono font-bold uppercase text-secondary tracking-widest flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">compare_arrows</span>
+          3. Evidence: Learned Baseline vs This Flow
+        </h4>
+
+        <!-- Side by Side Metrics -->
+        <div class="grid grid-cols-2 gap-4 text-xs font-mono">
+          
+          <!-- IAT Comparison -->
+          <div class="p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/60 space-y-2">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block">Inter-Arrival Time (IAT)</span>
+            <div class="flex justify-between items-center text-[11px]">
+              <span class="text-slate-400">Baseline Normal:</span>
+              <span class="text-tertiary font-bold">12.0 - 24.0 ms</span>
+            </div>
+            <div class="flex justify-between items-center text-[11px] pt-1 border-t border-outline-variant/40">
+              <span class="text-slate-400">This Flow:</span>
+              <span id="fi-evidence-iat" class="text-error font-extrabold">0.03 ms (High Flood)</span>
+            </div>
+          </div>
+
+          <!-- Entropy Comparison -->
+          <div class="p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/60 space-y-2">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block">Shannon Entropy</span>
+            <div class="flex justify-between items-center text-[11px]">
+              <span class="text-slate-400">Baseline Normal:</span>
+              <span class="text-tertiary font-bold">3.8 - 4.2 bits</span>
+            </div>
+            <div class="flex justify-between items-center text-[11px] pt-1 border-t border-outline-variant/40">
+              <span class="text-slate-400">This Flow:</span>
+              <span id="fi-evidence-entropy" class="text-error font-extrabold">7.94 bits (Packed)</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Raw Hex Data Preview Snippet -->
+        <div>
+          <span class="text-[10px] font-mono text-slate-400 uppercase block mb-1.5 font-bold">Raw Ingress Frame Hex / ASCII Preview</span>
+          <div class="p-3 bg-surface-container-lowest rounded-lg border border-outline-variant font-mono text-[11px] text-primary overflow-x-auto leading-relaxed" id="fi-raw-hex">
+            0000  00 01 00 00 00 06 01 05 00 10 ff 00 4d 5a 90 00  ............MZ..
+            0010  03 00 00 00 04 00 00 00 ff ff 00 00 b8 00 00 00  ................
+            0020  00 00 00 00 40 00 00 00 00 00 00 00 00 00 00 00  ....@...........
           </div>
         </div>
       </div>
+
+      <!-- 4. REMEDIATION / ACTIONABLE SOC GUIDANCE -->
+      <div class="bg-surface-container p-5 rounded-xl border border-tertiary/40 space-y-3">
+        <h4 class="text-xs font-mono font-bold uppercase text-tertiary tracking-widest flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">shield</span>
+          4. Recommended SOC Remediation
+        </h4>
+        <div class="space-y-2 text-xs font-sans text-slate-200" id="fi-remediation-list">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
     </div>
+
+    <!-- Panel Footer Action -->
+    <div class="p-4 border-t border-outline-variant bg-surface-container flex items-center justify-between">
+      <span class="text-[11px] font-mono text-slate-400">IRONGATE Autoencoder Intelligence</span>
+      <button onclick="closeFlowInspector()" class="btn-interactive px-5 py-2 rounded-lg bg-primary text-on-primary font-mono text-xs font-bold uppercase">
+        Close Inspector
+      </button>
+    </div>
+
   </div>
 
   <!-- ========================================================================================= -->
@@ -997,136 +1067,205 @@
   <script>
     // === DEMO MODE: CLIENT-SIDE SIMULATION, NO BACKEND REQUIRED ===
 
-    // ── 1. In-Memory State & Threat Ledger ─────────────────────
+    // ── 1. Comprehensive Flow Knowledge Base ───────────────────
+    const FLOW_DATABASE = {
+      smuggle: {
+        flow_id: "flw_9e41b02",
+        label: "Smuggled SCADA Exploit",
+        severity: "CRITICAL",
+        confidence: "98.8% Anomalous",
+        src: "198.51.100.74:54210",
+        dst: "10.0.80.12:502 [SCADA Modbus Master]",
+        protocol: "Modbus TCP",
+        payload_size: "1,420 bytes",
+        flags: "[PSH, ACK]",
+        latency: "14.1 ms",
+        loss: "0.942",
+        headline: "Flagged: Encrypted executable payload packed inside legitimate Modbus Write command.",
+        reasons: [
+          "Payload entropy is abnormally high (7.94 bits), indicating encrypted shellcode disguised in plaintext Modbus coils.",
+          "Frame length of 1,420 bytes exceeds typical 32-byte industrial telemetry polling by 44x.",
+          "Destination coil address 0x0010 has never received external writes in 90 days of baseline observation."
+        ],
+        evidence_iat: "0.03 ms (Bursted)",
+        evidence_entropy: "7.94 bits (Packed Shellcode)",
+        hex: "0000  00 01 00 00 00 06 01 05 00 10 ff 00 4d 5a 90 00  ............MZ..\n0010  03 00 00 00 04 00 00 00 ff ff 00 00 b8 00 00 00  ................\n0020  00 00 00 00 40 00 00 00 00 00 00 00 00 00 00 00  ....@...........",
+        remediation: [
+          "Restrict source ingress subnet 198.51.100.0/24 at the edge tap interface.",
+          "Isolate field PLC #04 for immediate firmware checksum and memory attestation.",
+          "Append this structural byte signature to the known-bad pre-filter ledger."
+        ]
+      },
+      ddos: {
+        flow_id: "flw_8b31a01",
+        label: "DDoS SYN Flood",
+        severity: "CRITICAL",
+        confidence: "98.4% Anomalous",
+        src: "198.51.100.82:61002",
+        dst: "10.0.80.12:443 [HTTPS Web Gateway]",
+        protocol: "TCP (Raw SYN)",
+        payload_size: "64 bytes",
+        flags: "[SYN]",
+        latency: "14.2 ms",
+        loss: "0.884",
+        headline: "Flagged: State-exhaustion SYN flood with collapsed zero-jitter packet inter-arrival times.",
+        reasons: [
+          "Inter-arrival time collapsed to 0.04ms, characteristic of automated flood tooling rather than human or PLC traffic.",
+          "TCP Window Size is randomized with zero TCP timestamp options enabled.",
+          "Over 12,000 requests received in under 800ms from non-whitelisted ephemeral ports."
+        ],
+        evidence_iat: "0.04 ms (Flooding)",
+        evidence_entropy: "3.40 bits (Uniform Headers)",
+        hex: "0000  45 00 00 3c a1 b2 40 00 40 06 b4 21 c6 33 64 52  E..<..@.@..!3dR\n0010  0a 00 50 0c ee 4a 01 bb 00 00 00 00 a0 02 72 10  ..P..J........r.\n0020  2c 34 00 00 02 04 05 b4 04 02 08 0a 00 00 00 00  ,4..............",
+        remediation: [
+          "Enforce rate-limiting threshold at ingress photodiode transceiver.",
+          "Engage upstream BGP blackholing for originating AS54210 prefix.",
+          "Verify downstream enclave optical receiver buffer occupancy."
+        ]
+      },
+      scan: {
+        flow_id: "flw_4e12c88",
+        label: "Port Scan Discovery",
+        severity: "MEDIUM",
+        confidence: "94.5% Anomalous",
+        src: "192.0.2.144:39811",
+        dst: "10.0.80.20:22 [SSH Core Node]",
+        protocol: "TCP (Probing)",
+        payload_size: "48 bytes",
+        flags: "[SYN]",
+        latency: "12.8 ms",
+        loss: "0.412",
+        headline: "Flagged: Rapid sequential port sweep probing restricted industrial services.",
+        reasons: [
+          "Sequential port incrementation (21 -> 22 -> 23 -> 80 -> 443 -> 502) detected across a 1.2s window.",
+          "Source IP has never appeared in authorized OT ingress allowlists.",
+          "TCP sequence numbers increment in fixed linear steps (+65536), indicating automated nmap footprint."
+        ],
+        evidence_iat: "1.12 ms (Automated Sweep)",
+        evidence_entropy: "4.80 bits (Sparse)",
+        hex: "0000  45 00 00 34 1a 2b 40 00 38 06 e1 a0 c0 00 02 90  E..4.+@.8.......\n0010  0a 00 50 14 9b 8b 00 16 00 01 00 00 80 02 20 00  ..P........... .\n0020  a1 b2 00 00 02 04 05 b4 01 01 04 02 00 00 00 00  ................",
+        remediation: [
+          "Add source IP 192.0.2.144 to persistent hardware tap blocklist.",
+          "Audit perimeter boundary access rules to trace how scanning probe reached the diode tap."
+        ]
+      },
+      c2: {
+        flow_id: "flw_2a90e31",
+        label: "C2 Beaconing Pattern",
+        severity: "HIGH",
+        confidence: "93.1% Anomalous",
+        src: "198.51.100.205:60124",
+        dst: "10.0.80.8:8443 [DNP3 Gateway]",
+        protocol: "DNP3 over TLS",
+        payload_size: "488 bytes",
+        flags: "[PSH, ACK]",
+        latency: "16.2 ms",
+        loss: "0.765",
+        headline: "Flagged: Rigid 500.0ms heartbeat interval matching known C2 beaconing frameworks.",
+        reasons: [
+          "Packet inter-arrival time is locked precisely to 500.0ms with less than 0.002ms jitter over 20 cycles.",
+          "Payload contains high-entropy TLS handshake with self-signed certificate issuer CN='DarkBeacon'.",
+          "Destination port 8443 is not provisioned for DNP3 operational polling in the active security zone."
+        ],
+        evidence_iat: "500.0 ms (Rigid Periodic)",
+        evidence_entropy: "7.82 bits (Encrypted TLS)",
+        hex: "0000  16 03 03 01 e3 01 00 01 df 03 03 61 e8 f2 1a b4  ..........a.....\n0010  32 99 a1 0e f4 23 88 19 cc 74 11 02 e9 18 29 44  2....#...t....)D\n0020  00 00 20 c0 2f c0 2b c0 11 c0 07 c0 13 c0 09 00  .. ./..........",
+        remediation: [
+          "Revoke internal TLS certificate corresponding to thumbprint CN='DarkBeacon'.",
+          "Audit workstation 10.0.80.8 for background persistence hooks.",
+          "Update statistical baseline with new heartbeat jitter detection thresholds."
+        ]
+      }
+    };
+
     let packetsAnalyzed = 2847291;
     let threatsFlagged = 37;
     let avgLatency = 14.82;
     let currentLoss = 0.034;
     const lossHistory = [0.031, 0.035, 0.028, 0.033, 0.036, 0.032, 0.029, 0.034, 0.030, 0.034];
-    const LOSS_THRESHOLD_3SIGMA = 0.150; // 3-Sigma Anomaly Threshold
+    const LOSS_THRESHOLD_3SIGMA = 0.150;
 
     let searchDebounceTimer = null;
     let threatSearchTerm = "";
 
-    const THREAT_TYPES = {
-      smuggle: {
-        label: "Smuggled SCADA Exploit",
-        threat_type: "smuggle",
-        severity: "CRITICAL",
-        mitre: "T1055 - Malicious Payload Injection",
-        flags: ["PSH", "ACK"],
-        port: 502,
-        entropy: 7.94,
-        iat_ms: 0.03,
-        loss: 0.942
-      },
-      ddos: {
-        label: "DDoS SYN Flood",
-        threat_type: "ddos",
-        severity: "CRITICAL",
-        mitre: "T1498.001 - Direct Network Flood",
-        flags: ["SYN"],
-        port: 443,
-        entropy: 3.4,
-        iat_ms: 0.04,
-        loss: 0.884
-      },
-      scan: {
-        label: "Port Scan Discovery",
-        threat_type: "scans",
-        severity: "MEDIUM",
-        mitre: "T1046 - Network Service Discovery",
-        flags: ["SYN"],
-        port: 22,
-        entropy: 4.8,
-        iat_ms: 1.12,
-        loss: 0.412
-      },
-      c2: {
-        label: "C2 Beaconing Pattern",
-        threat_type: "c2",
-        severity: "HIGH",
-        mitre: "T1071.001 - Web Protocols C2",
-        flags: ["PSH", "ACK"],
-        port: 8443,
-        entropy: 7.82,
-        iat_ms: 500.0,
-        loss: 0.765
-      }
-    };
-
     let threatStore = [
-      {
-        flow_id: "flw_9e41b02",
-        timestamp: new Date().toISOString().substring(11, 19) + " UTC",
-        label: "Smuggled SCADA Exploit",
-        threat_type: "smuggle",
-        confidence: 0.988,
-        latency_ms: 14.1,
-        severity: "CRITICAL",
-        src_ip: "198.51.100.74:54210",
-        dst_port: "502 (10.0.80.12)",
-        tcp_flags: ["PSH", "ACK"],
-        mitre_technique: "T1055 - Malicious Payload Injection",
-        iat_ms: 0.03,
-        entropy: 7.94,
-        loss: 0.942,
-        iat_series: [0.06, 0.03, 0.04, 0.03, 0.02, 0.03]
-      },
-      {
-        flow_id: "flw_8b31a01",
-        timestamp: new Date().toISOString().substring(11, 19) + " UTC",
-        label: "DDoS SYN Flood",
-        threat_type: "ddos",
-        confidence: 0.984,
-        latency_ms: 14.2,
-        severity: "CRITICAL",
-        src_ip: "198.51.100.82:61002",
-        dst_port: "443 (10.0.80.12)",
-        tcp_flags: ["SYN"],
-        mitre_technique: "T1498.001 - Direct Network Flood",
-        iat_ms: 0.04,
-        entropy: 3.4,
-        loss: 0.884,
-        iat_series: [0.08, 0.04, 0.05, 0.03, 0.04, 0.04]
-      },
-      {
-        flow_id: "flw_4e12c88",
-        timestamp: new Date().toISOString().substring(11, 19) + " UTC",
-        label: "Port Scan Discovery",
-        threat_type: "scans",
-        confidence: 0.945,
-        latency_ms: 12.8,
-        severity: "MEDIUM",
-        src_ip: "192.0.2.144:39811",
-        dst_port: "22 (10.0.80.20)",
-        tcp_flags: ["SYN"],
-        mitre_technique: "T1046 - Network Service Discovery",
-        iat_ms: 1.12,
-        entropy: 4.8,
-        loss: 0.412,
-        iat_series: [1.4, 1.2, 1.3, 1.1, 1.12]
-      },
-      {
-        flow_id: "flw_2a90e31",
-        timestamp: new Date().toISOString().substring(11, 19) + " UTC",
-        label: "C2 Beaconing Pattern",
-        threat_type: "c2",
-        confidence: 0.931,
-        latency_ms: 16.2,
-        severity: "HIGH",
-        src_ip: "198.51.100.205:60124",
-        dst_port: "8443 (10.0.80.8)",
-        tcp_flags: ["PSH", "ACK"],
-        mitre_technique: "T1071.001 - Web Protocols C2",
-        iat_ms: 500.0,
-        entropy: 7.82,
-        loss: 0.765,
-        iat_series: [500.2, 499.8, 500.1, 500.0, 499.9]
-      }
+      FLOW_DATABASE.smuggle,
+      FLOW_DATABASE.ddos,
+      FLOW_DATABASE.scan,
+      FLOW_DATABASE.c2
     ];
 
-    // ── 2. Toast Notifications ─────────────────────────────────
+    // ── 2. Flow Inspector Panel Controller ─────────────────────
+    function openFlowInspector(flowData) {
+      const panel = document.getElementById("flow-inspector-panel");
+      if (!panel) return;
+
+      document.getElementById("fi-flow-id").innerText = flowData.flow_id;
+      document.getElementById("fi-timestamp").innerText = flowData.timestamp || (new Date().toISOString().substring(0, 19).replace('T', ' ') + " UTC");
+      
+      const badge = document.getElementById("fi-badge");
+      badge.innerText = flowData.severity || "CRITICAL ANOMALY";
+      badge.className = `px-2.5 py-0.5 rounded-full text-[10px] font-mono font-black tracking-wider ${
+        flowData.severity === "MEDIUM" ? "bg-warning/20 text-warning border border-warning/50" : "bg-error/20 text-error border border-error/50"
+      }`;
+
+      document.getElementById("fi-src").innerText = flowData.src;
+      document.getElementById("fi-dst").innerText = flowData.dst;
+      document.getElementById("fi-protocol").innerText = flowData.protocol;
+      document.getElementById("fi-payload-size").innerText = flowData.payload_size || "1,420 bytes";
+      document.getElementById("fi-flags").innerText = flowData.flags ? (Array.isArray(flowData.flags) ? `[${flowData.flags.join(',')}]` : flowData.flags) : "[PSH, ACK]";
+      document.getElementById("fi-latency").innerText = flowData.latency || "14.1 ms";
+
+      document.getElementById("fi-confidence-badge").innerText = flowData.confidence || "98.8% Anomalous";
+      document.getElementById("fi-verdict-headline").innerText = flowData.headline;
+
+      // Populate Reasons List
+      const reasonsList = document.getElementById("fi-reasons-list");
+      reasonsList.innerHTML = "";
+      (flowData.reasons || []).forEach(r => {
+        const div = document.createElement("div");
+        div.className = "flex items-start gap-2 p-2 bg-surface-container-lowest rounded-lg border border-outline-variant/40";
+        div.innerHTML = `<span class="material-symbols-outlined text-sm text-error mt-0.5">report</span><span>${r}</span>`;
+        reasonsList.appendChild(div);
+      });
+
+      // Populate Evidence
+      document.getElementById("fi-evidence-iat").innerText = flowData.evidence_iat || "0.03 ms";
+      document.getElementById("fi-evidence-entropy").innerText = flowData.evidence_entropy || "7.94 bits";
+      document.getElementById("fi-raw-hex").innerText = flowData.hex || "0000 00 01 00 00 ...";
+
+      // Populate Remediation List
+      const remList = document.getElementById("fi-remediation-list");
+      remList.innerHTML = "";
+      (flowData.remediation || []).forEach(rem => {
+        const div = document.createElement("div");
+        div.className = "flex items-start gap-2 p-2 bg-surface-container-lowest rounded-lg border border-outline-variant/40";
+        div.innerHTML = `<span class="material-symbols-outlined text-sm text-tertiary mt-0.5">check_circle</span><span>${rem}</span>`;
+        remList.appendChild(div);
+      });
+
+      // Slide in
+      panel.classList.remove("translate-x-full");
+    }
+
+    function closeFlowInspector() {
+      const panel = document.getElementById("flow-inspector-panel");
+      if (panel) panel.classList.add("translate-x-full");
+    }
+
+    function openInspectorFromCanvas(e) {
+      // Pick random flow from database to make exploring rewarding
+      const keys = Object.keys(FLOW_DATABASE);
+      const chosenKey = keys[Math.floor(Math.random() * keys.length)];
+      openFlowInspector(FLOW_DATABASE[chosenKey]);
+    }
+
+    function openInspectorFromVerdict() {
+      closeVerdictModal();
+      openFlowInspector(FLOW_DATABASE.smuggle);
+    }
+
+    // ── 3. Toast Notifications ─────────────────────────────────
     function showToast(message, type = "info") {
       const container = document.getElementById("toast-container");
       if (!container) return;
@@ -1150,7 +1289,7 @@
       el.innerText = isDecimal ? value.toFixed(decimals) : Math.floor(value).toLocaleString();
     }
 
-    // ── 3. Continuous Background Stream ────────────────────────
+    // ── 4. Continuous Background Stream ────────────────────────
     function scheduleNextPacket() {
       const delay = Math.floor(400 + Math.random() * 400);
       setTimeout(() => {
@@ -1172,7 +1311,7 @@
       }, delay);
     }
 
-    // ── 4. Live Anomaly Loss Sparkline ─────────────────────────
+    // ── 5. Live Anomaly Loss Sparkline ─────────────────────────
     function renderLossSparkline() {
       const canvas = document.getElementById("loss-sparkline-canvas");
       if (!canvas) return;
@@ -1225,7 +1364,7 @@
       ctx.restore();
     }
 
-    // ── 5. Hands-on Interactive Scenario Trigger ───────────────
+    // ── 6. Hands-on Interactive Scenario Trigger ───────────────
     function runInteractiveScenario(type) {
       if (type === 'normal') {
         showToast("Running Normal SCADA Telemetry Stream... (0.00bps Anomaly)", "info");
@@ -1244,7 +1383,7 @@
         return;
       }
 
-      const choice = THREAT_TYPES[type] || THREAT_TYPES.smuggle;
+      const choice = FLOW_DATABASE[type] || FLOW_DATABASE.smuggle;
       
       // Screen vignette & shake
       document.body.classList.add("shake-active");
@@ -1272,7 +1411,7 @@
       spawnDeflectionShatterSparks();
 
       // Spike loss score
-      currentLoss = choice.loss;
+      currentLoss = parseFloat(choice.loss);
       lossHistory.push(currentLoss);
       updateCounterDisplay("metric-reconstruction-loss", currentLoss, true, 3);
       const tag = document.getElementById("loss-status-tag");
@@ -1282,33 +1421,10 @@
       }
       renderLossSparkline();
 
-      // Inject threat into table
-      const flowId = `flw_${Math.random().toString(16).substring(2, 9)}`;
-      const nowUtc = new Date().toISOString().substring(11, 19) + " UTC";
-      const newThreat = {
-        flow_id: flowId,
-        timestamp: nowUtc,
-        label: choice.label,
-        threat_type: choice.threat_type,
-        confidence: 0.985,
-        latency_ms: 13.8,
-        severity: choice.severity,
-        src_ip: `198.51.100.${Math.floor(2 + Math.random() * 240)}:${Math.floor(1024 + Math.random() * 60000)}`,
-        dst_port: `${choice.port} (10.0.80.12)`,
-        tcp_flags: choice.flags,
-        mitre_technique: choice.mitre,
-        entropy: choice.entropy,
-        loss: currentLoss,
-        iat_ms: choice.iat_ms,
-        iat_series: [0.06, 0.03, 0.05, 0.02, 0.04, 0.03]
-      };
-
-      threatStore.unshift(newThreat);
-      if (threatStore.length > 100) threatStore.pop();
       threatsFlagged++;
       updateCounterDisplay("metric-threats", threatsFlagged);
       spawnForwardPhoton(true);
-      prependThreatRow(newThreat);
+      prependThreatRow(choice);
 
       // Slide in AI Verdict Modal
       document.getElementById("verdict-label").innerText = choice.label.toUpperCase();
@@ -1336,12 +1452,11 @@
       modal.classList.add("opacity-0", "pointer-events-none");
     }
 
-    // ── 6. Interactive AI Cognition Sandbox Controller ─────────
+    // ── 7. Interactive AI Cognition Sandbox Controller ─────────
     function updateAiSandbox() {
       const iatVal = parseInt(document.getElementById("slider-iat").value);
       const entropyVal = parseInt(document.getElementById("slider-entropy").value);
 
-      // IAT readout
       const iatReadout = document.getElementById("slider-iat-val");
       if (iatVal < 25) {
         iatReadout.innerText = `Burst Flood (${(iatVal * 0.2).toFixed(1)} ms)`;
@@ -1354,7 +1469,6 @@
         iatReadout.className = "text-primary font-bold";
       }
 
-      // Entropy readout
       const entropyReadout = document.getElementById("slider-entropy-val");
       const bits = (2.0 + (entropyVal / 100) * 6.0).toFixed(2);
       if (bits > 7.0) {
@@ -1365,7 +1479,6 @@
         entropyReadout.className = "text-secondary font-bold";
       }
 
-      // Calculate instant loss score
       const iatDeviation = Math.abs(iatVal - 45) / 50;
       const entropyDeviation = Math.max(0, (bits - 5.5) / 2.5);
       const calculatedLoss = Math.min(0.98, Math.max(0.02, (iatDeviation * 0.45 + entropyDeviation * 0.55)));
@@ -1377,7 +1490,7 @@
 
       bar.style.width = `${Math.min(100, calculatedLoss * 100)}%`;
 
-      if (calculatedLoss > 0.150) { // Anomaly
+      if (calculatedLoss > 0.150) {
         bar.className = "h-full bg-error shadow-[0_0_8px_#ff4d4f]";
         badge.innerText = "ANOMALY FLAGGED (> 3σ)";
         badge.className = "px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-error/20 text-error border border-error/40";
@@ -1388,34 +1501,6 @@
         badge.className = "px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-tertiary/20 text-tertiary border border-tertiary/40";
         exp.innerHTML = "✅ Timing and entropy match typical unencrypted industrial SCADA telemetry. Packet forwarded into enclave.";
       }
-    }
-
-    // ── 7. Packet Click Inspection on Flow Canvas ──────────────
-    function inspectNearestPacket(e) {
-      const rect = document.getElementById("visualizer-stage").getBoundingClientRect();
-      const tooltip = document.getElementById("packet-inspect-tooltip");
-      const clickX = e.clientX - rect.left;
-      const clickY = e.clientY - rect.top;
-
-      const randomFlow = `flw_${Math.random().toString(16).substring(2, 7)}`;
-      document.getElementById("inspect-flow-id").innerText = randomFlow;
-      
-      const isAnomaly = currentLoss > LOSS_THRESHOLD_3SIGMA;
-      const badge = document.getElementById("inspect-verdict-badge");
-      badge.innerText = isAnomaly ? "ANOMALOUS (>3σ)" : "CLEAN (<3σ)";
-      badge.className = isAnomaly ? "px-1.5 py-0.2 rounded bg-error/20 text-error text-[10px] font-bold" : "px-1.5 py-0.2 rounded bg-tertiary/20 text-tertiary text-[10px] font-bold";
-
-      document.getElementById("inspect-entropy").innerText = isAnomaly ? "7.84 bits" : "4.12 bits";
-      document.getElementById("inspect-iat").innerText = isAnomaly ? "0.04 ms" : "2.31 ms";
-      document.getElementById("inspect-loss").innerText = currentLoss.toFixed(3);
-
-      tooltip.style.left = `${Math.min(rect.width - 220, Math.max(20, clickX - 100))}px`;
-      tooltip.style.top = `${Math.min(rect.height - 110, Math.max(20, clickY - 60))}px`;
-      tooltip.classList.remove("hidden");
-
-      setTimeout(() => {
-        tooltip.classList.add("hidden");
-      }, 4000);
     }
 
     // ── 8. Threat Table Rendering & Search ─────────────────────
@@ -1429,7 +1514,7 @@
         filtered = filtered.filter(t => 
           t.flow_id.toLowerCase().includes(threatSearchTerm) ||
           t.label.toLowerCase().includes(threatSearchTerm) ||
-          t.src_ip.toLowerCase().includes(threatSearchTerm)
+          t.src.toLowerCase().includes(threatSearchTerm)
         );
       }
 
@@ -1441,17 +1526,17 @@
       filtered.forEach(t => {
         const tr = document.createElement("tr");
         tr.className = "hover:bg-surface-container cursor-pointer transition-colors group";
-        tr.onclick = () => openDrawer(t.flow_id);
+        tr.onclick = () => openFlowInspector(t);
         const isCrit = t.severity === "CRITICAL";
         const badgeColor = isCrit ? "bg-error/20 text-error border-error/40" : "bg-warning/20 text-warning border-warning/40";
 
         tr.innerHTML = `
           <td class="py-2.5 px-3 font-bold text-white group-hover:text-primary">${t.flow_id}</td>
-          <td class="py-2.5 px-3 text-slate-400 text-[11px]">${t.timestamp}</td>
+          <td class="py-2.5 px-3 text-slate-400 text-[11px]">${t.timestamp || "01:02:14 UTC"}</td>
           <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded border text-[10px] font-bold ${badgeColor}">${t.label}</span></td>
-          <td class="py-2.5 px-3 text-white">${t.src_ip}</td>
-          <td class="py-2.5 px-3 text-slate-400">${(t.tcp_flags || []).join(",")}</td>
-          <td class="py-2.5 px-3 text-secondary font-bold">${Math.round(t.confidence * 100)}%</td>
+          <td class="py-2.5 px-3 text-white">${t.src}</td>
+          <td class="py-2.5 px-3 text-tertiary font-bold">${t.protocol}</td>
+          <td class="py-2.5 px-3 text-secondary font-bold">${t.confidence || "98.8%"}</td>
           <td class="py-2.5 px-3 text-right text-primary text-[11px] font-bold">Inspect →</td>
         `;
         tbody.appendChild(tr);
@@ -1464,17 +1549,17 @@
 
       const tr = document.createElement("tr");
       tr.className = "hover:bg-surface-container cursor-pointer transition-all duration-500 bg-primary/20 animate-pulse";
-      tr.onclick = () => openDrawer(t.flow_id);
+      tr.onclick = () => openFlowInspector(t);
       const isCrit = t.severity === "CRITICAL";
       const badgeColor = isCrit ? "bg-error/20 text-error border-error/40" : "bg-warning/20 text-warning border-warning/40";
 
       tr.innerHTML = `
         <td class="py-2.5 px-3 font-bold text-white">${t.flow_id}</td>
-        <td class="py-2.5 px-3 text-slate-400 text-[11px]">${t.timestamp}</td>
+        <td class="py-2.5 px-3 text-slate-400 text-[11px]">${t.timestamp || "01:02:14 UTC"}</td>
         <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded border text-[10px] font-bold ${badgeColor}">${t.label}</span></td>
-        <td class="py-2.5 px-3 text-white">${t.src_ip}</td>
-        <td class="py-2.5 px-3 text-slate-400">${(t.tcp_flags || []).join(",")}</td>
-        <td class="py-2.5 px-3 text-secondary font-bold">${Math.round(t.confidence * 100)}%</td>
+        <td class="py-2.5 px-3 text-white">${t.src}</td>
+        <td class="py-2.5 px-3 text-tertiary font-bold">${t.protocol}</td>
+        <td class="py-2.5 px-3 text-secondary font-bold">${t.confidence || "98.8%"}</td>
         <td class="py-2.5 px-3 text-right text-primary text-[11px] font-bold">Inspect →</td>
       `;
       tbody.insertBefore(tr, tbody.firstChild);
@@ -1486,62 +1571,14 @@
       searchDebounceTimer = setTimeout(() => {
         threatSearchTerm = val.trim().toLowerCase();
         renderThreatTable();
-      }, 50); // Instant 50ms search response
-    }
-
-    // ── 9. Drawer Detail Inspection with IAT Waveform Chart ────
-    function openDrawer(flowId) {
-      const t = threatStore.find(x => x.flow_id === flowId);
-      if (!t) return;
-
-      document.getElementById("drawer-flow-id").innerText = t.flow_id;
-      document.getElementById("drawer-timestamp").innerText = `${t.timestamp}`;
-      document.getElementById("drawer-threat-badge").innerText = t.severity || "CRITICAL";
-      document.getElementById("drawer-label").innerText = t.label;
-      document.getElementById("drawer-mitre").innerText = t.mitre_technique || "T1055";
-      document.getElementById("drawer-loss").innerText = `${(t.loss || 0.884).toFixed(3)} (Spike > 3σ)`;
-      document.getElementById("drawer-latency").innerText = `${t.latency_ms} ms`;
-      document.getElementById("drawer-src-ip").innerText = t.src_ip;
-      document.getElementById("drawer-dst-port").innerText = t.dst_port;
-      document.getElementById("drawer-entropy").innerText = `${(t.entropy || 7.82).toFixed(2)} bits (high)`;
-
-      renderDrawerChart(t.iat_series || [0.2, 0.18, 0.22, 0.19, 0.18]);
-      document.getElementById("drawer-iat-mean").innerText = `Mean IAT: ${t.iat_ms || 0.18} ms`;
-      document.getElementById("threat-drawer").classList.remove("translate-x-full");
-    }
-
-    function closeDrawer() {
-      document.getElementById("threat-drawer").classList.add("translate-x-full");
-    }
-
-    function renderDrawerChart(series) {
-      const canvas = document.getElementById("drawer-iat-canvas");
-      if (!canvas) return;
-      const ctx = canvas.getContext("2d");
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      const step = canvas.width / (series.length - 1);
-      const max = Math.max(...series, 1.0) * 1.2;
-
-      ctx.strokeStyle = "#6af7ba";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      series.forEach((val, i) => {
-        const x = i * step;
-        const y = canvas.height - (val / max) * canvas.height * 0.85 - 5;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-      ctx.stroke();
+      }, 50);
     }
 
     function exportCSV() {
       showToast("Compiling threat intelligence ledger CSV...", "info");
-      let csv = "Flow ID,Timestamp,Attack Vector,Confidence,Severity,Anomaly Loss,Source IP,Target Port,Protocol,Flags,Latency (ms),MITRE ATT&CK\n";
+      let csv = "Flow ID,Timestamp,Attack Vector,Confidence,Severity,Anomaly Loss,Source IP,Target Port,Protocol,Flags,Latency (ms),Headline\n";
       threatStore.forEach(t => {
-        csv += `"${t.flow_id}","${t.timestamp}","${t.label}","${(t.confidence * 100).toFixed(1)}%","${t.severity}","${(t.loss || 0.034).toFixed(3)}","${t.src_ip}","${t.dst_port}","TCP","${(t.tcp_flags || []).join('|')}","${t.latency_ms}","${t.mitre_technique}"\n`;
+        csv += `"${t.flow_id}","${t.timestamp || 'UTC'}","${t.label}","${t.confidence}","${t.severity}","${t.loss}","${t.src}","${t.dst}","${t.protocol}","${t.flags}","${t.latency}","${t.headline}"\n`;
       });
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
@@ -1554,7 +1591,7 @@
       showToast("Threat log CSV downloaded successfully ✓");
     }
 
-    // ── 10. Photon Canvas & Deflection Sparks ──────────────────
+    // ── 9. Photon Canvas & Deflection Sparks ───────────────────
     const forwardPhotons = [];
     const shatterSparks = [];
     let flowCanvas, flowCtx;
@@ -1663,7 +1700,7 @@
       requestAnimationFrame(renderForwardPhotons);
     }
 
-    // ── 11. Scroll Progress & Scrollspy Navigation ─────────────
+    // ── 10. Scroll Progress & Scrollspy Navigation ─────────────
     window.addEventListener("scroll", () => {
       const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
       const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -1694,7 +1731,7 @@
       });
     });
 
-    // ── 12. Clock & Latency Jitter ─────────────────────────────
+    // ── 11. Clock & Latency Jitter ─────────────────────────────
     setInterval(() => {
       avgLatency = 12 + Math.random() * 6;
       updateCounterDisplay("metric-latency", avgLatency, true);
@@ -1708,7 +1745,7 @@
       }
     }, 100);
 
-    // ── 13. DOM Initialization ─────────────────────────────────
+    // ── 12. DOM Initialization ─────────────────────────────────
     window.addEventListener("DOMContentLoaded", () => {
       updateCounterDisplay("metric-packets", packetsAnalyzed);
       updateCounterDisplay("metric-threats", threatsFlagged);
@@ -1720,11 +1757,21 @@
       renderLossSparkline();
       updateAiSandbox();
       scheduleNextPacket();
+
+      // Close panel on clicking backdrop
+      document.addEventListener("click", (e) => {
+        const panel = document.getElementById("flow-inspector-panel");
+        const isClickInside = panel && panel.contains(e.target);
+        const isTrigger = e.target.closest("#soc-transfer-log-body tr") || e.target.closest("#visualizer-stage") || e.target.closest("#ai-verdict-box button");
+        if (!isClickInside && !isTrigger && panel && !panel.classList.contains("translate-x-full")) {
+          closeFlowInspector();
+        }
+      });
     });
 
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        closeDrawer();
+        closeFlowInspector();
         closeVerdictModal();
       }
     });
