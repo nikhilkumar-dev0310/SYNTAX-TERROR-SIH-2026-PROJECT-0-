@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html class="dark scroll-smooth" lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -7,7 +7,7 @@
   
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
   
   <script src="https://cdn.tailwindcss.com"></script>
@@ -82,40 +82,192 @@
   </script>
   <style>
     @layer base {
-      html, body { margin: 0; padding: 0; background-color: #101319; color: #f1f5f9; font-family: 'JetBrains Mono', monospace; }
+      html, body { 
+        margin: 0; 
+        padding: 0; 
+        background-color: #0b0e13; 
+        color: #f1f5f9; 
+        font-family: 'JetBrains Mono', monospace; 
+        overflow-x: hidden;
+      }
       ::-webkit-scrollbar { display: none; }
     }
-    @keyframes conduitStream {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
+
+    /* Scroll progress bar */
+    #scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #00d4ff, #7c3aed, #6af7ba);
+      z-index: 100;
+      width: 0%;
+      box-shadow: 0 0 10px #00d4ff;
+      transition: width 0.1s ease-out;
     }
-    .custom-countup {
-      font-variant-numeric: tabular-nums;
+
+    /* Screen shake animation */
+    @keyframes screenShake {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      20% { transform: translate(-3px, 2px) rotate(-0.5deg); }
+      40% { transform: translate(3px, -2px) rotate(0.5deg); }
+      60% { transform: translate(-2px, -1px) rotate(-0.2deg); }
+      80% { transform: translate(2px, 1px) rotate(0.2deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
     }
-    .hero-enter {
-      animation: heroFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    .shake-active {
+      animation: screenShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
     }
-    @keyframes heroFadeIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    /* Vignette on attack deflection */
+    #cinematic-vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 45;
+      opacity: 0;
+      background: radial-gradient(circle, transparent 40%, rgba(255, 77, 79, 0.35) 90%, rgba(147, 0, 10, 0.8) 100%);
+      transition: opacity 0.2s ease-out;
+    }
+
+    /* Button Ripple Effect */
+    .ripple-effect {
+      position: relative;
+      overflow: hidden;
+    }
+    .ripple-circle {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple 0.6s linear;
+      background-color: rgba(255, 255, 255, 0.35);
+      pointer-events: none;
+    }
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    /* Interactive Physical Card Lift */
+    .hover-lift {
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .hover-lift:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 32px -8px rgba(0, 212, 255, 0.18), 0 0 0 1px rgba(0, 212, 255, 0.4);
+      border-color: rgba(0, 212, 255, 0.5) !important;
+    }
+
+    /* Interactive Button Float */
+    .btn-interactive {
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+    }
+    .btn-interactive:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+    }
+    .btn-interactive:active {
+      transform: scale(0.97);
+    }
+
+    /* Nav Link Animated Underline */
+    .nav-link-item {
+      position: relative;
+    }
+    .nav-link-item::after {
+      content: '';
+      position: absolute;
+      width: 0%;
+      height: 2px;
+      bottom: -2px;
+      left: 0;
+      background: #00d4ff;
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 0 8px #00d4ff;
+    }
+    .nav-link-item:hover::after {
+      width: 100%;
+    }
+
+    /* Animated Border Shimmer */
+    .border-shimmer {
+      position: relative;
+    }
+    .border-shimmer::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.6), transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: shimmerBorder 4s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes shimmerBorder {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* 3D Tilt Wrapper */
+    .tilt-card {
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out;
+    }
+
+    /* Scanline overlay for glitch verdict */
+    .scanline-glitch {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      background-size: 100% 3px, 6px 100%;
+    }
+
+    /* Scroll Assembly Classes */
+    .assembly-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .assembly-center {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .assembly-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .assembly-visible {
+      opacity: 1 !important;
+      transform: translate(0, 0) scale(1) !important;
     }
   </style>
 </head>
 <body class="bg-background font-body-md text-body-md text-on-surface antialiased selection:bg-primary/30 selection:text-primary min-w-[1024px] lg:min-w-full">
 
+  <!-- ============================== SCROLL PROGRESS BAR ============================== -->
+  <div id="scroll-progress"></div>
+
   <!-- ============================== GLOBAL TOAST CONTAINER ============================== -->
   <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none transition-all duration-300"></div>
 
-  <!-- Dynamic Audio/Visual Ambient Overlay Layer for Deflections -->
-  <div id="alert-flash-scrim" class="fixed inset-0 pointer-events-none z-50 transition-opacity duration-150 opacity-0 bg-error/25 backdrop-blur-[2px]"></div>
+  <!-- Cinematic Deflection Vignette Layer -->
+  <div id="cinematic-vignette"></div>
+
+  <!-- Ambient Cursor Glow Spotlight -->
+  <div id="cursor-spotlight" class="fixed pointer-events-none z-0 w-[600px] h-[600px] rounded-full blur-[140px] opacity-15 bg-primary transition-transform duration-75 ease-out -translate-x-1/2 -translate-y-1/2 hidden md:block"></div>
 
   <!-- ============================== TOP NAVIGATION BAR ============================== -->
-  <header class="fixed top-0 left-0 right-0 z-40 bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_1px_12px_rgba(0,0,0,0.8)] border-b border-outline-variant/60">
+  <header class="fixed top-0 left-0 right-0 z-40 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_12px_rgba(0,0,0,0.8)] border-b border-outline-variant/60">
     <div class="h-16 w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
       
       <!-- IRONGATE Shield Diode Logo SVG Brand -->
-      <div class="flex items-center gap-3 cursor-pointer" onclick="switchMainTab('overview')">
-        <svg class="h-9 w-auto" viewBox="0 0 240 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div class="flex items-center gap-3 cursor-pointer group" onclick="switchMainTab('overview')">
+        <svg class="h-9 w-auto transform group-hover:scale-105 transition-transform duration-200" viewBox="0 0 240 64" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <filter id="cyanGlow" x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="3" result="blur"/>
@@ -133,31 +285,36 @@
         </svg>
       </div>
 
-      <!-- Navigation Tabs -->
-      <nav class="hidden md:flex items-center gap-4">
-        <button id="nav-overview" onclick="switchMainTab('overview')" class="font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded bg-surface-container-high text-primary font-semibold">
+      <!-- Navigation Tabs with Sliding Underline Effect -->
+      <nav class="hidden md:flex items-center gap-6">
+        <button id="nav-overview" onclick="switchMainTab('overview')" class="nav-link-item font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded text-primary font-bold">
           How It Works
         </button>
-        <button id="nav-soc" onclick="switchMainTab('soc')" class="text-on-surface-variant hover:text-white font-label-md text-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded">
+        <button id="nav-soc" onclick="switchMainTab('soc')" class="nav-link-item text-slate-300 hover:text-white font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded font-semibold">
           Live SOC Matrix
         </button>
-        <button id="nav-security" onclick="switchMainTab('security')" class="text-on-surface-variant hover:text-white font-label-md text-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded">
+        <button id="nav-security" onclick="switchMainTab('security')" class="nav-link-item text-slate-300 hover:text-white font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded font-semibold">
           Security Specs
         </button>
       </nav>
 
-      <!-- Right Actions: Static Emerald Engine Pill + Loud Attack CTA + Clearance Badge -->
+      <!-- Right Actions: Audio Toggle + Detection Engine Status Pill + Loud Attack CTA -->
       <div class="flex items-center gap-3">
         
-        <!-- Detection Engine Status Pill (Static Emerald Demo Indicator) -->
-        <div id="ws-indicator" class="flex items-center gap-2 px-3 py-1 rounded bg-surface-container border border-tertiary/40 text-[11px] font-label-sm shadow-[0_0_12px_rgba(106,247,186,0.15)]">
+        <!-- Audio Synthesizer Tone Toggle -->
+        <button id="audio-toggle-btn" onclick="toggleAudio()" title="Toggle Sound FX" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-bright flex items-center justify-center text-slate-400 hover:text-primary border border-outline-variant/60 transition-colors">
+          <span class="material-symbols-outlined text-base" id="audio-icon">volume_off</span>
+        </button>
+
+        <!-- Detection Engine Status Pill (Static Emerald Indicator) -->
+        <div id="ws-indicator" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container border border-tertiary/40 text-[11px] font-label-sm shadow-[0_0_12px_rgba(106,247,186,0.15)]">
           <span id="ws-dot" class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_#6af7ba] animate-pulse"></span>
           <span id="ws-status" class="text-tertiary font-bold tracking-wider uppercase">DETECTION ENGINE ACTIVE</span>
         </div>
 
-        <!-- SIMULATE ATTACK CTA — Loudest interactive element on the page -->
-        <button id="simulate-attack-global-btn" onclick="triggerSimulatedAttack()" class="relative group px-4 py-2 bg-error-container hover:bg-error/40 text-on-error-container border border-error rounded-md font-label-sm text-xs font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-2 active:scale-95 shadow-[0_0_20px_rgba(255,180,171,0.4)] animate-pulse hover:shadow-[0_0_30px_rgba(255,180,171,0.8)]">
-          <span class="material-symbols-outlined text-base text-error">security_update_warning</span>
+        <!-- SIMULATE ATTACK CTA — Loudest interactive element on page -->
+        <button id="simulate-attack-global-btn" onclick="triggerCinematicAttack()" class="ripple-effect btn-interactive relative group px-4 py-2 bg-error-container hover:bg-error/40 text-on-error-container border border-error rounded-lg font-label-sm text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-[0_0_22px_rgba(255,180,171,0.45)] animate-pulse hover:shadow-[0_0_35px_rgba(255,180,171,0.85)]">
+          <span class="material-symbols-outlined text-base text-error group-hover:rotate-12 transition-transform">security_update_warning</span>
           <span id="simulate-attack-label" class="text-white font-extrabold">SIMULATE ATTACK</span>
         </button>
 
@@ -178,14 +335,13 @@
   <main id="view-overview" class="w-full pt-16 bg-surface-container-lowest transition-opacity duration-300">
     <div class="flex flex-col w-full">
 
-      <!-- HERO SECTION (Under 1-second First Impression) -->
-      <section class="relative w-full min-h-[85vh] flex flex-col justify-between overflow-hidden px-6 py-10 hero-enter">
-        <canvas class="absolute inset-0 w-full h-full pointer-events-none opacity-40" id="unidirectional-particles"></canvas>
+      <!-- HERO SECTION with Cursor-Reactive Particle Magnet -->
+      <section class="relative w-full min-h-[85vh] flex flex-col justify-between overflow-hidden px-6 py-10" id="hero-section">
+        <canvas class="absolute inset-0 w-full h-full pointer-events-none z-0" id="unidirectional-particles"></canvas>
         <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(rgba(0,212,255,0.06)_1px,transparent_1px)] [background-size:32px_32px]"></div>
-        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
 
         <div class="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center text-center mt-4">
-          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded bg-surface-container-high/90 backdrop-blur-md shadow-sm mb-4 border border-primary/30">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-high/90 backdrop-blur-md shadow-sm mb-4 border border-primary/30 transform hover:scale-105 transition-transform duration-200">
             <span class="relative flex h-2 w-2">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
@@ -195,7 +351,7 @@
             </span>
           </div>
 
-          <h1 class="font-headline-xl text-5xl md:text-[76px] md:leading-[82px] font-extrabold uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-fixed-dim to-white select-none">
+          <h1 class="font-headline-xl text-5xl md:text-[78px] md:leading-[84px] font-black uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-fixed-dim to-white select-none drop-shadow-[0_10px_30px_rgba(0,212,255,0.2)]">
             IRONGATE
           </h1>
           <p class="mt-3 max-w-3xl font-body-lg text-lg text-slate-300 font-normal tracking-wide">
@@ -203,20 +359,20 @@
           </p>
 
           <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
-            <button onclick="switchMainTab('soc')" class="relative group inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary-container text-on-primary font-label-md text-xs uppercase tracking-wider font-extrabold shadow-[0_0_24px_rgba(0,212,255,0.35)] hover:shadow-[0_0_36px_rgba(0,212,255,0.6)] hover:bg-primary-fixed-dim transition-all duration-300">
+            <button onclick="switchMainTab('soc')" class="ripple-effect btn-interactive inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-primary-container text-on-primary font-label-md text-xs uppercase tracking-wider font-extrabold shadow-[0_0_25px_rgba(0,212,255,0.4)] hover:bg-primary-fixed-dim transition-all">
               <span>Enter Live SOC Matrix</span>
               <span class="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
             </button>
-            <button onclick="triggerPhysicsAudit()" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-surface-container-high text-white hover:text-primary hover:bg-surface-bright transition-all font-label-md text-xs uppercase tracking-wider border border-outline-variant/80">
+            <button onclick="triggerPhysicsAudit()" class="ripple-effect btn-interactive inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-surface-container-high text-white hover:text-primary hover:bg-surface-bright font-label-md text-xs uppercase tracking-wider border border-outline-variant/80 transition-all">
               <span class="material-symbols-outlined text-base text-primary">verified_user</span>
               <span>Verify EAL7+ Certificate</span>
             </button>
           </div>
         </div>
 
-        <!-- 3-ZONE HARDWARE CONDUIT INTERACTIVE DIAGRAM -->
-        <div class="relative z-10 w-full max-w-6xl mx-auto my-8" id="live-explainer">
-          <div class="bg-surface-container-low/95 backdrop-blur-2xl rounded-xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.7)] border border-outline-variant/60">
+        <!-- 3-ZONE HARDWARE CONDUIT INTERACTIVE DIAGRAM (3D Perspective Tilt & Scroll Assembly) -->
+        <div class="relative z-10 w-full max-w-6xl mx-auto my-8 perspective-[1000px]" id="live-explainer">
+          <div id="tilt-box" class="tilt-card border-shimmer bg-surface-container-low/95 backdrop-blur-2xl rounded-2xl p-6 shadow-[0_25px_60px_rgba(0,0,0,0.8)] border border-outline-variant/70">
             <div class="flex items-center justify-between pb-3 mb-4 border-b border-outline-variant/50">
               <div class="flex items-center gap-3">
                 <span class="material-symbols-outlined text-primary text-lg">memory</span>
@@ -229,11 +385,11 @@
               </div>
             </div>
 
-            <!-- 3-ZONE TELEMETRY CONDUIT -->
-            <div class="relative grid grid-cols-1 md:grid-cols-11 gap-4 items-stretch min-h-[250px]">
+            <!-- 3-ZONE TELEMETRY CONDUIT (Fly-in Assembly via Scroll) -->
+            <div class="relative grid grid-cols-1 md:grid-cols-11 gap-4 items-stretch min-h-[250px]" id="conduit-grid">
               
-              <!-- ZONE 1: UNTRUSTED / EXTERNAL (Cols 1-4) -->
-              <div class="md:col-span-4 bg-surface-container-lowest rounded-lg p-4 flex flex-col justify-between relative overflow-hidden border border-error/40">
+              <!-- ZONE 1: UNTRUSTED / EXTERNAL (Cols 1-4) - Assembly Left -->
+              <div class="assembly-left md:col-span-4 hover-lift bg-surface-container-lowest rounded-xl p-4 flex flex-col justify-between relative overflow-hidden border border-error/40">
                 <div class="absolute inset-0 bg-gradient-to-r from-error-container/20 to-transparent pointer-events-none"></div>
                 <div>
                   <div class="flex items-center justify-between">
@@ -266,8 +422,8 @@
                 </div>
               </div>
 
-              <!-- ZONE 2: PHYSICAL DATA DIODE BARRIER (Cols 5-7) -->
-              <div class="md:col-span-3 bg-surface-container rounded-lg p-4 flex flex-col items-center justify-between relative overflow-hidden group shadow-xl border border-primary/40">
+              <!-- ZONE 2: PHYSICAL DATA DIODE BARRIER (Cols 5-7) - Assembly Center -->
+              <div class="assembly-center md:col-span-3 hover-lift bg-surface-container rounded-xl p-4 flex flex-col items-center justify-between relative overflow-hidden group shadow-xl border border-primary/40">
                 <div class="w-full text-center">
                   <span class="font-label-sm text-xs uppercase tracking-widest text-primary-fixed-dim font-bold">PHYSICAL BARRIER</span>
                   <div class="text-[10px] text-slate-400 mt-0.5 font-mono">SINGLE-STRAND 9/125µm FIBER</div>
@@ -286,8 +442,8 @@
                 </div>
               </div>
 
-              <!-- ZONE 3: SECURE ENCLAVE / CLASSIFIED (Cols 8-11) -->
-              <div class="md:col-span-4 bg-surface-container-lowest rounded-lg p-4 flex flex-col justify-between relative overflow-hidden border border-secondary/40">
+              <!-- ZONE 3: SECURE ENCLAVE / CLASSIFIED (Cols 8-11) - Assembly Right -->
+              <div class="assembly-right md:col-span-4 hover-lift bg-surface-container-lowest rounded-xl p-4 flex flex-col justify-between relative overflow-hidden border border-secondary/40">
                 <div class="absolute inset-0 bg-gradient-to-l from-on-tertiary-fixed-variant/20 to-transparent pointer-events-none"></div>
                 <div>
                   <div class="flex items-center justify-between">
@@ -320,7 +476,7 @@
             </div>
 
             <!-- Conduit Animation Strip -->
-            <div class="relative w-full h-8 mt-4 rounded bg-surface-container-lowest overflow-hidden flex items-center border border-outline-variant/60">
+            <div class="relative w-full h-8 mt-4 rounded-lg bg-surface-container-lowest overflow-hidden flex items-center border border-outline-variant/60">
               <div class="absolute inset-x-0 h-0.5 bg-surface-container-high"></div>
               <div class="absolute flex items-center gap-20 w-full animate-[conduitStream_3s_linear_infinite]">
                 <span class="inline-block w-6 h-1.5 rounded-full bg-primary shadow-[0_0_10px_#00d4ff]"></span>
@@ -338,13 +494,13 @@
           </div>
         </div>
 
-        <!-- 3 STAT HUD CARDS (Instant Render on Load) -->
-        <div class="relative z-10 w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 pb-6">
-          <div class="bg-surface-container/90 backdrop-blur-xl rounded-xl p-5 shadow-lg flex items-center justify-between border border-outline-variant/60">
+        <!-- 3 STAT HUD CARDS (Scroll Triggered Count-Up) -->
+        <div class="relative z-10 w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 pb-6" id="stat-cards-row">
+          <div class="hover-lift bg-surface-container/90 backdrop-blur-xl rounded-xl p-5 shadow-lg flex items-center justify-between border border-outline-variant/60">
             <div>
               <span class="font-label-sm text-[11px] uppercase tracking-widest text-slate-400 block mb-1">Inbound Return Risk</span>
               <div class="flex items-baseline gap-2">
-                <span class="font-telemetry-num text-3xl font-black text-white">0</span>
+                <span class="font-telemetry-num text-3xl font-black text-white" data-target="0">0</span>
                 <span class="font-label-md text-xs text-tertiary font-extrabold">CHANNELS</span>
               </div>
               <span class="font-body-sm text-[11px] text-slate-400 mt-1 block">Physically cut transmit wire on RX</span>
@@ -354,11 +510,11 @@
             </div>
           </div>
 
-          <div class="bg-surface-container/90 backdrop-blur-xl rounded-xl p-5 shadow-lg flex items-center justify-between border border-outline-variant/60">
+          <div class="hover-lift bg-surface-container/90 backdrop-blur-xl rounded-xl p-5 shadow-lg flex items-center justify-between border border-outline-variant/60">
             <div>
               <span class="font-label-sm text-[11px] uppercase tracking-widest text-slate-400 block mb-1">Autoencoder Anomaly Accuracy</span>
               <div class="flex items-baseline gap-2">
-                <span class="font-telemetry-num text-3xl font-black text-primary">99.42</span>
+                <span class="font-telemetry-num text-3xl font-black text-primary" data-target="99.42" id="stat-accuracy">99.42</span>
                 <span class="font-label-md text-xs text-primary font-bold">%</span>
               </div>
               <span class="font-body-sm text-[11px] text-slate-400 mt-1 block">PyTorch 3σ Reconstruction Loss</span>
@@ -372,11 +528,11 @@
             </div>
           </div>
 
-          <div class="bg-surface-container/90 backdrop-blur-xl rounded-xl p-5 shadow-lg flex items-center justify-between border border-outline-variant/60">
+          <div class="hover-lift bg-surface-container/90 backdrop-blur-xl rounded-xl p-5 shadow-lg flex items-center justify-between border border-outline-variant/60">
             <div>
               <span class="font-label-sm text-[11px] uppercase tracking-widest text-slate-400 block mb-1">Throughput Capacity</span>
               <div class="flex items-baseline gap-2">
-                <span class="font-telemetry-num text-3xl font-black text-white">10</span>
+                <span class="font-telemetry-num text-3xl font-black text-white" data-target="10">10</span>
                 <span class="font-label-md text-xs text-secondary font-bold">GBPS</span>
               </div>
               <span class="font-body-sm text-[11px] text-slate-400 mt-1 block">Line-rate passive optical tap</span>
@@ -406,11 +562,11 @@
           </p>
         </div>
 
-        <!-- 4 STEP CARDS -->
+        <!-- 4 STEP CARDS WITH HOVER LIFT -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           
           <!-- Card 1 -->
-          <div class="bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-5 border border-outline-variant/60 flex flex-col justify-between shadow-xl">
+          <div class="hover-lift bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-5 border border-outline-variant/60 flex flex-col justify-between shadow-xl">
             <div>
               <div class="flex items-center justify-between mb-3">
                 <span class="font-telemetry-num text-primary text-xl font-bold">01</span>
@@ -427,7 +583,7 @@
           </div>
 
           <!-- Card 2 -->
-          <div class="bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-5 border border-outline-variant/60 flex flex-col justify-between shadow-xl">
+          <div class="hover-lift bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-5 border border-outline-variant/60 flex flex-col justify-between shadow-xl">
             <div>
               <div class="flex items-center justify-between mb-3">
                 <span class="font-telemetry-num text-primary text-xl font-bold">02</span>
@@ -444,7 +600,7 @@
           </div>
 
           <!-- Card 3 -->
-          <div class="bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-5 border border-outline-variant/60 flex flex-col justify-between shadow-xl">
+          <div class="hover-lift bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-5 border border-outline-variant/60 flex flex-col justify-between shadow-xl">
             <div>
               <div class="flex items-center justify-between mb-3">
                 <span class="font-telemetry-num text-tertiary text-xl font-bold">03</span>
@@ -461,7 +617,7 @@
           </div>
 
           <!-- Card 4: AI COGNITION (Autoencoder Reconstruction Loss Story) -->
-          <div class="bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-5 border border-secondary/50 flex flex-col justify-between shadow-xl relative overflow-hidden">
+          <div class="hover-lift bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-5 border border-secondary/50 flex flex-col justify-between shadow-xl relative overflow-hidden">
             <div class="absolute -right-6 -top-6 w-24 h-24 bg-secondary/10 rounded-full blur-xl pointer-events-none"></div>
             <div>
               <div class="flex items-center justify-between mb-3">
@@ -496,7 +652,7 @@
           </p>
         </div>
 
-        <div class="bg-surface-container-low/95 backdrop-blur-2xl rounded-xl p-6 shadow-2xl overflow-x-auto border border-outline-variant/60">
+        <div class="hover-lift bg-surface-container-low/95 backdrop-blur-2xl rounded-xl p-6 shadow-2xl overflow-x-auto border border-outline-variant/60">
           <table class="w-full text-left font-body-md text-xs">
             <thead>
               <tr class="text-slate-300 font-label-sm text-xs uppercase tracking-widest border-b border-outline-variant/60">
@@ -574,14 +730,14 @@
       </div>
     </section>
 
-    <!-- MAIN SOC WORKSPACE GRID (Optimized for 1366x768 Judging Displays) -->
+    <!-- MAIN SOC WORKSPACE GRID -->
     <div class="max-w-[1720px] mx-auto px-6 py-6 space-y-6">
 
       <!-- ROW 1 — REALTIME HUD NODES INCLUDING AUTOENCODER RECONSTRUCTION LOSS -->
       <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         
         <!-- Card 1: Packets Analyzed -->
-        <div class="relative bg-surface-container/85 rounded-xl p-5 shadow-md border border-outline-variant/60 flex flex-col justify-between overflow-hidden">
+        <div class="hover-lift relative bg-surface-container/85 rounded-xl p-5 shadow-md border border-outline-variant/60 flex flex-col justify-between overflow-hidden">
           <div class="flex items-center justify-between">
             <span class="font-label-sm text-xs text-slate-400 uppercase tracking-wider font-semibold">Packets Analyzed</span>
             <span class="material-symbols-outlined text-primary text-lg">swap_vert</span>
@@ -591,16 +747,16 @@
             <span class="text-xs text-primary font-mono font-bold">streaming</span>
           </div>
           <div class="w-full h-8 flex items-end gap-1 mt-1">
-            <div class="flex-1 bg-primary/20 hover:bg-primary h-3 rounded-sm"></div>
-            <div class="flex-1 bg-primary/30 hover:bg-primary h-5 rounded-sm"></div>
-            <div class="flex-1 bg-primary/40 hover:bg-primary h-7 rounded-sm"></div>
-            <div class="flex-1 bg-primary/60 hover:bg-primary h-6 rounded-sm"></div>
-            <div class="flex-1 bg-primary hover:bg-primary-container h-8 rounded-sm"></div>
+            <div class="flex-1 bg-primary/20 hover:bg-primary h-3 rounded-sm transition-all duration-300"></div>
+            <div class="flex-1 bg-primary/30 hover:bg-primary h-5 rounded-sm transition-all duration-300"></div>
+            <div class="flex-1 bg-primary/40 hover:bg-primary h-7 rounded-sm transition-all duration-300"></div>
+            <div class="flex-1 bg-primary/60 hover:bg-primary h-6 rounded-sm transition-all duration-300"></div>
+            <div class="flex-1 bg-primary hover:bg-primary-container h-8 rounded-sm transition-all duration-300"></div>
           </div>
         </div>
 
         <!-- Card 2: Threats Detected -->
-        <div class="relative bg-surface-container/85 rounded-xl p-5 shadow-md border border-outline-variant/60 flex flex-col justify-between overflow-hidden">
+        <div class="hover-lift relative bg-surface-container/85 rounded-xl p-5 shadow-md border border-outline-variant/60 flex flex-col justify-between overflow-hidden">
           <div class="flex items-center justify-between">
             <span class="font-label-sm text-xs text-slate-400 uppercase tracking-wider font-semibold">Threats Flagged</span>
             <div class="relative flex h-3 w-3">
@@ -619,11 +775,11 @@
         </div>
 
         <!-- Card 3: Autoencoder Reconstruction Loss Sparkline (JUDGES "AHA" VISUAL) -->
-        <div class="relative bg-surface-container/85 rounded-xl p-5 shadow-md border border-secondary/50 flex flex-col justify-between overflow-hidden">
+        <div class="hover-lift relative bg-surface-container/85 rounded-xl p-5 shadow-md border border-secondary/50 flex flex-col justify-between overflow-hidden">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5">
               <span class="font-label-sm text-xs text-secondary uppercase tracking-wider font-bold">Reconstruction Loss</span>
-              <span class="px-1.5 py-0.2 bg-secondary/20 text-secondary text-[9px] font-mono rounded">L_rec</span>
+              <span class="px-1.5 py-0.2 bg-secondary/20 text-secondary text-[9px] font-mono rounded font-bold">L_rec</span>
             </div>
             <span class="text-[10px] font-mono text-tertiary font-bold bg-tertiary/10 px-2 py-0.5 rounded border border-tertiary/30">3σ THRESHOLD</span>
           </div>
@@ -639,13 +795,12 @@
           <!-- Canvas Sparkline with 3σ Reference Line -->
           <div class="relative w-full h-10 bg-surface-container-lowest rounded overflow-hidden border border-outline-variant/40">
             <canvas id="loss-sparkline-canvas" class="w-full h-full block"></canvas>
-            <!-- 3-Sigma Reference Line Tag -->
             <div class="absolute right-1 top-1 text-[8px] font-mono text-error font-bold opacity-80">3σ = 0.150</div>
           </div>
         </div>
 
         <!-- Card 4: Avg Inference Latency -->
-        <div class="relative bg-surface-container/85 rounded-xl p-5 shadow-md border border-outline-variant/60 flex flex-col justify-between overflow-hidden">
+        <div class="hover-lift relative bg-surface-container/85 rounded-xl p-5 shadow-md border border-outline-variant/60 flex flex-col justify-between overflow-hidden">
           <div class="flex items-center justify-between">
             <span class="font-label-sm text-xs text-slate-400 uppercase tracking-wider font-semibold">Avg SOC Latency</span>
             <span class="material-symbols-outlined text-secondary text-lg">bolt</span>
@@ -681,7 +836,7 @@
             </div>
             
             <!-- Loud Simulate Attack Button inside SOC Console -->
-            <button id="trigger-attack-soc-btn" onclick="triggerSimulatedAttack()" class="flex items-center gap-2 bg-error-container hover:bg-error/40 text-on-error-container px-4 py-2 rounded-md font-label-sm text-xs uppercase font-black tracking-wider transition-all duration-150 border border-error shadow-[0_0_15px_rgba(255,180,171,0.3)] animate-pulse active:scale-95">
+            <button id="trigger-attack-soc-btn" onclick="triggerCinematicAttack()" class="ripple-effect btn-interactive flex items-center gap-2 bg-error-container hover:bg-error/40 text-on-error-container px-4 py-2 rounded-lg font-label-sm text-xs uppercase font-black tracking-wider transition-all border border-error shadow-[0_0_18px_rgba(255,180,171,0.35)] animate-pulse">
               <span class="material-symbols-outlined text-base text-error">security_update_warning</span>
               <span id="soc-attack-btn-text" class="text-white font-extrabold">Simulate Reverse Attack</span>
             </button>
@@ -692,7 +847,7 @@
         <div class="relative w-full h-72 bg-surface-container-lowest rounded-xl overflow-hidden flex items-center justify-between px-8 border border-outline-variant/70" id="visualizer-stage">
           
           <!-- Left Node: Untrusted Ingress TX -->
-          <div class="relative z-10 flex flex-col items-center gap-2 bg-surface-container-high/95 p-4 rounded-xl shadow-lg w-56 border border-error/40">
+          <div class="relative z-10 flex flex-col items-center gap-2 bg-surface-container-high/95 p-4 rounded-xl shadow-lg w-56 border border-error/40 hover-lift">
             <div class="flex items-center justify-between w-full">
               <span class="font-label-sm text-xs text-error uppercase font-bold">EXTERNAL INGRESS</span>
               <span class="px-2 py-0.5 bg-error/20 text-error rounded font-label-sm text-[10px] font-bold">TX-01</span>
@@ -723,7 +878,7 @@
           </div>
 
           <!-- Right Node: Trusted Egress RX -->
-          <div class="relative z-10 flex flex-col items-center gap-2 bg-surface-container-high/95 p-4 rounded-xl shadow-lg w-56 border border-secondary/40">
+          <div class="relative z-10 flex flex-col items-center gap-2 bg-surface-container-high/95 p-4 rounded-xl shadow-lg w-56 border border-secondary/40 hover-lift">
             <div class="flex items-center justify-between w-full">
               <span class="font-label-sm text-xs text-tertiary uppercase font-bold">SECURE ENCLAVE</span>
               <span class="px-2 py-0.5 bg-tertiary/20 text-tertiary rounded font-label-sm text-[10px] font-bold">RX-01</span>
@@ -738,7 +893,7 @@
             </div>
           </div>
 
-          <!-- HTML5 Canvas for Moving Photons & Deflection Particles -->
+          <!-- HTML5 Canvas for Photons, Particle Explosion & Motion Trails -->
           <canvas id="soc-photon-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
         </div>
       </div>
@@ -765,7 +920,7 @@
               </div>
 
               <!-- Export CSV -->
-              <button onclick="exportCSV()" class="bg-surface-container-high hover:bg-surface-bright text-white font-label-sm text-xs uppercase px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors border border-outline-variant font-semibold">
+              <button onclick="exportCSV()" class="ripple-effect btn-interactive bg-surface-container-high hover:bg-surface-bright text-white font-label-sm text-xs uppercase px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 border border-outline-variant font-semibold">
                 <span class="material-symbols-outlined text-sm text-primary">download</span>
                 <span>Export CSV</span>
               </button>
@@ -804,7 +959,7 @@
           </div>
 
           <div class="flex flex-col gap-3 overflow-y-auto max-h-[360px] pr-1 font-label-sm text-xs mt-4" id="audit-timeline-stream">
-            <div class="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-lg border border-outline-variant/40">
+            <div class="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-lg border border-outline-variant/40 hover-lift">
               <span class="material-symbols-outlined text-primary text-base mt-0.5">wb_iridescent</span>
               <div class="flex-1">
                 <div class="flex justify-between items-center">
@@ -815,7 +970,7 @@
               </div>
             </div>
 
-            <div class="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-lg border border-outline-variant/40">
+            <div class="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-lg border border-outline-variant/40 hover-lift">
               <span class="material-symbols-outlined text-tertiary text-base mt-0.5">memory</span>
               <div class="flex-1">
                 <div class="flex justify-between items-center">
@@ -832,7 +987,7 @@
 
       <!-- ROW 4 — COMPLIANCE STANDARDS & HARDWARE ENFORCEMENT SETTINGS -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-12">
-        <div class="bg-surface-container/85 rounded-xl shadow-md p-6 border border-outline-variant/60 flex flex-col justify-between">
+        <div class="hover-lift bg-surface-container/85 rounded-xl shadow-md p-6 border border-outline-variant/60 flex flex-col justify-between">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined text-tertiary text-lg">workspace_premium</span>
@@ -860,13 +1015,13 @@
               </div>
             </div>
           </div>
-          <button onclick="showToast('Downloading formal cryptographically signed audit certificate (PDF)...')" class="mt-4 w-full py-2 bg-surface-container-high hover:bg-surface-bright text-primary font-label-sm text-xs uppercase rounded-lg transition-colors flex items-center justify-center gap-1.5 border border-outline-variant font-bold">
+          <button onclick="showToast('Downloading formal cryptographically signed audit certificate (PDF)...')" class="ripple-effect btn-interactive mt-4 w-full py-2 bg-surface-container-high hover:bg-surface-bright text-primary font-label-sm text-xs uppercase rounded-lg transition-colors flex items-center justify-center gap-1.5 border border-outline-variant font-bold">
             <span class="material-symbols-outlined text-sm">picture_as_pdf</span>
             <span>Download Formal Audit Certificate (EAL7+ Signed PDF)</span>
           </button>
         </div>
 
-        <div class="bg-surface-container/85 rounded-xl shadow-md p-6 border border-outline-variant/60 flex flex-col justify-between">
+        <div class="hover-lift bg-surface-container/85 rounded-xl shadow-md p-6 border border-outline-variant/60 flex flex-col justify-between">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined text-primary text-lg">toggle_on</span>
@@ -889,7 +1044,10 @@
                 <p class="text-white font-bold">Autoencoder Tap</p>
                 <p class="text-slate-400 text-[10px]">PyTorch 3σ Reconstruction</p>
               </div>
-              <input type="checkbox" checked onchange="showToast('Autoencoder passive tap settings committed.')" class="accent-primary w-4 h-4 cursor-pointer"/>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" checked onchange="showToast('Autoencoder passive tap settings committed.')" class="sr-only peer">
+                <div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+              </label>
             </div>
           </div>
 
@@ -900,6 +1058,44 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ============================== CINEMATIC AI VERDICT MODAL ============================== -->
+  <div id="ai-verdict-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div id="ai-verdict-box" class="scanline-glitch relative w-full max-w-lg bg-surface-container-low border-2 border-error rounded-2xl p-6 shadow-[0_0_50px_rgba(255,77,79,0.5)] transform scale-95 transition-all duration-300">
+      <div class="flex items-center justify-between pb-3 border-b border-error/40">
+        <div class="flex items-center gap-2.5">
+          <span class="w-3 h-3 rounded-full bg-error animate-ping"></span>
+          <h3 class="font-headline-md text-base text-error font-black uppercase tracking-wider">CRITICAL INCIDENT DEFLECTED</h3>
+        </div>
+        <span class="px-2 py-0.5 rounded bg-error/20 text-error font-mono text-[10px] font-bold border border-error/50">HARDWARE DIODE 0 BPS</span>
+      </div>
+
+      <div class="py-4 space-y-3 font-mono text-xs">
+        <div class="flex justify-between items-center text-slate-300">
+          <span>Target Destination:</span>
+          <span class="text-white font-bold">10.0.80.12 (OT Enclave Core)</span>
+        </div>
+        <div class="flex justify-between items-center text-slate-300">
+          <span>Attack Profile:</span>
+          <span id="verdict-label" class="text-error font-black uppercase">DDoS SYN FLOOD & ZERO-DAY BURST</span>
+        </div>
+        <div class="flex justify-between items-center text-slate-300">
+          <span>Reconstruction Loss ($L_{rec}$):</span>
+          <span id="verdict-loss" class="text-error font-extrabold">0.942 (&gt;&gt; 3σ Threshold)</span>
+        </div>
+        <div class="flex justify-between items-center text-slate-300">
+          <span>Physical Mitigation:</span>
+          <span class="text-tertiary font-bold">Laser Reflection Rejected (Zero TX Return)</span>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-outline-variant/40 flex justify-end">
+        <button onclick="closeVerdictModal()" class="ripple-effect btn-interactive px-5 py-2 rounded-lg bg-error hover:bg-error-container text-white font-mono text-xs font-bold uppercase transition-colors shadow-lg">
+          Acknowledge & Dismiss
+        </button>
+      </div>
     </div>
   </div>
 
@@ -983,9 +1179,7 @@
   <!-- ========================================================================================= -->
   <script>
     // === DEMO MODE: CLIENT-SIDE SIMULATION, NO BACKEND REQUIRED ===
-    // All real-time telemetry, Autoencoder reconstruction-loss sparklines,
-    // threat injections, and charts run completely self-contained in the browser.
-
+    
     // ── 1. In-Memory State & Autoencoder Threat Store ──────────
     let packetsAnalyzed = 2847291;
     let threatsFlagged = 37;
@@ -997,6 +1191,8 @@
 
     let searchDebounceTimer = null;
     let threatSearchTerm = "";
+    let isAudioEnabled = false;
+    let audioCtx = null;
 
     const THREAT_TYPES = [
       {
@@ -1116,7 +1312,36 @@
       }
     ];
 
-    // ── 2. Toast Notifications ─────────────────────────────────
+    // ── 2. Synthesized Audio Alert FX (Web Audio API) ──────────
+    function toggleAudio() {
+      isAudioEnabled = !isAudioEnabled;
+      const icon = document.getElementById("audio-icon");
+      if (icon) icon.innerText = isAudioEnabled ? "volume_up" : "volume_off";
+      showToast(isAudioEnabled ? "Audio FX unmuted (alert blips enabled)" : "Audio FX muted");
+    }
+
+    function playDeflectionTone() {
+      if (!isAudioEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.25);
+      } catch (e) {}
+    }
+
+    // ── 3. Toast Notifications ─────────────────────────────────
     function showToast(message, type = "info") {
       const container = document.getElementById("toast-container");
       if (!container) return;
@@ -1134,7 +1359,7 @@
       }, 3500);
     }
 
-    // ── 3. Navigation View Switcher ────────────────────────────
+    // ── 4. Navigation View Switcher ────────────────────────────
     function switchMainTab(tab) {
       const viewOverview = document.getElementById("view-overview");
       const viewSoc = document.getElementById("view-soc");
@@ -1145,16 +1370,16 @@
       if (tab === "soc") {
         viewOverview.classList.add("hidden");
         viewSoc.classList.remove("hidden");
-        btnSoc.className = "font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded bg-surface-container-high text-primary font-semibold";
-        btnOverview.className = "text-slate-300 hover:text-white font-label-md text-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded";
-        if (btnSecurity) btnSecurity.className = "text-slate-300 hover:text-white font-label-md text-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded";
+        btnSoc.className = "nav-link-item font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded text-primary font-bold";
+        btnOverview.className = "nav-link-item text-slate-300 hover:text-white font-label-md text-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded font-semibold";
+        if (btnSecurity) btnSecurity.className = "nav-link-item text-slate-300 hover:text-white font-label-md text-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded font-semibold";
         renderThreatTable();
         renderLossSparkline();
       } else {
         viewSoc.classList.add("hidden");
         viewOverview.classList.remove("hidden");
-        btnOverview.className = "font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded bg-surface-container-high text-primary font-semibold";
-        btnSoc.className = "text-slate-300 hover:text-white font-label-md text-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded";
+        btnOverview.className = "nav-link-item font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded text-primary font-bold";
+        btnSoc.className = "nav-link-item text-slate-300 hover:text-white font-label-md text-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded font-semibold";
         if (tab === "security") {
           const sec = document.getElementById("security-comparison");
           if (sec) sec.scrollIntoView({ behavior: 'smooth' });
@@ -1162,16 +1387,16 @@
       }
     }
 
-    // ── 4. Count-Up Number Helper ──────────────────────────────
+    // ── 5. Count-Up Number Helper ──────────────────────────────
     function updateCounterDisplay(elementId, value, isDecimal = false, decimals = 2) {
       const el = document.getElementById(elementId);
       if (!el) return;
       el.innerText = isDecimal ? value.toFixed(decimals) : Math.floor(value).toLocaleString();
     }
 
-    // ── 5. Synthetic Packet Generation Loop (400-800ms) ────────
+    // ── 6. Synthetic Packet Generation Loop (400-800ms) ────────
     function scheduleNextPacket() {
-      const delay = Math.floor(400 + Math.random() * 400); // 400-800ms
+      const delay = Math.floor(400 + Math.random() * 400);
       setTimeout(() => {
         packetsAnalyzed += Math.floor(1 + Math.random() * 3);
         updateCounterDisplay("metric-packets", packetsAnalyzed);
@@ -1182,7 +1407,6 @@
           rateEl.innerText = `${currentRate} PKTS/S`;
         }
 
-        // Slight normal oscillation of reconstruction loss (0.02 - 0.04)
         if (currentLoss < LOSS_THRESHOLD_3SIGMA) {
           currentLoss = 0.022 + Math.random() * 0.018;
           lossHistory.push(currentLoss);
@@ -1196,7 +1420,7 @@
       }, delay);
     }
 
-    // ── 6. Reconstruction Loss Sparkline Renderer ──────────────
+    // ── 7. Reconstruction Loss Sparkline Renderer ──────────────
     function renderLossSparkline() {
       const canvas = document.getElementById("loss-sparkline-canvas");
       if (!canvas) return;
@@ -1207,9 +1431,9 @@
 
       const w = canvas.width;
       const h = canvas.height;
-      const maxVal = 1.0; // scale 0 to 1.0
+      const maxVal = 1.0;
 
-      // 1. Draw Fixed 3-Sigma Reference Line (0.150)
+      // Draw 3-Sigma Reference Line
       const thresholdY = h - (LOSS_THRESHOLD_3SIGMA / maxVal) * h;
       ctx.save();
       ctx.strokeStyle = "rgba(255, 180, 171, 0.75)";
@@ -1221,7 +1445,6 @@
       ctx.stroke();
       ctx.restore();
 
-      // 2. Draw Loss Trend Line
       if (lossHistory.length < 2) return;
       const step = w / (lossHistory.length - 1);
 
@@ -1239,7 +1462,6 @@
       });
       ctx.stroke();
 
-      // Draw gradient under line
       ctx.lineTo((lossHistory.length - 1) * step, h);
       ctx.lineTo(0, h);
       ctx.closePath();
@@ -1251,7 +1473,7 @@
       ctx.restore();
     }
 
-    // ── 7. Client-Side Threat Generation Function ──────────────
+    // ── 8. Single Threat Generator ─────────────────────────────
     function generateSyntheticThreat(isBurst = false) {
       const choice = THREAT_TYPES[Math.floor(Math.random() * THREAT_TYPES.length)];
       const conf = (90 + Math.random() * 9.5) / 100;
@@ -1260,7 +1482,6 @@
       const nowUtc = new Date().toISOString().substring(11, 19) + " UTC";
       const srcIp = `198.51.100.${Math.floor(2 + Math.random() * 240)}:${Math.floor(1024 + Math.random() * 60000)}`;
 
-      // Spike Reconstruction Loss above 3σ
       currentLoss = choice.loss || (0.75 + Math.random() * 0.2);
       lossHistory.push(currentLoss);
       if (lossHistory.length > 20) lossHistory.shift();
@@ -1304,13 +1525,13 @@
       updateCounterDisplay("metric-threats", threatsFlagged);
 
       spawnPhoton(true);
+      playDeflectionTone();
       prependThreatRow(newThreat);
 
-      // Audit Stream Entry
       const auditStream = document.getElementById("audit-timeline-stream");
       if (auditStream) {
         const auditEntry = document.createElement("div");
-        auditEntry.className = "flex items-start gap-2.5 p-3 bg-error-container/40 rounded-lg border border-error/50 animate-pulse";
+        auditEntry.className = "flex items-start gap-2.5 p-3 bg-error-container/40 rounded-lg border border-error/50 animate-pulse hover-lift";
         auditEntry.innerHTML = `
           <span class="material-symbols-outlined text-error text-base mt-0.5">gpp_bad</span>
           <div class="flex-1">
@@ -1329,17 +1550,8 @@
       }
     }
 
-    // Schedule regular synthetic threat every ~15-20 seconds
-    function schedulePeriodicThreat() {
-      const delay = Math.floor(15000 + Math.random() * 5000);
-      setTimeout(() => {
-        generateSyntheticThreat(false);
-        schedulePeriodicThreat();
-      }, delay);
-    }
-
-    // ── 8. SIMULATE ATTACK Rapid Dramatic Burst ───────────────
-    function triggerSimulatedAttack() {
+    // ── 9. THE "WOW" MOMENT: CINEMATIC SIMULATE ATTACK SEQUENCE 
+    function triggerCinematicAttack() {
       const btn1 = document.getElementById("simulate-attack-global-btn");
       const btn2 = document.getElementById("trigger-attack-soc-btn");
       const label = document.getElementById("simulate-attack-label");
@@ -1348,6 +1560,31 @@
       if (btn1) btn1.disabled = true;
       if (btn2) btn2.disabled = true;
 
+      // 1. Trigger Screen Shake & Cinematic Vignette
+      document.body.classList.add("shake-active");
+      const vignette = document.getElementById("cinematic-vignette");
+      if (vignette) vignette.style.opacity = "1";
+
+      setTimeout(() => {
+        document.body.classList.remove("shake-active");
+        if (vignette) vignette.style.opacity = "0";
+      }, 500);
+
+      // 2. Barrier Flashing Alert
+      const barrier = document.getElementById("hardware-barrier");
+      const alertTag = document.getElementById("barrier-alert-tag");
+      if (barrier) barrier.classList.add("bg-error/30", "border-error");
+      if (alertTag) alertTag.classList.remove("hidden");
+
+      setTimeout(() => {
+        if (barrier) barrier.classList.remove("bg-error/30", "border-error");
+        if (alertTag) alertTag.classList.add("hidden");
+      }, 3500);
+
+      // 3. Shatter / Deflection Particle Explosion at Diode
+      spawnDeflectionShatterSparks();
+
+      // 4. Cooldown Timer & Rapid Threat Injections (6-8 packets over 3s)
       let countdown = 4;
       if (label) label.innerText = `BURST (${countdown}s)`;
       if (socLabel) socLabel.innerText = `BURST (${countdown}s)`;
@@ -1364,36 +1601,42 @@
         }
       }, 1000);
 
-      // Deflection Visual FX
-      const scrim = document.getElementById("alert-flash-scrim");
-      const barrier = document.getElementById("hardware-barrier");
-      const alertTag = document.getElementById("barrier-alert-tag");
-
-      if (scrim) {
-        scrim.classList.remove("opacity-0");
-        setTimeout(() => scrim.classList.add("opacity-0"), 400);
-      }
-      if (barrier) {
-        barrier.classList.add("bg-error/30");
-        if (alertTag) alertTag.classList.remove("hidden");
-        setTimeout(() => {
-          barrier.classList.remove("bg-error/30");
-          if (alertTag) alertTag.classList.add("hidden");
-        }, 3000);
-      }
-
-      // Fire 6-8 rapid threats over 3 seconds
       const burstCount = Math.floor(6 + Math.random() * 3);
       for (let i = 0; i < burstCount; i++) {
         setTimeout(() => {
           generateSyntheticThreat(true);
-        }, i * 380);
+        }, i * 360);
       }
 
-      showToast(`⚡ ATTACK BURST DEFLECTED: ${burstCount} anomalous flows intercepted by Autoencoder & Diode!`, "error");
+      // 5. Open Cinematic AI Verdict Glitch Modal after deflection impact
+      setTimeout(() => {
+        openVerdictModal();
+      }, 1200);
+
+      showToast(`⚡ ATTACK BURST DEFLECTED: ${burstCount} malicious flows intercepted at physical diode barrier!`, "error");
     }
 
-    // ── 9. Threat Table Rendering & Search ─────────────────────
+    function openVerdictModal() {
+      const modal = document.getElementById("ai-verdict-modal");
+      const box = document.getElementById("ai-verdict-box");
+      if (!modal || !box) return;
+
+      modal.classList.remove("opacity-0", "pointer-events-none");
+      box.classList.remove("scale-95");
+      box.classList.add("scale-100");
+    }
+
+    function closeVerdictModal() {
+      const modal = document.getElementById("ai-verdict-modal");
+      const box = document.getElementById("ai-verdict-box");
+      if (!modal || !box) return;
+
+      box.classList.remove("scale-100");
+      box.classList.add("scale-95");
+      modal.classList.add("opacity-0", "pointer-events-none");
+    }
+
+    // ── 10. Threat Table Rendering & Search ────────────────────
     function renderThreatTable() {
       const tbody = document.getElementById("soc-transfer-log-body");
       if (!tbody) return;
@@ -1438,7 +1681,7 @@
       if (!tbody) return;
 
       const tr = document.createElement("tr");
-      tr.className = "hover:bg-surface-container cursor-pointer transition-colors bg-error/15 animate-pulse";
+      tr.className = "hover:bg-surface-container cursor-pointer transition-all duration-500 bg-primary/20 animate-pulse";
       tr.onclick = () => openDrawer(t.flow_id);
       const isCrit = t.severity === "CRITICAL";
       const badgeColor = isCrit ? "bg-error/20 text-error border-error/40" : "bg-warning/20 text-warning border-warning/40";
@@ -1453,7 +1696,7 @@
         <td class="py-2.5 px-3 text-right text-primary text-[11px] font-bold">Inspect →</td>
       `;
       tbody.insertBefore(tr, tbody.firstChild);
-      setTimeout(() => tr.classList.remove("bg-error/15", "animate-pulse"), 2500);
+      setTimeout(() => tr.classList.remove("bg-primary/20", "animate-pulse"), 1500);
     }
 
     function handleThreatSearch(val) {
@@ -1464,7 +1707,7 @@
       }, 300);
     }
 
-    // ── 10. Threat Detail Drawer with Autoencoder Metrics ──────
+    // ── 11. Threat Detail Drawer ───────────────────────────────
     function openDrawer(flowId) {
       const t = threatStore.find(x => x.flow_id === flowId);
       if (!t) return;
@@ -1512,7 +1755,7 @@
       ctx.stroke();
     }
 
-    // ── 11. Client-Side CSV Export ─────────────────────────────
+    // ── 12. Client-Side CSV Export ─────────────────────────────
     function exportCSV() {
       showToast("Compiling hardware threat ledger CSV...", "info");
       let csv = "Flow ID,Timestamp,Classification,Confidence,Severity,Reconstruction Loss,Source IP,Target Port,Protocol,Flags,Latency (ms),MITRE ATT&CK\n";
@@ -1530,8 +1773,9 @@
       showToast("Threat log CSV downloaded successfully ✓");
     }
 
-    // ── 12. Photon Canvas & Animation Engine ───────────────────
+    // ── 13. Enhanced Photon Canvas & Deflection Sparks ─────────
     const photons = [];
+    const shatterSparks = [];
     let socCanvas, socCtx;
 
     function initPhotonCanvas() {
@@ -1554,53 +1798,125 @@
       photons.push({
         x: 180,
         y: socCanvas.height / 2 + (Math.random() * 24 - 12),
-        speed: isThreat ? 7.5 : (3.5 + Math.random() * 2.5),
-        size: isThreat ? 4.5 : 2.5,
-        isThreat: isThreat
+        speed: isThreat ? 9.5 : (4.0 + Math.random() * 2.5),
+        size: isThreat ? 5.0 : 2.5,
+        isThreat: isThreat,
+        alpha: 1.0,
+        trail: []
       });
+    }
+
+    function spawnDeflectionShatterSparks() {
+      if (!socCanvas) return;
+      const barrierX = socCanvas.width / 2;
+      const barrierY = socCanvas.height / 2;
+      for (let i = 0; i < 30; i++) {
+        const angle = (Math.PI / 2) + (Math.random() * Math.PI - Math.PI / 2); // bounce backwards & radially
+        const speed = Math.random() * 8 + 3;
+        shatterSparks.push({
+          x: barrierX,
+          y: barrierY + (Math.random() * 40 - 20),
+          vx: -Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: Math.random() * 3.5 + 1.5,
+          alpha: 1.0,
+          decay: Math.random() * 0.03 + 0.02
+        });
+      }
     }
 
     function renderPhotons() {
       if (!socCanvas || !socCtx) return;
       socCtx.clearRect(0, 0, socCanvas.width, socCanvas.height);
 
+      // 1. Render Active Photons with Smooth Motion Trails
       for (let i = photons.length - 1; i >= 0; i--) {
         const p = photons[i];
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > 6) p.trail.shift();
+
         p.x += p.speed;
 
+        // Render Trail
+        socCtx.save();
+        p.trail.forEach((t, idx) => {
+          const ratio = idx / p.trail.length;
+          socCtx.fillStyle = p.isThreat ? `rgba(255, 77, 79, ${ratio * 0.5})` : `rgba(0, 212, 255, ${ratio * 0.4})`;
+          socCtx.beginPath();
+          socCtx.arc(t.x, t.y, p.size * ratio, 0, Math.PI * 2);
+          socCtx.fill();
+        });
+        socCtx.restore();
+
+        // Render Head
         socCtx.fillStyle = p.isThreat ? "#ff4d4f" : "#00d4ff";
-        socCtx.shadowColor = p.isThreat ? "rgba(255, 77, 79, 0.9)" : "rgba(0, 212, 255, 0.8)";
-        socCtx.shadowBlur = p.isThreat ? 14 : 8;
+        socCtx.shadowColor = p.isThreat ? "rgba(255, 77, 79, 1)" : "rgba(0, 212, 255, 0.9)";
+        socCtx.shadowBlur = p.isThreat ? 16 : 8;
         socCtx.beginPath();
         socCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         socCtx.fill();
         socCtx.shadowBlur = 0;
 
-        if (p.x > socCanvas.width - 180) {
+        // Deflect/Exit
+        if (p.isThreat && p.x >= socCanvas.width / 2) {
+          spawnDeflectionShatterSparks();
+          photons.splice(i, 1);
+        } else if (p.x > socCanvas.width - 180) {
           photons.splice(i, 1);
         }
       }
+
+      // 2. Render Shatter Sparks
+      for (let j = shatterSparks.length - 1; j >= 0; j--) {
+        const s = shatterSparks[j];
+        s.x += s.vx;
+        s.y += s.vy;
+        s.alpha -= s.decay;
+
+        socCtx.save();
+        socCtx.fillStyle = `rgba(255, 77, 79, ${Math.max(s.alpha, 0)})`;
+        socCtx.shadowColor = "rgba(255, 77, 79, 0.8)";
+        socCtx.shadowBlur = 6;
+        socCtx.beginPath();
+        socCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        socCtx.fill();
+        socCtx.restore();
+
+        if (s.alpha <= 0) shatterSparks.splice(j, 1);
+      }
+
       requestAnimationFrame(renderPhotons);
     }
 
-    // Overview background particle drift
-    (function initOverviewDrift() {
+    // ── 14. Cursor-Reactive Particle Drift with Magnetic Parallax 
+    (function initCursorReactiveParticles() {
       const c = document.getElementById('unidirectional-particles');
       if (!c) return;
       const cx = c.getContext('2d');
       let w, h, bgParts = [];
+      let mouseX = -1000, mouseY = -1000;
+
+      window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        const spotlight = document.getElementById("cursor-spotlight");
+        if (spotlight) {
+          spotlight.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+        }
+      });
 
       function res() {
         w = c.width = c.offsetWidth;
         h = c.height = c.offsetHeight;
         bgParts = [];
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 55; i++) {
           bgParts.push({
             x: Math.random() * w,
             y: Math.random() * h,
-            speed: 0.8 + Math.random() * 2,
-            size: 1 + Math.random() * 2,
-            opacity: 0.15 + Math.random() * 0.4
+            vx: 0.8 + Math.random() * 2,
+            vy: (Math.random() - 0.5) * 0.4,
+            size: 1.2 + Math.random() * 2,
+            opacity: 0.15 + Math.random() * 0.45
           });
         }
       }
@@ -1608,12 +1924,30 @@
       function loop() {
         cx.clearRect(0, 0, w, h);
         bgParts.forEach(p => {
-          p.x += p.speed;
+          // Cursor magnetic attraction
+          const dx = mouseX - p.x;
+          const dy = mouseY - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 180) {
+            const force = (180 - dist) / 180;
+            p.x += (dx / dist) * force * 1.5;
+            p.y += (dy / dist) * force * 1.5;
+          }
+
+          p.x += p.vx;
+          p.y += p.vy;
+
           if (p.x > w) { p.x = 0; p.y = Math.random() * h; }
+          if (p.y > h) p.y = 0;
+          if (p.y < 0) p.y = h;
+
           cx.fillStyle = `rgba(0, 212, 255, ${p.opacity})`;
+          cx.shadowColor = "rgba(0, 212, 255, 0.4)";
+          cx.shadowBlur = 4;
           cx.beginPath();
           cx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
           cx.fill();
+          cx.shadowBlur = 0;
         });
         requestAnimationFrame(loop);
       }
@@ -1623,7 +1957,98 @@
       loop();
     })();
 
-    // ── 13. Latency Jitter & UTC Live Clock ─────────────────────
+    // ── 15. 3D Perspective Tilt on Architecture Diagram ─────────
+    (function initCardTilt() {
+      const tiltBox = document.getElementById("tilt-box");
+      const wrapper = document.getElementById("live-explainer");
+      if (!tiltBox || !wrapper) return;
+
+      wrapper.addEventListener("mousemove", (e) => {
+        const rect = wrapper.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        const rotX = -(y / (rect.height / 2)) * 6; // max 6 deg
+        const rotY = (x / (rect.width / 2)) * 6;
+        tiltBox.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      });
+
+      wrapper.addEventListener("mouseleave", () => {
+        tiltBox.style.transform = `rotateX(0deg) rotateY(0deg)`;
+      });
+    })();
+
+    // ── 16. Scroll-Driven Assembly & Progress Bar ──────────────
+    window.addEventListener("scroll", () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      const progressBar = document.getElementById("scroll-progress");
+      if (progressBar) progressBar.style.width = scrolled + "%";
+    });
+
+    function initScrollObserver() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("assembly-visible");
+          }
+        });
+      }, { threshold: 0.15 });
+
+      document.querySelectorAll(".assembly-left, .assembly-center, .assembly-right").forEach(el => {
+        observer.observe(el);
+      });
+
+      // Stat cards count up on scroll
+      const statObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateCountUp("stat-accuracy", 99.42, true);
+            statObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3 });
+
+      const statRow = document.getElementById("stat-cards-row");
+      if (statRow) statObserver.observe(statRow);
+    }
+
+    function animateCountUp(elementId, targetValue, isDecimal = false) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const duration = 1200;
+      const start = performance.now();
+      function step(now) {
+        const progress = Math.min(1, (now - start) / duration);
+        const val = targetValue * progress;
+        el.innerText = isDecimal ? val.toFixed(2) : Math.floor(val).toLocaleString();
+        if (progress < 1) requestAnimationFrame(step);
+        else el.innerText = isDecimal ? targetValue.toFixed(2) : Math.floor(targetValue).toLocaleString();
+      }
+      requestAnimationFrame(step);
+    }
+
+    // ── 17. Button Click Ripple FX ─────────────────────────────
+    document.addEventListener("click", function(e) {
+      const rippleTarget = e.target.closest(".ripple-effect");
+      if (!rippleTarget) return;
+
+      const rect = rippleTarget.getBoundingClientRect();
+      const circle = document.createElement("span");
+      const d = Math.max(rect.width, rect.height);
+      circle.style.width = circle.style.height = `${d}px`;
+      circle.style.left = `${e.clientX - rect.left - d / 2}px`;
+      circle.style.top = `${e.clientY - rect.top - d / 2}px`;
+      circle.classList.add("ripple-circle");
+
+      const prev = rippleTarget.querySelector(".ripple-circle");
+      if (prev) prev.remove();
+
+      rippleTarget.appendChild(circle);
+      setTimeout(() => circle.remove(), 600);
+    });
+
+    // ── 18. Latency Jitter & UTC Live Clock ─────────────────────
     setInterval(() => {
       avgLatency = 12 + Math.random() * 12;
       updateCounterDisplay("metric-latency", avgLatency, true);
@@ -1641,7 +2066,7 @@
       showToast("EAL7+ Physical Attestation: 0.000 bps backscatter verified.");
     }
 
-    // ── 14. Initialization on DOM Load ─────────────────────────
+    // ── 19. Initialization on DOM Load ─────────────────────────
     window.addEventListener("DOMContentLoaded", () => {
       updateCounterDisplay("metric-packets", packetsAnalyzed);
       updateCounterDisplay("metric-threats", threatsFlagged);
@@ -1652,12 +2077,22 @@
       renderThreatTable();
       initPhotonCanvas();
       renderLossSparkline();
+      initScrollObserver();
       scheduleNextPacket();
-      schedulePeriodicThreat();
+
+      // Trigger assembly animation for initial viewport
+      setTimeout(() => {
+        document.querySelectorAll(".assembly-left, .assembly-center, .assembly-right").forEach(el => {
+          el.classList.add("assembly-visible");
+        });
+      }, 200);
     });
 
     window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeDrawer();
+      if (e.key === "Escape") {
+        closeDrawer();
+        closeVerdictModal();
+      }
     });
   </script>
 </body>
