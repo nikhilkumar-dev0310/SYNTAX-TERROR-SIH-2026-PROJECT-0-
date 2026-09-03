@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>IRONGATE — Hardware Data Diode & Autoencoder AI Threat Detection (NTRO • SIH26145)</title>
+  <title>IRONGATE — Hardware Data Diode & AI Threat Detection (NTRO • SIH26145)</title>
   
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -31,7 +31,7 @@
             "on-primary-container": "#00586b",
             "on-secondary-container": "#c9aeff",
             "on-surface": "#f1f5f9",
-            "background": "#101319",
+            "background": "#0b0e13",
             "inverse-surface": "#e1e2ea",
             "on-secondary": "#3f008e",
             "primary-fixed-dim": "#3cd7ff",
@@ -41,7 +41,7 @@
             "inverse-on-surface": "#2d3036",
             "on-tertiary-container": "#005c3e",
             "on-surface-variant": "#cbd5e1",
-            "outline-variant": "#475569",
+            "outline-variant": "#334155",
             "error-container": "#93000a",
             "outline": "#94a3b8",
             "secondary-fixed": "#eaddff",
@@ -57,7 +57,7 @@
             "surface-variant": "#32353b",
             "surface-tint": "#3cd7ff",
             "on-secondary-fixed": "#25005a",
-            "surface-container-low": "#191c21",
+            "surface-container-low": "#15181e",
             "secondary-container": "#6001d1",
             "on-primary": "#003642",
             "primary": "#a8e8ff",
@@ -88,12 +88,11 @@
         background-color: #0b0e13; 
         color: #f1f5f9; 
         font-family: 'JetBrains Mono', monospace; 
-        overflow-x: hidden;
+        scroll-behavior: smooth;
       }
       ::-webkit-scrollbar { display: none; }
     }
 
-    /* Scroll progress bar */
     #scroll-progress {
       position: fixed;
       top: 0;
@@ -108,142 +107,72 @@
 
     /* Screen shake animation */
     @keyframes screenShake {
-      0% { transform: translate(0, 0) rotate(0deg); }
-      20% { transform: translate(-3px, 2px) rotate(-0.5deg); }
-      40% { transform: translate(3px, -2px) rotate(0.5deg); }
-      60% { transform: translate(-2px, -1px) rotate(-0.2deg); }
-      80% { transform: translate(2px, 1px) rotate(0.2deg); }
-      100% { transform: translate(0, 0) rotate(0deg); }
+      0% { transform: translate(0, 0); }
+      20% { transform: translate(-3px, 2px); }
+      40% { transform: translate(3px, -2px); }
+      60% { transform: translate(-2px, -1px); }
+      80% { transform: translate(2px, 1px); }
+      100% { transform: translate(0, 0); }
     }
     .shake-active {
-      animation: screenShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+      animation: screenShake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
     }
 
-    /* Vignette on attack deflection */
     #cinematic-vignette {
       position: fixed;
       inset: 0;
       pointer-events: none;
       z-index: 45;
       opacity: 0;
-      background: radial-gradient(circle, transparent 40%, rgba(255, 77, 79, 0.35) 90%, rgba(147, 0, 10, 0.8) 100%);
+      background: radial-gradient(circle, transparent 40%, rgba(255, 77, 79, 0.25) 90%, rgba(147, 0, 10, 0.6) 100%);
       transition: opacity 0.2s ease-out;
     }
 
-    /* Button Ripple Effect */
-    .ripple-effect {
-      position: relative;
-      overflow: hidden;
-    }
-    .ripple-circle {
-      position: absolute;
-      border-radius: 50%;
-      transform: scale(0);
-      animation: ripple 0.6s linear;
-      background-color: rgba(255, 255, 255, 0.35);
-      pointer-events: none;
-    }
-    @keyframes ripple {
-      to {
-        transform: scale(4);
-        opacity: 0;
-      }
-    }
-
-    /* Interactive Physical Card Lift */
     .hover-lift {
       transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
     }
     .hover-lift:hover {
       transform: translateY(-6px);
-      box-shadow: 0 16px 32px -8px rgba(0, 212, 255, 0.18), 0 0 0 1px rgba(0, 212, 255, 0.4);
-      border-color: rgba(0, 212, 255, 0.5) !important;
+      box-shadow: 0 16px 32px -8px rgba(0, 212, 255, 0.15), 0 0 0 1px rgba(0, 212, 255, 0.3);
+      border-color: rgba(0, 212, 255, 0.4) !important;
     }
 
-    /* Interactive Button Float */
     .btn-interactive {
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
     }
     .btn-interactive:hover {
       transform: scale(1.03);
-      box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.35);
     }
     .btn-interactive:active {
       transform: scale(0.97);
     }
 
-    /* Nav Link Animated Underline */
-    .nav-link-item {
+    .nav-link {
       position: relative;
+      transition: color 0.2s ease;
     }
-    .nav-link-item::after {
+    .nav-link::after {
       content: '';
       position: absolute;
       width: 0%;
       height: 2px;
-      bottom: -2px;
+      bottom: -4px;
       left: 0;
       background: #00d4ff;
-      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: width 0.25s ease;
       box-shadow: 0 0 8px #00d4ff;
     }
-    .nav-link-item:hover::after {
+    .nav-link.active-nav, .nav-link:hover {
+      color: #00d4ff;
+    }
+    .nav-link.active-nav::after, .nav-link:hover::after {
       width: 100%;
     }
 
-    /* Animated Border Shimmer */
-    .border-shimmer {
-      position: relative;
-    }
-    .border-shimmer::before {
-      content: '';
-      position: absolute;
-      inset: -1px;
-      border-radius: inherit;
-      padding: 1px;
-      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.6), transparent);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      animation: shimmerBorder 4s linear infinite;
-      pointer-events: none;
-    }
-    @keyframes shimmerBorder {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-
-    /* 3D Tilt Wrapper */
-    .tilt-card {
-      transform-style: preserve-3d;
-      transition: transform 0.15s ease-out;
-    }
-
-    /* Scanline overlay for glitch verdict */
-    .scanline-glitch {
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-      background-size: 100% 3px, 6px 100%;
-    }
-
-    /* Scroll Assembly Classes */
-    .assembly-left {
-      opacity: 0;
-      transform: translateX(-40px);
-      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .assembly-center {
-      opacity: 0;
-      transform: translateY(30px) scale(0.95);
-      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .assembly-right {
-      opacity: 0;
-      transform: translateX(40px);
-      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .assembly-visible {
-      opacity: 1 !important;
-      transform: translate(0, 0) scale(1) !important;
+    @keyframes conduitStream {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
   </style>
 </head>
@@ -258,15 +187,12 @@
   <!-- Cinematic Deflection Vignette Layer -->
   <div id="cinematic-vignette"></div>
 
-  <!-- Ambient Cursor Glow Spotlight -->
-  <div id="cursor-spotlight" class="fixed pointer-events-none z-0 w-[600px] h-[600px] rounded-full blur-[140px] opacity-15 bg-primary transition-transform duration-75 ease-out -translate-x-1/2 -translate-y-1/2 hidden md:block"></div>
-
-  <!-- ============================== TOP NAVIGATION BAR ============================== -->
-  <header class="fixed top-0 left-0 right-0 z-40 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_12px_rgba(0,0,0,0.8)] border-b border-outline-variant/60">
+  <!-- ============================== STICKY TOP NAVIGATION BAR ============================== -->
+  <header class="fixed top-0 left-0 right-0 z-40 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_12px_rgba(0,0,0,0.8)] border-b border-outline-variant">
     <div class="h-16 w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
       
-      <!-- IRONGATE Shield Diode Logo SVG Brand -->
-      <div class="flex items-center gap-3 cursor-pointer group" onclick="switchMainTab('overview')">
+      <!-- IRONGATE Logo -->
+      <a href="#hero" class="flex items-center gap-3 group">
         <svg class="h-9 w-auto transform group-hover:scale-105 transition-transform duration-200" viewBox="0 0 240 64" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <filter id="cyanGlow" x="-20%" y="-20%" width="140%" height="140%">
@@ -281,818 +207,539 @@
             <circle cx="27" cy="22" r="1.5" fill="#10b981"/>
           </g>
           <text x="68" y="34" font-family="'Inter', sans-serif" font-size="22" font-weight="900" letter-spacing="4" fill="#ffffff">IRON<tspan fill="#00d4ff">GATE</tspan></text>
-          <text x="68" y="47" font-family="'JetBrains Mono', monospace" font-size="8.5" font-weight="600" letter-spacing="2.5" fill="#94a3b8">HARDWARE DATA DIODE</text>
+          <text x="68" y="47" font-family="'JetBrains Mono', monospace" font-size="8.5" font-weight="600" letter-spacing="2.5" fill="#94a3b8">DATA DIODE AI DEFENSE</text>
         </svg>
-      </div>
+      </a>
 
-      <!-- Navigation Tabs with Sliding Underline Effect -->
-      <nav class="hidden md:flex items-center gap-6">
-        <button id="nav-overview" onclick="switchMainTab('overview')" class="nav-link-item font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded text-primary font-bold">
-          How It Works
-        </button>
-        <button id="nav-soc" onclick="switchMainTab('soc')" class="nav-link-item text-slate-300 hover:text-white font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded font-semibold">
-          Live SOC Matrix
-        </button>
-        <button id="nav-security" onclick="switchMainTab('security')" class="nav-link-item text-slate-300 hover:text-white font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded font-semibold">
-          Security Specs
-        </button>
+      <!-- Scrollspy Nav Links -->
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="#hero" class="nav-link font-label-md text-xs uppercase tracking-wider text-slate-300 font-semibold" data-section="hero">Overview</a>
+        <a href="#live-flow" class="nav-link font-label-md text-xs uppercase tracking-wider text-slate-300 font-semibold" data-section="live-flow">Live Flow</a>
+        <a href="#soc-dashboard" class="nav-link font-label-md text-xs uppercase tracking-wider text-slate-300 font-semibold" data-section="soc-dashboard">SOC Matrix</a>
+        <a href="#how-it-works" class="nav-link font-label-md text-xs uppercase tracking-wider text-slate-300 font-semibold" data-section="how-it-works">How It Works</a>
+        <a href="#comparison" class="nav-link font-label-md text-xs uppercase tracking-wider text-slate-300 font-semibold" data-section="comparison">Why Diode</a>
       </nav>
 
-      <!-- Right Actions: Audio Toggle + Detection Engine Status Pill + Loud Attack CTA -->
+      <!-- Persistent Quick Actions: Status Pill + Loud Simulate Attack CTA -->
       <div class="flex items-center gap-3">
-        
-        <!-- Audio Synthesizer Tone Toggle -->
-        <button id="audio-toggle-btn" onclick="toggleAudio()" title="Toggle Sound FX" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-bright flex items-center justify-center text-slate-400 hover:text-primary border border-outline-variant/60 transition-colors">
-          <span class="material-symbols-outlined text-base" id="audio-icon">volume_off</span>
-        </button>
-
-        <!-- Detection Engine Status Pill (Static Emerald Indicator) -->
-        <div id="ws-indicator" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container border border-tertiary/40 text-[11px] font-label-sm shadow-[0_0_12px_rgba(106,247,186,0.15)]">
-          <span id="ws-dot" class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_#6af7ba] animate-pulse"></span>
-          <span id="ws-status" class="text-tertiary font-bold tracking-wider uppercase">DETECTION ENGINE ACTIVE</span>
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-md bg-surface-container border border-tertiary/40 text-[11px] font-label-sm">
+          <span class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_#6af7ba] animate-pulse"></span>
+          <span class="text-tertiary font-bold tracking-wider uppercase">ENGINE ACTIVE</span>
         </div>
 
-        <!-- SIMULATE ATTACK CTA — Loudest interactive element on page -->
-        <button id="simulate-attack-global-btn" onclick="triggerCinematicAttack()" class="ripple-effect btn-interactive relative group px-4 py-2 bg-error-container hover:bg-error/40 text-on-error-container border border-error rounded-lg font-label-sm text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-[0_0_22px_rgba(255,180,171,0.45)] animate-pulse hover:shadow-[0_0_35px_rgba(255,180,171,0.85)]">
-          <span class="material-symbols-outlined text-base text-error group-hover:rotate-12 transition-transform">security_update_warning</span>
-          <span id="simulate-attack-label" class="text-white font-extrabold">SIMULATE ATTACK</span>
+        <!-- Persistent Top Simulate Attack CTA -->
+        <button onclick="triggerSmuggledPayloadAttack()" class="btn-interactive px-4 py-2 bg-error-container hover:bg-error/40 text-on-error-container border border-error rounded-lg font-label-sm text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-[0_0_20px_rgba(255,180,171,0.4)] animate-pulse">
+          <span class="material-symbols-outlined text-base text-error">security_update_warning</span>
+          <span id="nav-attack-btn-text" class="text-white font-extrabold">SIMULATE ATTACK</span>
         </button>
-
-        <!-- NTRO SIH Clearance Badge -->
-        <div class="hidden lg:flex items-center gap-2 pl-3 border-l border-outline-variant">
-          <span class="font-label-sm text-[10px] text-primary px-2.5 py-1 rounded bg-primary/10 border border-primary/30 uppercase tracking-widest font-bold">
-            NTRO • SIH26145
-          </span>
-        </div>
-
       </div>
+
     </div>
   </header>
 
   <!-- ========================================================================================= -->
-  <!--                               VIEW 1: OVERVIEW / HOW IT WORKS                             -->
+  <!--                               SECTION 1: HERO & 3 PILLARS                                 -->
   <!-- ========================================================================================= -->
-  <main id="view-overview" class="w-full pt-16 bg-surface-container-lowest transition-opacity duration-300">
-    <div class="flex flex-col w-full">
+  <section id="hero" class="relative w-full min-h-[85vh] flex flex-col justify-center items-center text-center px-6 pt-24 pb-16">
+    <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(rgba(0,212,255,0.05)_1px,transparent_1px)] [background-size:32px_32px]"></div>
+    <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-primary/5 rounded-full blur-[140px] pointer-events-none"></div>
 
-      <!-- HERO SECTION with Cursor-Reactive Particle Magnet -->
-      <section class="relative w-full min-h-[85vh] flex flex-col justify-between overflow-hidden px-6 py-10" id="hero-section">
-        <canvas class="absolute inset-0 w-full h-full pointer-events-none z-0" id="unidirectional-particles"></canvas>
-        <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(rgba(0,212,255,0.06)_1px,transparent_1px)] [background-size:32px_32px]"></div>
+    <div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container/90 backdrop-blur-md mb-6 border border-primary/30">
+        <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+        <span class="font-label-sm text-[11px] uppercase tracking-[0.18em] text-primary font-bold">
+          NTRO • SIH26145 | PASSIVE AI DEFENSE FOR UNIDIRECTIONAL NETWORKS
+        </span>
+      </div>
 
-        <div class="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center text-center mt-4">
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-high/90 backdrop-blur-md shadow-sm mb-4 border border-primary/30 transform hover:scale-105 transition-transform duration-200">
-            <span class="relative flex h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-            </span>
-            <span class="font-label-sm text-[11px] uppercase tracking-[0.18em] text-primary font-bold">
-              MIL-SPEC AIR-GAP DIODE // PYTORCH AUTOENCODER DETECTION
-            </span>
+      <h1 class="font-headline-xl text-5xl md:text-7xl font-black uppercase tracking-tight text-white select-none">
+        IRON<span class="text-primary">GATE</span>
+      </h1>
+      <p class="mt-4 text-lg md:text-xl text-slate-300 font-normal max-w-2xl leading-relaxed">
+        Passive AI threat detection for physical data diodes. <span class="text-primary font-semibold">Zero reverse channel.</span> Unidirectional line-rate protection for air-gapped enclaves.
+      </p>
+
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <a href="#live-flow" class="btn-interactive inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-on-primary font-label-md text-xs uppercase tracking-wider font-extrabold shadow-[0_0_25px_rgba(0,212,255,0.4)]">
+          <span>Watch Live Flow Demo</span>
+          <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </a>
+        <button onclick="triggerSmuggledPayloadAttack()" class="btn-interactive inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-error-container hover:bg-error/40 text-white font-label-md text-xs uppercase tracking-wider border border-error shadow-[0_0_20px_rgba(255,180,171,0.35)] font-bold">
+          <span class="material-symbols-outlined text-sm text-error">gpp_bad</span>
+          <span>Simulate Payload Smuggle</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 3 PILLARS ANCHOR CARDS -->
+    <div class="relative z-10 w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 text-left">
+      
+      <!-- Pillar 1 -->
+      <div class="hover-lift bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-6 border border-outline-variant flex flex-col justify-between shadow-lg">
+        <div>
+          <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-4">
+            <span class="material-symbols-outlined text-xl">visibility</span>
           </div>
-
-          <h1 class="font-headline-xl text-5xl md:text-[78px] md:leading-[84px] font-black uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-fixed-dim to-white select-none drop-shadow-[0_10px_30px_rgba(0,212,255,0.2)]">
-            IRONGATE
-          </h1>
-          <p class="mt-3 max-w-3xl font-body-lg text-lg text-slate-300 font-normal tracking-wide">
-            The Last Line of Defence. <span class="text-primary font-semibold">Physically Enforced.</span> Mathematically Unbreakable.
+          <h3 class="font-headline-md text-base text-white font-bold mb-2">1. Passive Optical Tap</h3>
+          <p class="font-body-sm text-xs text-slate-300 leading-relaxed">
+            Operates purely out-of-band via fiber optic taps. Zero packet tampering, zero latency penalty, and zero inbound footprint.
           </p>
+        </div>
+        <div class="mt-4 pt-3 border-t border-outline-variant/60 text-[11px] text-primary font-bold">
+          100% NON-INTRUSIVE MONITORING
+        </div>
+      </div>
 
-          <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
-            <button onclick="switchMainTab('soc')" class="ripple-effect btn-interactive inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-primary-container text-on-primary font-label-md text-xs uppercase tracking-wider font-extrabold shadow-[0_0_25px_rgba(0,212,255,0.4)] hover:bg-primary-fixed-dim transition-all">
-              <span>Enter Live SOC Matrix</span>
-              <span class="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
-            </button>
-            <button onclick="triggerPhysicsAudit()" class="ripple-effect btn-interactive inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-surface-container-high text-white hover:text-primary hover:bg-surface-bright font-label-md text-xs uppercase tracking-wider border border-outline-variant/80 transition-all">
-              <span class="material-symbols-outlined text-base text-primary">verified_user</span>
-              <span>Verify EAL7+ Certificate</span>
-            </button>
+      <!-- Pillar 2 -->
+      <div class="hover-lift bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-6 border border-outline-variant flex flex-col justify-between shadow-lg">
+        <div>
+          <div class="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center text-tertiary mb-4">
+            <span class="material-symbols-outlined text-xl">swap_horiz</span>
+          </div>
+          <h3 class="font-headline-md text-base text-white font-bold mb-2">2. Physical Unidirectionality</h3>
+          <p class="font-body-sm text-xs text-slate-300 leading-relaxed">
+            Layer-1 single-strand fiber enforcement. Transmit laser photons can only travel forward; return path is physically nonexistent.
+          </p>
+        </div>
+        <div class="mt-4 pt-3 border-t border-outline-variant/60 text-[11px] text-tertiary font-bold">
+          PHYSICAL AIR-GAP INTEGRITY
+        </div>
+      </div>
+
+      <!-- Pillar 3 -->
+      <div class="hover-lift bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-6 border border-outline-variant flex flex-col justify-between shadow-lg">
+        <div>
+          <div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary mb-4">
+            <span class="material-symbols-outlined text-xl">psychology</span>
+          </div>
+          <h3 class="font-headline-md text-base text-white font-bold mb-2">3. Statistical AI Cognition</h3>
+          <p class="font-body-sm text-xs text-slate-300 leading-relaxed">
+            Evaluates IAT (Inter-Arrival Time) & Shannon Entropy against learned baseline behavior, catching zero-day smuggled payloads before the enclave.
+          </p>
+        </div>
+        <div class="mt-4 pt-3 border-t border-outline-variant/60 text-[11px] text-secondary font-bold">
+          3σ STATISTICAL ANOMALY DETECTION
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================================= -->
+  <!--                     SECTION 2: LIVE DATA FLOW & FORWARD ATTACK SIMULATOR                  -->
+  <!-- ========================================================================================= -->
+  <section id="live-flow" class="relative w-full max-w-7xl mx-auto px-6 py-16">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      <div>
+        <div class="inline-flex items-center gap-1 font-label-sm text-xs uppercase tracking-widest text-primary mb-2 font-bold">
+          <span class="material-symbols-outlined text-sm">alt_route</span>
+          <span>UNIDIRECTIONAL ENFORCEMENT ENGINE</span>
+        </div>
+        <h2 class="font-headline-xl text-3xl md:text-4xl uppercase text-white font-extrabold">
+          Live Data Flow & Payload Inspection
+        </h2>
+      </div>
+      <p class="font-body-md text-sm text-slate-300 max-w-md">
+        Packets flow forward through the single-strand diode. The AI engine continuously inspects telemetry to intercept smuggled malicious payloads before delivery.
+      </p>
+    </div>
+
+    <!-- Live Flow Stage -->
+    <div class="relative w-full bg-surface-container-low/95 backdrop-blur-2xl rounded-2xl p-6 shadow-2xl border border-outline-variant space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-outline-variant/60">
+        <div class="flex items-center gap-3">
+          <span class="w-2.5 h-2.5 rounded-full bg-tertiary animate-ping"></span>
+          <span class="font-label-sm text-xs uppercase text-white font-bold">1310nm Single-Strand Monomode Fiber Carrier</span>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <span class="text-xs text-slate-400 font-mono">Stream: <strong class="text-primary font-bold" id="flow-rate-readout">188 PKTS/S</strong></span>
+          <button id="flow-stage-attack-btn" onclick="triggerSmuggledPayloadAttack()" class="btn-interactive flex items-center gap-2 bg-error-container hover:bg-error/40 text-on-error-container px-4 py-2 rounded-lg font-label-sm text-xs uppercase font-black tracking-wider transition-all border border-error shadow-[0_0_15px_rgba(255,180,171,0.35)] animate-pulse">
+            <span class="material-symbols-outlined text-sm text-error">security_update_warning</span>
+            <span id="flow-attack-btn-text" class="text-white font-bold">Simulate Smuggled Attack</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive 3-Stage Conduit Visualizer -->
+      <div class="relative w-full h-72 bg-surface-container-lowest rounded-xl overflow-hidden flex items-center justify-between px-8 border border-outline-variant/80" id="visualizer-stage">
+        
+        <!-- Left Node: Untrusted Ingress TX -->
+        <div class="relative z-10 flex flex-col items-center gap-2 bg-surface-container-high/95 p-4 rounded-xl shadow-lg w-56 border border-error/40 hover-lift">
+          <div class="flex items-center justify-between w-full">
+            <span class="font-label-sm text-xs text-error uppercase font-bold">UNTRUSTED INGRESS</span>
+            <span class="px-2 py-0.5 bg-error/20 text-error rounded font-label-sm text-[10px] font-bold">TX-01</span>
+          </div>
+          <div class="w-full bg-surface-container-low p-2 rounded text-[11px] font-mono space-y-1 border border-outline-variant/30">
+            <div class="flex justify-between text-slate-400"><span>Source:</span><span class="text-white font-semibold">198.51.100.74</span></div>
+            <div class="flex justify-between text-slate-400"><span>Signal:</span><span class="text-primary font-bold">Laser Emitted</span></div>
+          </div>
+          <div class="flex items-center gap-1 text-primary font-label-sm text-[11px] animate-pulse font-bold">
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            <span>STREAMING FORWARD →</span>
           </div>
         </div>
 
-        <!-- 3-ZONE HARDWARE CONDUIT INTERACTIVE DIAGRAM (3D Perspective Tilt & Scroll Assembly) -->
-        <div class="relative z-10 w-full max-w-6xl mx-auto my-8 perspective-[1000px]" id="live-explainer">
-          <div id="tilt-box" class="tilt-card border-shimmer bg-surface-container-low/95 backdrop-blur-2xl rounded-2xl p-6 shadow-[0_25px_60px_rgba(0,0,0,0.8)] border border-outline-variant/70">
-            <div class="flex items-center justify-between pb-3 mb-4 border-b border-outline-variant/50">
-              <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-primary text-lg">memory</span>
-                <span class="font-label-sm text-xs uppercase tracking-widest text-white font-bold">HARDWARE DIODE REAL-TIME PHOTONIC TELEMETRY</span>
-              </div>
-              <div class="flex items-center gap-2 font-label-sm text-xs">
-                <span class="w-2 h-2 rounded-full bg-tertiary"></span>
-                <span class="text-tertiary font-bold">PHYSICAL CARRIER: EMITTED</span>
-                <span class="text-slate-400 font-mono">[1310nm LASER]</span>
-              </div>
-            </div>
-
-            <!-- 3-ZONE TELEMETRY CONDUIT (Fly-in Assembly via Scroll) -->
-            <div class="relative grid grid-cols-1 md:grid-cols-11 gap-4 items-stretch min-h-[250px]" id="conduit-grid">
-              
-              <!-- ZONE 1: UNTRUSTED / EXTERNAL (Cols 1-4) - Assembly Left -->
-              <div class="assembly-left md:col-span-4 hover-lift bg-surface-container-lowest rounded-xl p-4 flex flex-col justify-between relative overflow-hidden border border-error/40">
-                <div class="absolute inset-0 bg-gradient-to-r from-error-container/20 to-transparent pointer-events-none"></div>
-                <div>
-                  <div class="flex items-center justify-between">
-                    <span class="font-label-sm text-xs uppercase tracking-wider text-error flex items-center gap-1 font-bold">
-                      <span class="material-symbols-outlined text-base">warning</span> UNTRUSTED INGRESS
-                    </span>
-                    <span class="px-2 py-0.5 bg-surface-container-high rounded text-slate-300 font-label-sm text-[10px]">PORT: TX-01</span>
-                  </div>
-                  <p class="font-body-sm text-xs text-slate-400 mt-1">External WAN, corporate telemetry, SCADA untrusted bus.</p>
-                </div>
-                
-                <!-- Autoencoder Feature Basis Telemetry -->
-                <div class="my-3 space-y-1.5 font-mono text-[11px]" id="conduit-feature-readout">
-                  <div class="flex justify-between items-center px-2 py-1 rounded bg-surface-container text-white">
-                    <span class="flex items-center gap-1.5 text-primary">
-                      <span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
-                      IAT: 2.3ms (organic)
-                    </span>
-                    <span class="text-slate-400 font-mono">Entropy: 4.1 bits</span>
-                  </div>
-                  <div class="flex justify-between items-center px-2 py-1 rounded bg-surface-container/60 text-slate-300">
-                    <span class="text-secondary font-semibold">L_rec: 0.032 (NORMAL)</span>
-                    <span class="text-tertiary font-bold">&lt; 3σ BASELINE</span>
-                  </div>
-                </div>
-                
-                <div class="flex items-center justify-between text-slate-400 font-label-sm text-[11px]">
-                  <span>TX PHOTODIODE: ACTIVE</span>
-                  <span class="text-primary font-bold">9.84 GBPS</span>
-                </div>
-              </div>
-
-              <!-- ZONE 2: PHYSICAL DATA DIODE BARRIER (Cols 5-7) - Assembly Center -->
-              <div class="assembly-center md:col-span-3 hover-lift bg-surface-container rounded-xl p-4 flex flex-col items-center justify-between relative overflow-hidden group shadow-xl border border-primary/40">
-                <div class="w-full text-center">
-                  <span class="font-label-sm text-xs uppercase tracking-widest text-primary-fixed-dim font-bold">PHYSICAL BARRIER</span>
-                  <div class="text-[10px] text-slate-400 mt-0.5 font-mono">SINGLE-STRAND 9/125µm FIBER</div>
-                </div>
-                <div class="relative my-2 flex flex-col items-center justify-center">
-                  <div class="w-14 h-14 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-[0_0_20px_rgba(0,212,255,0.4)] relative">
-                    <span class="material-symbols-outlined text-primary text-2xl">lens_blur</span>
-                    <div class="absolute -right-2 flex items-center text-primary animate-[pulse_1s_infinite]">
-                      <span class="material-symbols-outlined text-sm">arrow_forward_ios</span>
-                    </div>
-                  </div>
-                  <span class="mt-2 font-label-sm text-[10px] text-tertiary font-bold tracking-wider">UNIDIRECTIONAL ONLY</span>
-                </div>
-                <div class="w-full text-center py-1 rounded bg-error-container/40 text-error font-label-sm text-[11px] font-bold tracking-wide transition-all duration-300" id="reverse-alarm-badge">
-                  NO REVERSE CHANNEL (0.00 bps)
-                </div>
-              </div>
-
-              <!-- ZONE 3: SECURE ENCLAVE / CLASSIFIED (Cols 8-11) - Assembly Right -->
-              <div class="assembly-right md:col-span-4 hover-lift bg-surface-container-lowest rounded-xl p-4 flex flex-col justify-between relative overflow-hidden border border-secondary/40">
-                <div class="absolute inset-0 bg-gradient-to-l from-on-tertiary-fixed-variant/20 to-transparent pointer-events-none"></div>
-                <div>
-                  <div class="flex items-center justify-between">
-                    <span class="font-label-sm text-xs uppercase tracking-wider text-tertiary flex items-center gap-1 font-bold">
-                      <span class="material-symbols-outlined text-base">verified</span> SECURE ENCLAVE / OT
-                    </span>
-                    <span class="px-2 py-0.5 bg-surface-container-high rounded text-slate-300 font-label-sm text-[10px]">PORT: RX-01</span>
-                  </div>
-                  <p class="font-body-sm text-xs text-slate-400 mt-1">Air-gapped mission core. Zero egress transmission physically possible.</p>
-                </div>
-                <div class="my-3 space-y-1.5 font-mono text-[11px]">
-                  <div class="flex justify-between items-center px-2 py-1 rounded bg-surface-container text-tertiary font-bold">
-                    <span class="flex items-center gap-1">
-                      <span class="material-symbols-outlined text-sm">check_circle</span>
-                      INGESTED: CRC-32 OK
-                    </span>
-                    <span class="text-white font-mono">0.02ms</span>
-                  </div>
-                  <div class="flex justify-between items-center px-2 py-1 rounded bg-surface-container/60 text-slate-300">
-                    <span>RETURN_ROUTE_STATUS</span>
-                    <span class="text-error font-bold">NOT_WIRED (PHYSICAL)</span>
-                  </div>
-                </div>
-                <div class="flex items-center justify-between text-slate-400 font-label-sm text-[11px]">
-                  <span>RX PHOTODIODE: SENSING</span>
-                  <span class="text-tertiary font-bold">100% AIR-GAP INTEGRITY</span>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Conduit Animation Strip -->
-            <div class="relative w-full h-8 mt-4 rounded-lg bg-surface-container-lowest overflow-hidden flex items-center border border-outline-variant/60">
-              <div class="absolute inset-x-0 h-0.5 bg-surface-container-high"></div>
-              <div class="absolute flex items-center gap-20 w-full animate-[conduitStream_3s_linear_infinite]">
-                <span class="inline-block w-6 h-1.5 rounded-full bg-primary shadow-[0_0_10px_#00d4ff]"></span>
-                <span class="inline-block w-8 h-1.5 rounded-full bg-primary-fixed-dim shadow-[0_0_10px_#00d4ff]"></span>
-                <span class="inline-block w-4 h-1.5 rounded-full bg-tertiary shadow-[0_0_8px_#6af7ba]"></span>
-                <span class="inline-block w-10 h-1.5 rounded-full bg-primary shadow-[0_0_12px_#00d4ff]"></span>
-              </div>
-              <div class="absolute right-0 w-1/2 flex items-center justify-end overflow-visible pointer-events-none">
-                <div class="flex items-center gap-1 text-error text-xs font-bold" id="reverse-threat-packet">
-                  <span class="material-symbols-outlined text-sm">cancel</span>
-                  <span class="font-label-sm text-[10px] uppercase tracking-wider bg-error-container/90 px-1.5 py-0.5 rounded">REVERSE EXPLOIT ATTEMPT BLOCKED</span>
-                </div>
-              </div>
-            </div>
+        <!-- Center Optical Diode & AI Tap Barrier -->
+        <div id="hardware-barrier" class="relative z-20 flex flex-col items-center justify-center h-5/6 w-56 bg-surface-container-highest/90 backdrop-blur-md rounded-xl shadow-xl border border-primary/50 transition-all duration-200">
+          <div class="absolute -top-3 px-2.5 py-0.5 bg-surface-container-high text-primary rounded font-label-sm text-[10px] uppercase tracking-widest font-extrabold border border-primary/40 shadow-sm">
+            PHYSICAL DIODE & AI TAP
+          </div>
+          <span class="material-symbols-outlined text-3xl text-primary mb-1">lens_blur</span>
+          <div class="text-center px-2">
+            <span class="font-label-sm text-xs text-white font-extrabold block uppercase">1-WAY LIGHT PATH</span>
+            <span class="font-label-sm text-[10px] text-tertiary block font-bold">PASSIVE ANOMALY SCAN</span>
+          </div>
+          <div class="hidden mt-2 px-2.5 py-0.5 bg-error text-on-error font-label-sm uppercase rounded animate-bounce text-[10px] font-black tracking-wider" id="barrier-alert-tag">
+            PAYLOAD INTERCEPTED
           </div>
         </div>
 
-        <!-- 3 STAT HUD CARDS (Scroll Triggered Count-Up) -->
-        <div class="relative z-10 w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 pb-6" id="stat-cards-row">
-          <div class="hover-lift bg-surface-container/90 backdrop-blur-xl rounded-xl p-5 shadow-lg flex items-center justify-between border border-outline-variant/60">
-            <div>
-              <span class="font-label-sm text-[11px] uppercase tracking-widest text-slate-400 block mb-1">Inbound Return Risk</span>
-              <div class="flex items-baseline gap-2">
-                <span class="font-telemetry-num text-3xl font-black text-white" data-target="0">0</span>
-                <span class="font-label-md text-xs text-tertiary font-extrabold">CHANNELS</span>
-              </div>
-              <span class="font-body-sm text-[11px] text-slate-400 mt-1 block">Physically cut transmit wire on RX</span>
-            </div>
-            <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-tertiary/15 text-tertiary">
-              <span class="material-symbols-outlined text-xl">sensors_off</span>
-            </div>
+        <!-- Right Node: Trusted Egress RX -->
+        <div class="relative z-10 flex flex-col items-center gap-2 bg-surface-container-high/95 p-4 rounded-xl shadow-lg w-56 border border-secondary/40 hover-lift">
+          <div class="flex items-center justify-between w-full">
+            <span class="font-label-sm text-xs text-tertiary uppercase font-bold">SECURE ENCLAVE</span>
+            <span class="px-2 py-0.5 bg-tertiary/20 text-tertiary rounded font-label-sm text-[10px] font-bold">RX-01</span>
           </div>
-
-          <div class="hover-lift bg-surface-container/90 backdrop-blur-xl rounded-xl p-5 shadow-lg flex items-center justify-between border border-outline-variant/60">
-            <div>
-              <span class="font-label-sm text-[11px] uppercase tracking-widest text-slate-400 block mb-1">Autoencoder Anomaly Accuracy</span>
-              <div class="flex items-baseline gap-2">
-                <span class="font-telemetry-num text-3xl font-black text-primary" data-target="99.42" id="stat-accuracy">99.42</span>
-                <span class="font-label-md text-xs text-primary font-bold">%</span>
-              </div>
-              <span class="font-body-sm text-[11px] text-slate-400 mt-1 block">PyTorch 3σ Reconstruction Loss</span>
-            </div>
-            <div class="relative w-10 h-10">
-              <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                <path class="text-surface-container-highest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
-                <path class="text-primary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="99.42, 100" stroke-linecap="round" stroke-width="3.5"></path>
-              </svg>
-              <span class="material-symbols-outlined absolute inset-0 flex items-center justify-center text-primary text-sm">verified</span>
-            </div>
+          <div class="w-full bg-surface-container-low p-2 rounded text-[11px] font-mono space-y-1 border border-outline-variant/30">
+            <div class="flex justify-between text-slate-400"><span>Target:</span><span class="text-white font-semibold">10.0.80.12 (OT)</span></div>
+            <div class="flex justify-between text-slate-400"><span>Delivery:</span><span class="text-tertiary font-bold">VERIFIED CLEAN</span></div>
           </div>
-
-          <div class="hover-lift bg-surface-container/90 backdrop-blur-xl rounded-xl p-5 shadow-lg flex items-center justify-between border border-outline-variant/60">
-            <div>
-              <span class="font-label-sm text-[11px] uppercase tracking-widest text-slate-400 block mb-1">Throughput Capacity</span>
-              <div class="flex items-baseline gap-2">
-                <span class="font-telemetry-num text-3xl font-black text-white" data-target="10">10</span>
-                <span class="font-label-md text-xs text-secondary font-bold">GBPS</span>
-              </div>
-              <span class="font-body-sm text-[11px] text-slate-400 mt-1 block">Line-rate passive optical tap</span>
-            </div>
-            <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-secondary/15 text-secondary">
-              <span class="material-symbols-outlined text-xl">speed</span>
-            </div>
+          <div class="flex items-center gap-1 text-tertiary font-label-sm text-[11px] font-bold">
+            <span class="material-symbols-outlined text-sm">verified_user</span>
+            <span>AIR-GAP PROTECTED</span>
           </div>
         </div>
 
-      </section>
+        <!-- Canvas for Moving Forward Photons & Deflections -->
+        <canvas id="flow-photon-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
+      </div>
 
-      <!-- SECTION 2: 4-CARD ARCHITECTURE SPECIFICATION (FEATURING AUTOENCODER COGNITION) -->
-      <section class="relative w-full max-w-7xl mx-auto px-6 py-12" id="how-it-works">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      <!-- Feature Basis Readout Bar -->
+      <div class="p-3 bg-surface-container-lowest rounded-xl flex flex-wrap items-center justify-between gap-4 font-mono text-xs border border-outline-variant/50">
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400">Cognitive Feature Basis:</span>
+          <span class="text-primary font-bold">IAT (Inter-Arrival Time) & Shannon Entropy</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-slate-400">Baseline Loss ($L_{rec}$): <strong class="text-white font-bold" id="flow-baseline-loss">0.034</strong></span>
+          <span class="text-tertiary font-bold">&lt; 3σ Threshold (NORMAL)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================================= -->
+  <!--                           SECTION 3: LIVE SOC MATRIX & DASHBOARD                          -->
+  <!-- ========================================================================================= -->
+  <section id="soc-dashboard" class="relative w-full max-w-7xl mx-auto px-6 py-16">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      <div>
+        <div class="inline-flex items-center gap-1 font-label-sm text-xs uppercase tracking-widest text-primary mb-2 font-bold">
+          <span class="material-symbols-outlined text-sm">dashboard</span>
+          <span>REAL-TIME SOC TELEMETRY MATRIX</span>
+        </div>
+        <h2 class="font-headline-xl text-3xl md:text-4xl uppercase text-white font-extrabold">
+          Live SOC Defense Matrix
+        </h2>
+      </div>
+      <div class="flex items-center gap-3 text-xs font-mono">
+        <span class="text-slate-400">System Time:</span>
+        <span class="px-2.5 py-1 rounded bg-surface-container text-white font-bold border border-outline-variant" id="live-utc-clock">--:--:-- UTC</span>
+      </div>
+    </div>
+
+    <!-- 4 HUD METRIC CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+      
+      <!-- Card 1: Packets Analyzed -->
+      <div class="hover-lift bg-surface-container-low/95 rounded-xl p-5 shadow-md border border-outline-variant flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="font-label-sm text-xs text-slate-400 uppercase tracking-wider font-semibold">Packets Analyzed</span>
+          <span class="material-symbols-outlined text-primary text-lg">swap_vert</span>
+        </div>
+        <div class="flex items-baseline gap-2 my-2">
+          <span class="font-telemetry-num text-3xl font-black text-white" id="metric-packets">2,847,291</span>
+          <span class="text-xs text-primary font-mono font-bold">streaming</span>
+        </div>
+        <div class="text-[11px] text-slate-400 font-mono">Continuous 1-way passive capture</div>
+      </div>
+
+      <!-- Card 2: Threats Flagged -->
+      <div class="hover-lift bg-surface-container-low/95 rounded-xl p-5 shadow-md border border-outline-variant flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="font-label-sm text-xs text-slate-400 uppercase tracking-wider font-semibold">Threats Intercepted</span>
+          <div class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-error"></span>
+          </div>
+        </div>
+        <div class="flex items-baseline gap-2 my-2">
+          <span class="font-telemetry-num text-3xl font-black text-error" id="metric-threats">37</span>
+          <span class="text-xs text-error font-mono font-bold">ISOLATED</span>
+        </div>
+        <div class="text-[11px] text-slate-400 font-mono">0 reached secure enclave</div>
+      </div>
+
+      <!-- Card 3: Live Autoencoder Sparkline with 3-Sigma Line -->
+      <div class="hover-lift bg-surface-container-low/95 rounded-xl p-5 shadow-md border border-secondary/50 flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="font-label-sm text-xs text-secondary uppercase tracking-wider font-bold">Anomaly Loss ($L_{rec}$)</span>
+          <span class="text-[10px] font-mono text-tertiary font-bold bg-tertiary/10 px-2 py-0.5 rounded border border-tertiary/30">3σ THRESHOLD</span>
+        </div>
+        <div class="flex items-baseline justify-between my-1">
+          <span class="font-telemetry-num text-2xl font-black text-white" id="metric-reconstruction-loss">0.034</span>
+          <span id="loss-status-tag" class="text-[10px] font-mono text-tertiary font-bold">NORMAL (&lt; 3σ)</span>
+        </div>
+        <div class="relative w-full h-10 bg-surface-container-lowest rounded overflow-hidden border border-outline-variant/40">
+          <canvas id="loss-sparkline-canvas" class="w-full h-full block"></canvas>
+          <div class="absolute right-1 top-1 text-[8px] font-mono text-error font-bold opacity-80">3σ = 0.150</div>
+        </div>
+      </div>
+
+      <!-- Card 4: Avg Inference Latency -->
+      <div class="hover-lift bg-surface-container-low/95 rounded-xl p-5 shadow-md border border-outline-variant flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="font-label-sm text-xs text-slate-400 uppercase tracking-wider font-semibold">Avg SOC Latency</span>
+          <span class="material-symbols-outlined text-secondary text-lg">bolt</span>
+        </div>
+        <div class="flex items-baseline gap-2 my-2">
+          <span class="font-telemetry-num text-3xl font-black text-secondary" id="metric-latency">14.82</span>
+          <span class="text-xs text-secondary font-mono font-bold">ms</span>
+        </div>
+        <div class="text-[11px] text-tertiary font-bold font-mono">Line-rate statistical scoring</div>
+      </div>
+
+    </div>
+
+    <!-- THREAT LOG TABLE & AUDIT STREAM -->
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+      
+      <!-- Threat Log Table (8 cols) -->
+      <div class="xl:col-span-8 bg-surface-container-low/95 rounded-xl shadow-md p-6 border border-outline-variant flex flex-col justify-between">
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-outline-variant/60">
           <div>
-            <div class="inline-flex items-center gap-1 font-label-sm text-xs uppercase tracking-widest text-primary mb-2 font-bold">
-              <span class="material-symbols-outlined text-sm">precision_manufacturing</span>
-              <span>OPTICAL ARCHITECTURE & AI SPECIFICATION</span>
-            </div>
-            <h2 class="font-headline-xl text-3xl md:text-4xl uppercase text-white font-extrabold">
-              Unidirectional Physical & Cognitive Isolation
-            </h2>
+            <h3 class="font-headline-md text-base text-white font-bold flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-lg">data_object</span>
+              Passive Threat Intelligence Log
+            </h3>
+            <p class="font-label-sm text-xs text-slate-400 mt-0.5">Click any row to inspect deep feature vectors and anomaly telemetry</p>
           </div>
-          <p class="font-body-md text-sm text-slate-300 max-w-md">
-            Unlike software firewalls governed by thousands of lines of vulnerable code, IRONGATE pairs Layer-1 optical physics with unsupervised Deep Autoencoder cognition.
-          </p>
+
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <input type="text" id="soc-log-search" oninput="handleThreatSearch(this.value)" placeholder="Filter IP, Flow, Label..." class="bg-surface-container-lowest text-white text-xs font-mono px-3 py-1.5 pl-8 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary w-48 border border-outline-variant placeholder:text-slate-500"/>
+              <span class="material-symbols-outlined text-sm text-slate-400 absolute left-2 top-2">search</span>
+            </div>
+
+            <button onclick="exportCSV()" class="btn-interactive bg-surface-container-high hover:bg-surface-bright text-white font-label-sm text-xs uppercase px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 border border-outline-variant font-semibold">
+              <span class="material-symbols-outlined text-sm text-primary">download</span>
+              <span>CSV</span>
+            </button>
+          </div>
         </div>
 
-        <!-- 4 STEP CARDS WITH HOVER LIFT -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          
-          <!-- Card 1 -->
-          <div class="hover-lift bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-5 border border-outline-variant/60 flex flex-col justify-between shadow-xl">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="font-telemetry-num text-primary text-xl font-bold">01</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-surface-container-high text-slate-300 font-bold">INGRESS TX</span>
-              </div>
-              <h3 class="font-headline-md text-lg text-white mb-2 font-bold">Data Enters</h3>
-              <p class="font-body-sm text-xs text-slate-300 mb-4">
-                Network packets arrive at the Transmit FPGA. Flow vectors are sampled passively for IAT & Shannon Entropy, then converted from electrical pulses to laser photons.
-              </p>
-            </div>
-            <div class="pt-3 border-t border-outline-variant/50 text-[11px] text-tertiary font-bold">
-              BIT_ERROR_RATE: &lt;10^-14 • JITTER: 0.04ps
-            </div>
-          </div>
-
-          <!-- Card 2 -->
-          <div class="hover-lift bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-5 border border-outline-variant/60 flex flex-col justify-between shadow-xl">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="font-telemetry-num text-primary text-xl font-bold">02</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-surface-container-high text-slate-300 font-bold">PHOTONIC CORE</span>
-              </div>
-              <h3 class="font-headline-md text-lg text-white mb-2 font-bold">Light Path Diode</h3>
-              <p class="font-body-sm text-xs text-slate-300 mb-4">
-                Photons travel strictly forward down single-strand fiber. In accordance with quantum optical laws, photons cannot physically reflect back or carry reverse telemetry.
-              </p>
-            </div>
-            <div class="pt-3 border-t border-outline-variant/50 text-[11px] text-primary font-bold">
-              PHYSICAL LAW: SNELL'S LAW & LASER CAVITY
-            </div>
-          </div>
-
-          <!-- Card 3 -->
-          <div class="hover-lift bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-5 border border-outline-variant/60 flex flex-col justify-between shadow-xl">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="font-telemetry-num text-tertiary text-xl font-bold">03</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-surface-container-high text-slate-300 font-bold">SECURE RX</span>
-              </div>
-              <h3 class="font-headline-md text-lg text-white mb-2 font-bold">Secure Delivery</h3>
-              <p class="font-body-sm text-xs text-slate-300 mb-4">
-                The receiver photodiode converts light back to binary frames, verifies payload checksums, and dispatches data to OT servers without ever acknowledging the sender.
-              </p>
-            </div>
-            <div class="pt-3 border-t border-outline-variant/50 text-[11px] text-tertiary font-bold">
-              DELIVERY_CERTAINTY: 100% UNACKNOWLEDGED
-            </div>
-          </div>
-
-          <!-- Card 4: AI COGNITION (Autoencoder Reconstruction Loss Story) -->
-          <div class="hover-lift bg-surface-container-low/95 backdrop-blur-xl rounded-xl p-5 border border-secondary/50 flex flex-col justify-between shadow-xl relative overflow-hidden">
-            <div class="absolute -right-6 -top-6 w-24 h-24 bg-secondary/10 rounded-full blur-xl pointer-events-none"></div>
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="font-telemetry-num text-secondary text-xl font-bold">04</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-secondary/20 text-secondary font-bold">AI COGNITION</span>
-              </div>
-              <h3 class="font-headline-md text-lg text-white mb-2 font-bold">"Does this look normal?"</h3>
-              <p class="font-body-sm text-xs text-slate-300 mb-4">
-                The PyTorch Deep Autoencoder is trained only on legitimate OT/SCADA baseline traffic. It continuously asks: <em class="text-secondary font-semibold">"can I reconstruct this packet's behavior?"</em> Low error = normal traffic passed silently. High error (&gt; 3σ) = statistically alien pattern, flagged before any signature exists (catches zero-days).
-              </p>
-            </div>
-            <div class="pt-3 border-t border-secondary/30 text-[11px] text-secondary font-bold">
-              THRESHOLD: 3σ RECONSTRUCTION LOSS
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- SECTION 3: COMPARISON MATRIX -->
-      <section class="relative w-full max-w-7xl mx-auto px-6 py-12 mb-12" id="security-comparison">
-        <div class="text-center max-w-3xl mx-auto mb-8">
-          <div class="inline-flex items-center gap-1 font-label-sm text-xs uppercase tracking-widest text-primary mb-2 font-bold">
-            <span class="material-symbols-outlined text-sm">balance</span>
-            <span>DEFENSIVE INTEGRITY BENCHMARK</span>
-          </div>
-          <h2 class="font-headline-xl text-3xl md:text-5xl uppercase text-white font-extrabold">
-            Why Not Just Use a Firewall?
-          </h2>
-          <p class="font-body-lg text-sm text-slate-300 mt-2">
-            Software can be compromised. <span class="text-primary font-bold">Physics cannot.</span>
-          </p>
-        </div>
-
-        <div class="hover-lift bg-surface-container-low/95 backdrop-blur-2xl rounded-xl p-6 shadow-2xl overflow-x-auto border border-outline-variant/60">
-          <table class="w-full text-left font-body-md text-xs">
+        <div class="overflow-x-auto w-full mt-4">
+          <table class="w-full text-left text-xs font-mono border-collapse">
             <thead>
-              <tr class="text-slate-300 font-label-sm text-xs uppercase tracking-widest border-b border-outline-variant/60">
-                <th class="py-3.5 px-4 w-1/3">Security Vector & Risk</th>
-                <th class="py-3.5 px-4 w-1/3 text-error font-bold">Next-Gen Software Firewall</th>
-                <th class="py-3.5 px-4 w-1/3 text-primary font-bold">IRONGATE Hardware Diode</th>
+              <tr class="text-slate-400 uppercase tracking-wider border-b border-outline-variant/60 text-[11px]">
+                <th class="py-2.5 px-3">Flow ID</th>
+                <th class="py-2.5 px-3">Time (UTC)</th>
+                <th class="py-2.5 px-3">Attack Vector</th>
+                <th class="py-2.5 px-3">Source IP</th>
+                <th class="py-2.5 px-3">Flags</th>
+                <th class="py-2.5 px-3">Confidence</th>
+                <th class="py-2.5 px-3 text-right">Action</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-outline-variant/40 text-slate-300">
-              <tr>
-                <td class="py-4 px-4 font-semibold text-white">Bidirectional Path Liability</td>
-                <td class="py-4 px-4 bg-error-container/10 text-error">Active Two-Way Path [High Risk - Covert C2]</td>
-                <td class="py-4 px-4 bg-on-tertiary-fixed-variant/20 text-tertiary font-bold">Physical 1-Way Fiber [Zero Return Path]</td>
-              </tr>
-              <tr>
-                <td class="py-4 px-4 font-semibold text-white">Zero-Day Vulnerability</td>
-                <td class="py-4 px-4 bg-error-container/10 text-error">Vulnerable (OS & Memory Corruption CVEs)</td>
-                <td class="py-4 px-4 bg-on-tertiary-fixed-variant/20 text-tertiary font-bold">Unhackable (No OS / Executable Memory on Fiber)</td>
-              </tr>
-              <tr>
-                <td class="py-4 px-4 font-semibold text-white">Misconfiguration Liability</td>
-                <td class="py-4 px-4 bg-error-container/10 text-error">High (Permissive rules expose subnets)</td>
-                <td class="py-4 px-4 bg-on-tertiary-fixed-variant/20 text-tertiary font-bold">Zero Exposure (Physics Cannot Be Reconfigured)</td>
-              </tr>
-              <tr>
-                <td class="py-4 px-4 font-semibold text-white">Air-Gap Certification</td>
-                <td class="py-4 px-4 bg-error-container/10 text-error">Does Not Qualify as Air-Gap</td>
-                <td class="py-4 px-4 bg-on-tertiary-fixed-variant/20 text-tertiary font-bold">EAL7+ & NIST SP 800-82 Air-Gap Compliant</td>
-              </tr>
+            <tbody id="soc-transfer-log-body" class="divide-y divide-outline-variant/30">
+              <!-- Injected rows -->
             </tbody>
           </table>
         </div>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- ========================================================================================= -->
-  <!--                               VIEW 2: REALTIME SOC CONSOLE                                -->
-  <!-- ========================================================================================= -->
-  <div id="view-soc" class="hidden w-full pt-16 bg-surface-container-lowest transition-opacity duration-300">
-    
-    <!-- SUB-HEADER TELEMETRY STRIP -->
-    <section class="w-full bg-surface-container-lowest px-6 py-3 flex flex-wrap items-center justify-between gap-4 border-b border-outline-variant/60 shadow-md">
-      <div class="flex items-center gap-4">
-        <div class="flex items-center gap-2 bg-surface-container px-3 py-1.5 rounded-md text-xs border border-outline-variant/40">
-          <span class="font-label-sm text-primary tracking-widest uppercase font-bold">SOC AIR-GAP MATRIX</span>
-          <span class="text-slate-500">::</span>
-          <span class="font-label-sm text-tertiary font-bold">NTRO PS SIH26145</span>
-        </div>
-        <div class="hidden md:flex items-center gap-2 text-xs">
-          <span class="font-label-sm text-slate-400 uppercase">CHASSIS:</span>
-          <span class="font-label-sm text-white font-bold">IRONGATE-PHY-9900X</span>
-        </div>
       </div>
 
-      <div class="flex items-center gap-3 bg-surface-container-high px-4 py-1.5 rounded-md shadow-sm text-xs border border-outline-variant/40">
-        <span class="relative flex h-2.5 w-2.5">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-tertiary"></span>
-        </span>
-        <span class="font-label-sm text-tertiary uppercase tracking-widest font-bold">DIODE ACTIVE — 0.00% REVERSE TX</span>
-        <span class="text-slate-500">|</span>
-        <span class="font-telemetry-num text-primary-container font-bold" id="stream-flow-rate">184 PKTS/S</span>
-      </div>
-
-      <div class="flex items-center gap-4 text-xs">
-        <div class="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-md border border-outline-variant/40">
-          <span class="material-symbols-outlined text-sm text-primary">schedule</span>
-          <span class="font-telemetry-num text-white font-semibold tracking-wider" id="live-utc-clock">--:--:-- UTC</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-slate-300 font-mono">Team: <strong class="text-white">SYNTAX TERROR</strong></span>
-        </div>
-      </div>
-    </section>
-
-    <!-- MAIN SOC WORKSPACE GRID -->
-    <div class="max-w-[1720px] mx-auto px-6 py-6 space-y-6">
-
-      <!-- ROW 1 — REALTIME HUD NODES INCLUDING AUTOENCODER RECONSTRUCTION LOSS -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        
-        <!-- Card 1: Packets Analyzed -->
-        <div class="hover-lift relative bg-surface-container/85 rounded-xl p-5 shadow-md border border-outline-variant/60 flex flex-col justify-between overflow-hidden">
-          <div class="flex items-center justify-between">
-            <span class="font-label-sm text-xs text-slate-400 uppercase tracking-wider font-semibold">Packets Analyzed</span>
-            <span class="material-symbols-outlined text-primary text-lg">swap_vert</span>
+      <!-- Integrity Audit Stream (4 cols) -->
+      <div class="xl:col-span-4 bg-surface-container-low/95 rounded-xl shadow-md p-6 border border-outline-variant flex flex-col justify-between">
+        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/60">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-tertiary text-lg">verified</span>
+            <h3 class="font-headline-md text-base text-white font-bold">Audit Event Stream</h3>
           </div>
-          <div class="flex items-baseline gap-2 my-2">
-            <span class="font-telemetry-num text-3xl font-black text-white custom-countup" id="metric-packets">2,847,291</span>
-            <span class="text-xs text-primary font-mono font-bold">streaming</span>
-          </div>
-          <div class="w-full h-8 flex items-end gap-1 mt-1">
-            <div class="flex-1 bg-primary/20 hover:bg-primary h-3 rounded-sm transition-all duration-300"></div>
-            <div class="flex-1 bg-primary/30 hover:bg-primary h-5 rounded-sm transition-all duration-300"></div>
-            <div class="flex-1 bg-primary/40 hover:bg-primary h-7 rounded-sm transition-all duration-300"></div>
-            <div class="flex-1 bg-primary/60 hover:bg-primary h-6 rounded-sm transition-all duration-300"></div>
-            <div class="flex-1 bg-primary hover:bg-primary-container h-8 rounded-sm transition-all duration-300"></div>
-          </div>
+          <span class="px-2.5 py-0.5 bg-tertiary/20 text-tertiary rounded font-label-sm text-[10px] font-bold">PASSIVE AUDIT</span>
         </div>
 
-        <!-- Card 2: Threats Detected -->
-        <div class="hover-lift relative bg-surface-container/85 rounded-xl p-5 shadow-md border border-outline-variant/60 flex flex-col justify-between overflow-hidden">
-          <div class="flex items-center justify-between">
-            <span class="font-label-sm text-xs text-slate-400 uppercase tracking-wider font-semibold">Threats Flagged</span>
-            <div class="relative flex h-3 w-3">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-error"></span>
-            </div>
-          </div>
-          <div class="flex items-baseline gap-2 my-2">
-            <span class="font-telemetry-num text-3xl font-black text-error custom-countup" id="metric-threats">37</span>
-            <span class="text-xs text-error font-mono font-bold">DEFLECTED</span>
-          </div>
-          <div class="flex items-center justify-between text-xs text-slate-400 font-label-sm">
-            <span>Isolation Consensus:</span>
-            <span class="text-error font-bold">Dual Model Consensus</span>
-          </div>
-        </div>
-
-        <!-- Card 3: Autoencoder Reconstruction Loss Sparkline (JUDGES "AHA" VISUAL) -->
-        <div class="hover-lift relative bg-surface-container/85 rounded-xl p-5 shadow-md border border-secondary/50 flex flex-col justify-between overflow-hidden">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5">
-              <span class="font-label-sm text-xs text-secondary uppercase tracking-wider font-bold">Reconstruction Loss</span>
-              <span class="px-1.5 py-0.2 bg-secondary/20 text-secondary text-[9px] font-mono rounded font-bold">L_rec</span>
-            </div>
-            <span class="text-[10px] font-mono text-tertiary font-bold bg-tertiary/10 px-2 py-0.5 rounded border border-tertiary/30">3σ THRESHOLD</span>
-          </div>
-          
-          <div class="flex items-baseline justify-between my-1">
-            <div class="flex items-baseline gap-1.5">
-              <span class="font-telemetry-num text-2xl font-black text-white custom-countup" id="metric-reconstruction-loss">0.034</span>
-              <span class="text-[11px] text-slate-400 font-mono">loss score</span>
-            </div>
-            <span id="loss-status-tag" class="text-[10px] font-mono text-tertiary font-bold">NORMAL (&lt; 3σ)</span>
-          </div>
-
-          <!-- Canvas Sparkline with 3σ Reference Line -->
-          <div class="relative w-full h-10 bg-surface-container-lowest rounded overflow-hidden border border-outline-variant/40">
-            <canvas id="loss-sparkline-canvas" class="w-full h-full block"></canvas>
-            <div class="absolute right-1 top-1 text-[8px] font-mono text-error font-bold opacity-80">3σ = 0.150</div>
-          </div>
-        </div>
-
-        <!-- Card 4: Avg Inference Latency -->
-        <div class="hover-lift relative bg-surface-container/85 rounded-xl p-5 shadow-md border border-outline-variant/60 flex flex-col justify-between overflow-hidden">
-          <div class="flex items-center justify-between">
-            <span class="font-label-sm text-xs text-slate-400 uppercase tracking-wider font-semibold">Avg SOC Latency</span>
-            <span class="material-symbols-outlined text-secondary text-lg">bolt</span>
-          </div>
-          <div class="flex items-baseline gap-2 my-2">
-            <span class="font-telemetry-num text-3xl font-black text-secondary custom-countup" id="metric-latency">14.82</span>
-            <span class="text-xs text-secondary font-mono font-bold">ms</span>
-          </div>
-          <div class="flex items-center justify-between text-xs text-slate-400 font-label-sm">
-            <span>Line-Rate Ingestion:</span>
-            <span class="text-tertiary font-bold">SUB-MILLI SPEED</span>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ROW 2 — UNIDIRECTIONAL FLOW MONITOR & CANVAS -->
-      <div class="relative w-full bg-surface-container/85 rounded-xl shadow-xl overflow-hidden p-6 border border-outline-variant/60 space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-4 pb-2">
-          <div>
-            <h2 class="font-headline-md text-lg text-white tracking-tight uppercase font-extrabold flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary">alt_route</span>
-              Live Data Flow — Unidirectional Hardware Enforcement Engine
-            </h2>
-            <p class="font-label-sm text-xs text-slate-300">
-              Physical TX Laser Diode (1310nm) → Monomode Optic Barrier → RX Photodetector Array (Zero Return Transmitters)
-            </p>
-          </div>
-          <div class="flex items-center gap-3">
-            <div class="hidden lg:flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-md text-xs font-mono border border-outline-variant/40">
-              <span class="text-slate-400">CARRIER REFLECTION:</span>
-              <span class="text-tertiary font-bold">-58.4 dB (NEGLIGIBLE)</span>
-            </div>
-            
-            <!-- Loud Simulate Attack Button inside SOC Console -->
-            <button id="trigger-attack-soc-btn" onclick="triggerCinematicAttack()" class="ripple-effect btn-interactive flex items-center gap-2 bg-error-container hover:bg-error/40 text-on-error-container px-4 py-2 rounded-lg font-label-sm text-xs uppercase font-black tracking-wider transition-all border border-error shadow-[0_0_18px_rgba(255,180,171,0.35)] animate-pulse">
-              <span class="material-symbols-outlined text-base text-error">security_update_warning</span>
-              <span id="soc-attack-btn-text" class="text-white font-extrabold">Simulate Reverse Attack</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Canvas Flow Stage -->
-        <div class="relative w-full h-72 bg-surface-container-lowest rounded-xl overflow-hidden flex items-center justify-between px-8 border border-outline-variant/70" id="visualizer-stage">
-          
-          <!-- Left Node: Untrusted Ingress TX -->
-          <div class="relative z-10 flex flex-col items-center gap-2 bg-surface-container-high/95 p-4 rounded-xl shadow-lg w-56 border border-error/40 hover-lift">
-            <div class="flex items-center justify-between w-full">
-              <span class="font-label-sm text-xs text-error uppercase font-bold">EXTERNAL INGRESS</span>
-              <span class="px-2 py-0.5 bg-error/20 text-error rounded font-label-sm text-[10px] font-bold">TX-01</span>
-            </div>
-            <div class="w-full bg-surface-container-low p-2.5 rounded text-[11px] font-mono space-y-1 border border-outline-variant/30">
-              <div class="flex justify-between text-slate-400"><span>IP:</span><span class="text-white font-semibold">198.51.100.74</span></div>
-              <div class="flex justify-between text-slate-400"><span>Laser:</span><span class="text-primary font-bold">CW DFB (1310nm)</span></div>
-            </div>
-            <div class="flex items-center gap-1 text-primary font-label-sm text-[11px] animate-pulse font-bold">
-              <span class="material-symbols-outlined text-sm">arrow_forward</span>
-              <span>EMITTING PHOTONS</span>
-            </div>
-          </div>
-
-          <!-- Center Optical Diode Hardware Barrier -->
-          <div id="hardware-barrier" class="relative z-20 flex flex-col items-center justify-center h-5/6 w-52 bg-surface-container-highest/90 backdrop-blur-md rounded-xl shadow-xl border border-primary/50 transition-all duration-200">
-            <div class="absolute -top-3 px-2.5 py-0.5 bg-surface-container-high text-primary rounded font-label-sm text-[10px] uppercase tracking-widest font-extrabold border border-primary/40 shadow-sm">
-              OPTICAL ISOLATION CORE
-            </div>
-            <span class="material-symbols-outlined text-3xl text-primary mb-1">lens_blur</span>
-            <div class="text-center">
-              <span class="font-label-sm text-xs text-white font-extrabold block uppercase">PHYSICAL DIODE</span>
-              <span class="font-label-sm text-[10px] text-tertiary block font-bold">NO REVERSE PHOTONS</span>
-            </div>
-            <div class="hidden mt-2 px-2.5 py-0.5 bg-error text-on-error font-label-sm uppercase rounded animate-bounce text-[10px] font-black tracking-wider" id="barrier-alert-tag">
-              BLOCKED 0 BPS
-            </div>
-          </div>
-
-          <!-- Right Node: Trusted Egress RX -->
-          <div class="relative z-10 flex flex-col items-center gap-2 bg-surface-container-high/95 p-4 rounded-xl shadow-lg w-56 border border-secondary/40 hover-lift">
-            <div class="flex items-center justify-between w-full">
-              <span class="font-label-sm text-xs text-tertiary uppercase font-bold">SECURE ENCLAVE</span>
-              <span class="px-2 py-0.5 bg-tertiary/20 text-tertiary rounded font-label-sm text-[10px] font-bold">RX-01</span>
-            </div>
-            <div class="w-full bg-surface-container-low p-2.5 rounded text-[11px] font-mono space-y-1 border border-outline-variant/30">
-              <div class="flex justify-between text-slate-400"><span>Target:</span><span class="text-white font-semibold">10.0.80.12</span></div>
-              <div class="flex justify-between text-slate-400"><span>TX Wire:</span><span class="text-error font-bold">PHYSICALLY CUT</span></div>
-            </div>
-            <div class="flex items-center gap-1 text-tertiary font-label-sm text-[11px] font-bold">
-              <span class="material-symbols-outlined text-sm">verified_user</span>
-              <span>100% AIR-GAP SECURE</span>
-            </div>
-          </div>
-
-          <!-- HTML5 Canvas for Photons, Particle Explosion & Motion Trails -->
-          <canvas id="soc-photon-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
-        </div>
-      </div>
-
-      <!-- ROW 3 — TELEMETRY TRANSFER LOG & INTEGRITY AUDIT -->
-      <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        
-        <!-- LEFT PANEL: Transfer Log (8 Cols) -->
-        <div class="xl:col-span-8 bg-surface-container/85 rounded-xl shadow-md p-6 border border-outline-variant/60 flex flex-col justify-between">
-          <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-outline-variant/50">
-            <div>
-              <h3 class="font-headline-md text-base text-white font-bold flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary text-lg">data_object</span>
-                Telemetry Transfer & Threat Intelligence Log
-              </h3>
-              <p class="font-label-sm text-xs text-slate-300 mt-0.5">Real-time passive classifications • Click row to inspect Autoencoder feature vector</p>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <!-- Search Input with Debounce -->
-              <div class="relative">
-                <input type="text" id="soc-log-search" oninput="handleThreatSearch(this.value)" placeholder="Filter IP, Flow, Label..." class="bg-surface-container-lowest text-white text-xs font-mono px-3 py-1.5 pl-8 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary w-48 border border-outline-variant/60 placeholder:text-slate-500"/>
-                <span class="material-symbols-outlined text-sm text-slate-400 absolute left-2 top-2">search</span>
+        <div class="flex flex-col gap-3 overflow-y-auto max-h-[360px] pr-1 font-label-sm text-xs mt-4" id="audit-timeline-stream">
+          <div class="flex items-start gap-2.5 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/40 hover-lift">
+            <span class="material-symbols-outlined text-primary text-base mt-0.5">wb_iridescent</span>
+            <div class="flex-1">
+              <div class="flex justify-between items-center">
+                <span class="text-white font-bold">Optical Diode Nominal</span>
+                <span class="text-slate-400 text-[10px]">14:27:55</span>
               </div>
-
-              <!-- Export CSV -->
-              <button onclick="exportCSV()" class="ripple-effect btn-interactive bg-surface-container-high hover:bg-surface-bright text-white font-label-sm text-xs uppercase px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 border border-outline-variant font-semibold">
-                <span class="material-symbols-outlined text-sm text-primary">download</span>
-                <span>Export CSV</span>
-              </button>
+              <p class="text-slate-300 text-[11px] mt-0.5">Continuous forward transmission at 1310nm. Zero reverse reflection.</p>
             </div>
           </div>
 
-          <!-- Table Container with Smooth Fade-in -->
-          <div class="overflow-x-auto w-full mt-4">
-            <table class="w-full text-left text-xs font-mono border-collapse">
-              <thead>
-                <tr class="text-slate-400 uppercase tracking-wider border-b border-outline-variant/60 text-[11px]">
-                  <th class="py-2.5 px-3">Flow ID</th>
-                  <th class="py-2.5 px-3">Time (UTC)</th>
-                  <th class="py-2.5 px-3">Classification</th>
-                  <th class="py-2.5 px-3">Source IP & Port</th>
-                  <th class="py-2.5 px-3">Flags</th>
-                  <th class="py-2.5 px-3">Confidence</th>
-                  <th class="py-2.5 px-3 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody id="soc-transfer-log-body" class="divide-y divide-outline-variant/30 transition-all duration-300">
-                <!-- Dynamically populated rows -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- RIGHT PANEL: Integrity Audit Stream (4 Cols) -->
-        <div class="xl:col-span-4 bg-surface-container/85 rounded-xl shadow-md p-6 border border-outline-variant/60 flex flex-col justify-between">
-          <div class="flex items-center justify-between pb-3 border-b border-outline-variant/50">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-tertiary text-lg">verified</span>
-              <h3 class="font-headline-md text-base text-white font-bold">Integrity Audit Stream</h3>
-            </div>
-            <span class="px-2.5 py-0.5 bg-tertiary/20 text-tertiary rounded font-label-sm text-[10px] font-bold">EAL7+ ACTIVE</span>
-          </div>
-
-          <div class="flex flex-col gap-3 overflow-y-auto max-h-[360px] pr-1 font-label-sm text-xs mt-4" id="audit-timeline-stream">
-            <div class="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-lg border border-outline-variant/40 hover-lift">
-              <span class="material-symbols-outlined text-primary text-base mt-0.5">wb_iridescent</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-center">
-                  <span class="text-white font-bold">Optical carrier nominal</span>
-                  <span class="text-slate-400 text-[10px]">14:27:55</span>
-                </div>
-                <p class="text-slate-300 text-[11px] mt-0.5">Laser emission steady at 1310nm. 0.00dB backscatter.</p>
+          <div class="flex items-start gap-2.5 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/40 hover-lift">
+            <span class="material-symbols-outlined text-tertiary text-base mt-0.5">memory</span>
+            <div class="flex-1">
+              <div class="flex justify-between items-center">
+                <span class="text-white font-bold">AI Tap Baseline Synchronized</span>
+                <span class="text-slate-400 text-[10px]">14:25:30</span>
               </div>
+              <p class="text-slate-300 text-[11px] mt-0.5">Statistical IAT & Entropy features locked at 3σ threshold.</p>
             </div>
-
-            <div class="flex items-start gap-2.5 p-3 bg-surface-container-low rounded-lg border border-outline-variant/40 hover-lift">
-              <span class="material-symbols-outlined text-tertiary text-base mt-0.5">memory</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-center">
-                  <span class="text-white font-bold">FPGA Passive Tap Lock</span>
-                  <span class="text-slate-400 text-[10px]">14:25:30</span>
-                </div>
-                <p class="text-slate-300 text-[11px] mt-0.5">Zero CRC errors in 142k ingress packet frames.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ROW 4 — COMPLIANCE STANDARDS & HARDWARE ENFORCEMENT SETTINGS -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-12">
-        <div class="hover-lift bg-surface-container/85 rounded-xl shadow-md p-6 border border-outline-variant/60 flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-tertiary text-lg">workspace_premium</span>
-              <h3 class="font-headline-md text-base text-white font-bold">Assurance & Standard Certifications</h3>
-            </div>
-            <span class="px-2.5 py-0.5 bg-tertiary/20 text-tertiary rounded font-label-sm text-[10px] font-bold">100% ASSURED</span>
-          </div>
-          <div class="space-y-3 font-label-sm text-xs">
-            <div>
-              <div class="flex justify-between mb-1">
-                <span class="text-white font-semibold">IEC 62443-3-3 (Industrial Cyber Security)</span>
-                <span class="text-tertiary font-bold">100%</span>
-              </div>
-              <div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
-                <div class="bg-tertiary h-full w-full"></div>
-              </div>
-            </div>
-            <div>
-              <div class="flex justify-between mb-1">
-                <span class="text-white font-semibold">NIST SP 800-82 Rev 3 (OT Air-Gap Isolation)</span>
-                <span class="text-tertiary font-bold">100%</span>
-              </div>
-              <div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
-                <div class="bg-tertiary h-full w-full"></div>
-              </div>
-            </div>
-          </div>
-          <button onclick="showToast('Downloading formal cryptographically signed audit certificate (PDF)...')" class="ripple-effect btn-interactive mt-4 w-full py-2 bg-surface-container-high hover:bg-surface-bright text-primary font-label-sm text-xs uppercase rounded-lg transition-colors flex items-center justify-center gap-1.5 border border-outline-variant font-bold">
-            <span class="material-symbols-outlined text-sm">picture_as_pdf</span>
-            <span>Download Formal Audit Certificate (EAL7+ Signed PDF)</span>
-          </button>
-        </div>
-
-        <div class="hover-lift bg-surface-container/85 rounded-xl shadow-md p-6 border border-outline-variant/60 flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary text-lg">toggle_on</span>
-              <h3 class="font-headline-md text-base text-white font-bold">Hardware Enforcement Settings</h3>
-            </div>
-            <span class="px-2.5 py-0.5 bg-primary/20 text-primary rounded font-label-sm text-[10px] font-bold">EEPROM SECURED</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <div class="p-3 bg-surface-container-low rounded-lg flex items-center justify-between border border-outline-variant/40">
-              <div>
-                <p class="text-white font-bold">Layer-1 Isolation</p>
-                <p class="text-slate-400 text-[10px]">Strict physical break</p>
-              </div>
-              <span class="material-symbols-outlined text-secondary">lock</span>
-            </div>
-
-            <div class="p-3 bg-surface-container-low rounded-lg flex items-center justify-between border border-outline-variant/40">
-              <div>
-                <p class="text-white font-bold">Autoencoder Tap</p>
-                <p class="text-slate-400 text-[10px]">PyTorch 3σ Reconstruction</p>
-              </div>
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" checked onchange="showToast('Autoencoder passive tap settings committed.')" class="sr-only peer">
-                <div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
-              </label>
-            </div>
-          </div>
-
-          <div class="mt-4 p-2.5 bg-surface-container-lowest rounded flex items-center gap-2 text-[11px] font-label-sm text-slate-300">
-            <span class="material-symbols-outlined text-sm text-tertiary">lock</span>
-            <span>Physical chassis lock active. Electronic reverse override impossible.</span>
           </div>
         </div>
       </div>
 
     </div>
-  </div>
+  </section>
+
+  <!-- ========================================================================================= -->
+  <!--                           SECTION 4: HOW IT WORKS (3 CLEAN STEPS)                         -->
+  <!-- ========================================================================================= -->
+  <section id="how-it-works" class="relative w-full max-w-7xl mx-auto px-6 py-16">
+    <div class="text-center max-w-3xl mx-auto mb-12">
+      <div class="inline-flex items-center gap-1 font-label-sm text-xs uppercase tracking-widest text-primary mb-2 font-bold">
+        <span class="material-symbols-outlined text-sm">schema</span>
+        <span>DEFENSIVE PIPELINE</span>
+      </div>
+      <h2 class="font-headline-xl text-3xl md:text-5xl uppercase text-white font-extrabold">
+        How IRONGATE Protects
+      </h2>
+      <p class="font-body-lg text-sm text-slate-300 mt-2">
+        A seamless 3-step physical and cognitive isolation architecture.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- Step 1 -->
+      <div class="hover-lift bg-surface-container-low/95 rounded-xl p-6 border border-outline-variant flex flex-col justify-between shadow-xl">
+        <div>
+          <span class="font-telemetry-num text-primary text-2xl font-black block mb-3">01</span>
+          <h3 class="font-headline-md text-lg text-white font-bold mb-2">Ingress & Photon Conversion</h3>
+          <p class="font-body-sm text-xs text-slate-300 leading-relaxed">
+            Untrusted network packets arrive at the transmit interface and are immediately converted to 1310nm laser pulses down single-strand fiber.
+          </p>
+        </div>
+        <div class="mt-4 pt-3 border-t border-outline-variant/60 text-[11px] text-tertiary font-bold">
+          LAYER-1 PHYSICAL UNIDIRECTIONALITY
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="hover-lift bg-surface-container-low/95 rounded-xl p-6 border border-outline-variant flex flex-col justify-between shadow-xl">
+        <div>
+          <span class="font-telemetry-num text-secondary text-2xl font-black block mb-3">02</span>
+          <h3 class="font-headline-md text-lg text-white font-bold mb-2">Passive AI Anomaly Inspection</h3>
+          <p class="font-body-sm text-xs text-slate-300 leading-relaxed">
+            An out-of-band optical tap extracts packet IAT & Shannon Entropy, comparing behavior against baseline. If reconstruction error exceeds 3σ, the payload is flagged.
+          </p>
+        </div>
+        <div class="mt-4 pt-3 border-t border-outline-variant/60 text-[11px] text-secondary font-bold">
+          ZERO-DAY SMUGGLE DETECTION
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="hover-lift bg-surface-container-low/95 rounded-xl p-6 border border-outline-variant flex flex-col justify-between shadow-xl">
+        <div>
+          <span class="font-telemetry-num text-tertiary text-2xl font-black block mb-3">03</span>
+          <h3 class="font-headline-md text-lg text-white font-bold mb-2">Clean Delivery to Enclave</h3>
+          <p class="font-body-sm text-xs text-slate-300 leading-relaxed">
+            Receiver converts validated light back to binary frames and forwards clean data to OT servers with zero acknowledgement transmission to sender.
+          </p>
+        </div>
+        <div class="mt-4 pt-3 border-t border-outline-variant/60 text-[11px] text-tertiary font-bold">
+          ABSOLUTE AIR-GAP ENCLAVE ISOLATION
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================================= -->
+  <!--                           SECTION 5: WHY IRONGATE (3 CRISP BENCHMARKS)                    -->
+  <!-- ========================================================================================= -->
+  <section id="comparison" class="relative w-full max-w-7xl mx-auto px-6 py-16 mb-12">
+    <div class="text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-1 font-label-sm text-xs uppercase tracking-widest text-primary mb-2 font-bold">
+        <span class="material-symbols-outlined text-sm">balance</span>
+        <span>DEFENSIVE INTEGRITY BENCHMARK</span>
+      </div>
+      <h2 class="font-headline-xl text-3xl md:text-5xl uppercase text-white font-extrabold">
+        Why Data Diodes vs Software Firewalls?
+      </h2>
+      <p class="font-body-lg text-sm text-slate-300 mt-2">
+        Software firewalls have code vulnerabilities and return paths. <span class="text-primary font-bold">Optical physics cannot be bypassed.</span>
+      </p>
+    </div>
+
+    <div class="hover-lift bg-surface-container-low/95 rounded-xl p-6 shadow-2xl overflow-x-auto border border-outline-variant">
+      <table class="w-full text-left font-body-md text-xs">
+        <thead>
+          <tr class="text-slate-400 font-label-sm text-xs uppercase tracking-widest border-b border-outline-variant/60">
+            <th class="py-3.5 px-4 w-1/3">Defensive Pillar</th>
+            <th class="py-3.5 px-4 w-1/3 text-error font-bold">Standard Software Firewall</th>
+            <th class="py-3.5 px-4 w-1/3 text-primary font-bold">IRONGATE Data Diode AI</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant/40 text-slate-300">
+          <tr>
+            <td class="py-4 px-4 font-semibold text-white">1. Return Path Security</td>
+            <td class="py-4 px-4 bg-error-container/10 text-error">Bidirectional TCP socket (vulnerable to reverse C2 callbacks)</td>
+            <td class="py-4 px-4 bg-on-tertiary-fixed-variant/20 text-tertiary font-bold">Physical single-strand fiber (Zero return transmission path)</td>
+          </tr>
+          <tr>
+            <td class="py-4 px-4 font-semibold text-white">2. Zero-Day Payload Smuggling</td>
+            <td class="py-4 px-4 bg-error-container/10 text-error">Signature-dependent (Blind to novel zero-day exploits)</td>
+            <td class="py-4 px-4 bg-on-tertiary-fixed-variant/20 text-tertiary font-bold">Statistical AI Anomaly Engine (&gt;3σ detection of smuggled payloads)</td>
+          </tr>
+          <tr>
+            <td class="py-4 px-4 font-semibold text-white">3. Air-Gap Integrity</td>
+            <td class="py-4 px-4 bg-error-container/10 text-error">Does not meet air-gap isolation standards</td>
+            <td class="py-4 px-4 bg-on-tertiary-fixed-variant/20 text-tertiary font-bold">Meets strict physical unidirectional air-gap requirements</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
   <!-- ============================== CINEMATIC AI VERDICT MODAL ============================== -->
-  <div id="ai-verdict-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
-    <div id="ai-verdict-box" class="scanline-glitch relative w-full max-w-lg bg-surface-container-low border-2 border-error rounded-2xl p-6 shadow-[0_0_50px_rgba(255,77,79,0.5)] transform scale-95 transition-all duration-300">
+  <div id="ai-verdict-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div id="ai-verdict-box" class="relative w-full max-w-lg bg-surface-container-low border-2 border-error rounded-2xl p-6 shadow-[0_0_50px_rgba(255,77,79,0.5)] transform scale-95 transition-all duration-300">
       <div class="flex items-center justify-between pb-3 border-b border-error/40">
         <div class="flex items-center gap-2.5">
           <span class="w-3 h-3 rounded-full bg-error animate-ping"></span>
-          <h3 class="font-headline-md text-base text-error font-black uppercase tracking-wider">CRITICAL INCIDENT DEFLECTED</h3>
+          <h3 class="font-headline-md text-base text-error font-black uppercase tracking-wider">SMUGGLED PAYLOAD INTERCEPTED</h3>
         </div>
-        <span class="px-2 py-0.5 rounded bg-error/20 text-error font-mono text-[10px] font-bold border border-error/50">HARDWARE DIODE 0 BPS</span>
+        <span class="px-2 py-0.5 rounded bg-error/20 text-error font-mono text-[10px] font-bold border border-error/50">ISOLATED BEFORE ENCLAVE</span>
       </div>
 
       <div class="py-4 space-y-3 font-mono text-xs">
         <div class="flex justify-between items-center text-slate-300">
-          <span>Target Destination:</span>
-          <span class="text-white font-bold">10.0.80.12 (OT Enclave Core)</span>
+          <span>Target Enclave:</span>
+          <span class="text-white font-bold">10.0.80.12 (OT SCADA Bus)</span>
         </div>
         <div class="flex justify-between items-center text-slate-300">
-          <span>Attack Profile:</span>
-          <span id="verdict-label" class="text-error font-black uppercase">DDoS SYN FLOOD & ZERO-DAY BURST</span>
+          <span>Vector Detected:</span>
+          <span class="text-error font-black uppercase" id="verdict-label">MALICIOUS SCADA PAYLOAD SMUGGLE</span>
         </div>
         <div class="flex justify-between items-center text-slate-300">
-          <span>Reconstruction Loss ($L_{rec}$):</span>
-          <span id="verdict-loss" class="text-error font-extrabold">0.942 (&gt;&gt; 3σ Threshold)</span>
+          <span>Anomaly Score ($L_{rec}$):</span>
+          <span class="text-error font-extrabold" id="verdict-loss">0.942 (&gt;&gt; 3σ Threshold)</span>
         </div>
         <div class="flex justify-between items-center text-slate-300">
-          <span>Physical Mitigation:</span>
-          <span class="text-tertiary font-bold">Laser Reflection Rejected (Zero TX Return)</span>
+          <span>Engine Verdict:</span>
+          <span class="text-tertiary font-bold">Flow Isolated • 0 Bytes Delivered to Core</span>
         </div>
       </div>
 
       <div class="pt-3 border-t border-outline-variant/40 flex justify-end">
-        <button onclick="closeVerdictModal()" class="ripple-effect btn-interactive px-5 py-2 rounded-lg bg-error hover:bg-error-container text-white font-mono text-xs font-bold uppercase transition-colors shadow-lg">
+        <button onclick="closeVerdictModal()" class="btn-interactive px-5 py-2 rounded-lg bg-error hover:bg-error-container text-white font-mono text-xs font-bold uppercase transition-colors shadow-lg">
           Acknowledge & Dismiss
         </button>
       </div>
@@ -1120,9 +767,9 @@
     </div>
 
     <div class="flex-1 overflow-y-auto p-6 space-y-6">
-      <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/60 space-y-3">
+      <div class="p-4 rounded-xl bg-surface-container border border-outline-variant space-y-3">
         <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-400 uppercase">Threat Classification:</span>
+          <span class="text-slate-400 uppercase">Attack Vector:</span>
           <span id="drawer-label" class="font-bold text-error">--</span>
         </div>
         <div class="flex items-center justify-between text-xs">
@@ -1130,7 +777,7 @@
           <span id="drawer-mitre" class="text-primary font-mono font-bold">--</span>
         </div>
         <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-400 uppercase">Reconstruction Loss (L_rec):</span>
+          <span class="text-slate-400 uppercase">Anomaly Loss ($L_{rec}$):</span>
           <span id="drawer-loss" class="font-bold text-secondary font-mono">--</span>
         </div>
         <div class="flex items-center justify-between text-xs">
@@ -1140,21 +787,21 @@
       </div>
 
       <div>
-        <h4 class="text-xs font-mono font-bold uppercase text-white tracking-wider mb-3">Autoencoder Feature Telemetry</h4>
+        <h4 class="text-xs font-mono font-bold uppercase text-white tracking-wider mb-3">Extracted Feature Vectors</h4>
         <div class="grid grid-cols-2 gap-3 text-xs font-mono">
-          <div class="p-3 rounded bg-surface-container border border-outline-variant/60">
+          <div class="p-3 rounded bg-surface-container border border-outline-variant">
             <span class="text-[10px] text-slate-400 uppercase block">Source IP</span>
             <span id="drawer-src-ip" class="text-white font-medium block mt-0.5">--</span>
           </div>
-          <div class="p-3 rounded bg-surface-container border border-outline-variant/60">
+          <div class="p-3 rounded bg-surface-container border border-outline-variant">
             <span class="text-[10px] text-slate-400 uppercase block">Target Port</span>
             <span id="drawer-dst-port" class="text-white font-medium block mt-0.5">--</span>
           </div>
-          <div class="p-3 rounded bg-surface-container border border-outline-variant/60">
+          <div class="p-3 rounded bg-surface-container border border-outline-variant">
             <span class="text-[10px] text-slate-400 uppercase block">Shannon Entropy</span>
             <span id="drawer-entropy" class="text-primary font-medium block mt-0.5">7.82 bits (high)</span>
           </div>
-          <div class="p-3 rounded bg-surface-container border border-outline-variant/60">
+          <div class="p-3 rounded bg-surface-container border border-outline-variant">
             <span class="text-[10px] text-slate-400 uppercase block">Anomaly Threshold</span>
             <span class="text-tertiary font-bold block mt-0.5">&gt; 3.0σ Exceeded</span>
           </div>
@@ -1163,7 +810,7 @@
 
       <div>
         <h4 class="text-xs font-mono font-bold uppercase text-white tracking-wider mb-3">Inter-Arrival Time (IAT) Series</h4>
-        <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/60">
+        <div class="p-4 rounded-xl bg-surface-container border border-outline-variant">
           <canvas id="drawer-iat-canvas" class="w-full h-24 block"></canvas>
           <div class="mt-2 flex items-center justify-between text-[10px] font-mono text-slate-400">
             <span>Recent Sequence</span>
@@ -1179,11 +826,10 @@
   <!-- ========================================================================================= -->
   <script>
     // === DEMO MODE: CLIENT-SIDE SIMULATION, NO BACKEND REQUIRED ===
-    
-    // ── 1. In-Memory State & Autoencoder Threat Store ──────────
+
+    // ── 1. In-Memory State & Threat Ledger ─────────────────────
     let packetsAnalyzed = 2847291;
     let threatsFlagged = 37;
-    let zeroDayCount = 3;
     let avgLatency = 14.82;
     let currentLoss = 0.034;
     const lossHistory = [0.031, 0.035, 0.028, 0.033, 0.036, 0.032, 0.029, 0.034, 0.030, 0.034];
@@ -1191,10 +837,19 @@
 
     let searchDebounceTimer = null;
     let threatSearchTerm = "";
-    let isAudioEnabled = false;
-    let audioCtx = null;
 
     const THREAT_TYPES = [
+      {
+        label: "Smuggled SCADA Exploit",
+        threat_type: "smuggle",
+        severity: "CRITICAL",
+        mitre: "T1055 - Malicious Payload Injection",
+        flags: ["PSH", "ACK"],
+        port: 502,
+        entropy: 7.94,
+        iat_ms: 0.03,
+        loss: 0.942
+      },
       {
         label: "DDoS SYN Flood",
         threat_type: "ddos",
@@ -1218,30 +873,36 @@
         loss: 0.412
       },
       {
-        label: "C2 Beacon",
+        label: "C2 Beaconing Pattern",
         threat_type: "c2",
         severity: "HIGH",
         mitre: "T1071.001 - Web Protocols C2",
         flags: ["PSH", "ACK"],
         port: 8443,
-        entropy: 7.92,
+        entropy: 7.82,
         iat_ms: 500.0,
         loss: 0.765
-      },
-      {
-        label: "ZERO_DAY_ANOMALY",
-        threat_type: "zero-day",
-        severity: "CRITICAL",
-        mitre: "T1203 - Optical Ingress Statistical Alien",
-        flags: ["PSH", "ACK", "URG"],
-        port: 8080,
-        entropy: 7.85,
-        iat_ms: 4.12,
-        loss: 0.942
       }
     ];
 
     let threatStore = [
+      {
+        flow_id: "flw_9e41b02",
+        timestamp: new Date().toISOString().substring(11, 19) + " UTC",
+        label: "Smuggled SCADA Exploit",
+        threat_type: "smuggle",
+        confidence: 0.988,
+        latency_ms: 14.1,
+        severity: "CRITICAL",
+        src_ip: "198.51.100.74:54210",
+        dst_port: "502 (10.0.80.12)",
+        tcp_flags: ["PSH", "ACK"],
+        mitre_technique: "T1055 - Malicious Payload Injection",
+        iat_ms: 0.03,
+        entropy: 7.94,
+        loss: 0.942,
+        iat_series: [0.06, 0.03, 0.04, 0.03, 0.02, 0.03]
+      },
       {
         flow_id: "flw_8b31a01",
         timestamp: new Date().toISOString().substring(11, 19) + " UTC",
@@ -1250,7 +911,7 @@
         confidence: 0.984,
         latency_ms: 14.2,
         severity: "CRITICAL",
-        src_ip: "198.51.100.74:54210",
+        src_ip: "198.51.100.82:61002",
         dst_port: "443 (10.0.80.12)",
         tcp_flags: ["SYN"],
         mitre_technique: "T1498.001 - Direct Network Flood",
@@ -1258,23 +919,6 @@
         entropy: 3.4,
         loss: 0.884,
         iat_series: [0.08, 0.04, 0.05, 0.03, 0.04, 0.04]
-      },
-      {
-        flow_id: "flw_7c99f42",
-        timestamp: new Date().toISOString().substring(11, 19) + " UTC",
-        label: "ZERO_DAY_ANOMALY",
-        threat_type: "zero-day",
-        confidence: 0.962,
-        latency_ms: 18.5,
-        severity: "CRITICAL",
-        src_ip: "203.0.113.19:41992",
-        dst_port: "8080 (10.0.80.4)",
-        tcp_flags: ["PSH", "ACK", "URG"],
-        mitre_technique: "T1203 - Optical Ingress Statistical Alien",
-        iat_ms: 4.12,
-        entropy: 7.85,
-        loss: 0.942,
-        iat_series: [8.2, 4.1, 9.8, 4.1, 7.3, 4.12]
       },
       {
         flow_id: "flw_4e12c88",
@@ -1296,7 +940,7 @@
       {
         flow_id: "flw_2a90e31",
         timestamp: new Date().toISOString().substring(11, 19) + " UTC",
-        label: "C2 Beacon",
+        label: "C2 Beaconing Pattern",
         threat_type: "c2",
         confidence: 0.931,
         latency_ms: 16.2,
@@ -1306,47 +950,18 @@
         tcp_flags: ["PSH", "ACK"],
         mitre_technique: "T1071.001 - Web Protocols C2",
         iat_ms: 500.0,
-        entropy: 7.92,
+        entropy: 7.82,
         loss: 0.765,
         iat_series: [500.2, 499.8, 500.1, 500.0, 499.9]
       }
     ];
 
-    // ── 2. Synthesized Audio Alert FX (Web Audio API) ──────────
-    function toggleAudio() {
-      isAudioEnabled = !isAudioEnabled;
-      const icon = document.getElementById("audio-icon");
-      if (icon) icon.innerText = isAudioEnabled ? "volume_up" : "volume_off";
-      showToast(isAudioEnabled ? "Audio FX unmuted (alert blips enabled)" : "Audio FX muted");
-    }
-
-    function playDeflectionTone() {
-      if (!isAudioEnabled) return;
-      try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.25);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
-
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.25);
-      } catch (e) {}
-    }
-
-    // ── 3. Toast Notifications ─────────────────────────────────
+    // ── 2. Toast Notifications ─────────────────────────────────
     function showToast(message, type = "info") {
       const container = document.getElementById("toast-container");
       if (!container) return;
       const toast = document.createElement("div");
-      const isError = type === "error" || message.includes("BLOCKED") || message.includes("ATTACK") || message.includes("SPIKE");
+      const isError = type === "error" || message.includes("INTERCEPTED") || message.includes("ATTACK") || message.includes("SPIKE");
       toast.className = `pointer-events-auto px-4 py-2.5 rounded-lg shadow-2xl backdrop-blur-xl flex items-center gap-2 text-xs font-mono transition-all duration-300 transform translate-y-2 opacity-0 ${
         isError ? "bg-error-container text-on-error-container border border-error/60" : "bg-surface-container-highest text-white border border-secondary/50"
       }`;
@@ -1359,68 +974,40 @@
       }, 3500);
     }
 
-    // ── 4. Navigation View Switcher ────────────────────────────
-    function switchMainTab(tab) {
-      const viewOverview = document.getElementById("view-overview");
-      const viewSoc = document.getElementById("view-soc");
-      const btnOverview = document.getElementById("nav-overview");
-      const btnSoc = document.getElementById("nav-soc");
-      const btnSecurity = document.getElementById("nav-security");
-
-      if (tab === "soc") {
-        viewOverview.classList.add("hidden");
-        viewSoc.classList.remove("hidden");
-        btnSoc.className = "nav-link-item font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded text-primary font-bold";
-        btnOverview.className = "nav-link-item text-slate-300 hover:text-white font-label-md text-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded font-semibold";
-        if (btnSecurity) btnSecurity.className = "nav-link-item text-slate-300 hover:text-white font-label-md text-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded font-semibold";
-        renderThreatTable();
-        renderLossSparkline();
-      } else {
-        viewSoc.classList.add("hidden");
-        viewOverview.classList.remove("hidden");
-        btnOverview.className = "nav-link-item font-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded text-primary font-bold";
-        btnSoc.className = "nav-link-item text-slate-300 hover:text-white font-label-md text-label-md uppercase tracking-wider transition-colors px-3 py-1.5 rounded font-semibold";
-        if (tab === "security") {
-          const sec = document.getElementById("security-comparison");
-          if (sec) sec.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
-    }
-
-    // ── 5. Count-Up Number Helper ──────────────────────────────
+    // ── 3. Number Formatting & Display ─────────────────────────
     function updateCounterDisplay(elementId, value, isDecimal = false, decimals = 2) {
       const el = document.getElementById(elementId);
       if (!el) return;
       el.innerText = isDecimal ? value.toFixed(decimals) : Math.floor(value).toLocaleString();
     }
 
-    // ── 6. Synthetic Packet Generation Loop (400-800ms) ────────
+    // ── 4. Synthetic Continuous Packet Stream (400-800ms) ───────
     function scheduleNextPacket() {
       const delay = Math.floor(400 + Math.random() * 400);
       setTimeout(() => {
         packetsAnalyzed += Math.floor(1 + Math.random() * 3);
         updateCounterDisplay("metric-packets", packetsAnalyzed);
 
-        const rateEl = document.getElementById("stream-flow-rate");
-        if (rateEl) {
-          const currentRate = Math.floor(175 + Math.random() * 45);
-          rateEl.innerText = `${currentRate} PKTS/S`;
-        }
+        const currentRate = Math.floor(175 + Math.random() * 45);
+        const rateReadout = document.getElementById("flow-rate-readout");
+        if (rateReadout) rateReadout.innerText = `${currentRate} PKTS/S`;
 
         if (currentLoss < LOSS_THRESHOLD_3SIGMA) {
           currentLoss = 0.022 + Math.random() * 0.018;
           lossHistory.push(currentLoss);
           if (lossHistory.length > 20) lossHistory.shift();
           updateCounterDisplay("metric-reconstruction-loss", currentLoss, true, 3);
+          const baseLoss = document.getElementById("flow-baseline-loss");
+          if (baseLoss) baseLoss.innerText = currentLoss.toFixed(3);
           renderLossSparkline();
         }
 
-        spawnPhoton(false);
+        spawnForwardPhoton(false);
         scheduleNextPacket();
       }, delay);
     }
 
-    // ── 7. Reconstruction Loss Sparkline Renderer ──────────────
+    // ── 5. Anomaly Loss Sparkline ──────────────────────────────
     function renderLossSparkline() {
       const canvas = document.getElementById("loss-sparkline-canvas");
       if (!canvas) return;
@@ -1433,7 +1020,7 @@
       const h = canvas.height;
       const maxVal = 1.0;
 
-      // Draw 3-Sigma Reference Line
+      // 3-Sigma Anomaly Line (0.150)
       const thresholdY = h - (LOSS_THRESHOLD_3SIGMA / maxVal) * h;
       ctx.save();
       ctx.strokeStyle = "rgba(255, 180, 171, 0.75)";
@@ -1473,8 +1060,8 @@
       ctx.restore();
     }
 
-    // ── 8. Single Threat Generator ─────────────────────────────
-    function generateSyntheticThreat(isBurst = false) {
+    // ── 6. Smuggled Payload Threat Generator ───────────────────
+    function generateSmuggledThreat(isBurst = false) {
       const choice = THREAT_TYPES[Math.floor(Math.random() * THREAT_TYPES.length)];
       const conf = (90 + Math.random() * 9.5) / 100;
       const lat = parseFloat((12 + Math.random() * 12).toFixed(1));
@@ -1489,7 +1076,7 @@
       updateCounterDisplay("metric-reconstruction-loss", currentLoss, true, 3);
       const tag = document.getElementById("loss-status-tag");
       if (tag) {
-        tag.innerText = "SPIKE > 3σ (FLAGGED)";
+        tag.innerText = "SPIKE > 3σ (INTERCEPTED)";
         tag.className = "text-[10px] font-mono text-error font-extrabold animate-pulse";
         setTimeout(() => {
           if (tag && currentLoss < LOSS_THRESHOLD_3SIGMA) {
@@ -1524,8 +1111,7 @@
       threatsFlagged++;
       updateCounterDisplay("metric-threats", threatsFlagged);
 
-      spawnPhoton(true);
-      playDeflectionTone();
+      spawnForwardPhoton(true);
       prependThreatRow(newThreat);
 
       const auditStream = document.getElementById("audit-timeline-stream");
@@ -1536,31 +1122,26 @@
           <span class="material-symbols-outlined text-error text-base mt-0.5">gpp_bad</span>
           <div class="flex-1">
             <div class="flex justify-between items-center">
-              <span class="text-error font-bold">${choice.label.toUpperCase()} DEFLECTED</span>
+              <span class="text-error font-bold">${choice.label.toUpperCase()} INTERCEPTED</span>
               <span class="text-error text-[10px]">JUST NOW</span>
             </div>
-            <p class="text-slate-300 text-[11px] mt-0.5">L_rec: ${currentLoss.toFixed(3)} (Crossed 3σ threshold). Optical barrier: 0.00 bps passed.</p>
+            <p class="text-slate-300 text-[11px] mt-0.5">${choice.mitre} • Anomaly Score: ${currentLoss.toFixed(3)} (&gt;3σ). Intercepted before enclave.</p>
           </div>
         `;
         auditStream.insertBefore(auditEntry, auditStream.firstChild);
       }
 
       if (!isBurst) {
-        showToast(`🚨 THREAT DEFLECTED: ${choice.label} (L_rec = ${currentLoss.toFixed(3)} > 3σ)`, "error");
+        showToast(`🚨 SMUGGLED PAYLOAD INTERCEPTED: ${choice.label} (Score: ${currentLoss.toFixed(3)} > 3σ)`, "error");
       }
     }
 
-    // ── 9. THE "WOW" MOMENT: CINEMATIC SIMULATE ATTACK SEQUENCE 
-    function triggerCinematicAttack() {
-      const btn1 = document.getElementById("simulate-attack-global-btn");
-      const btn2 = document.getElementById("trigger-attack-soc-btn");
-      const label = document.getElementById("simulate-attack-label");
-      const socLabel = document.getElementById("soc-attack-btn-text");
+    // ── 7. THE ONE CLEAN "WOW" MOMENT: SIMULATE SMUGGLED ATTACK ─
+    function triggerSmuggledPayloadAttack() {
+      const btn1 = document.getElementById("nav-attack-btn-text");
+      const btn2 = document.getElementById("flow-attack-btn-text");
 
-      if (btn1) btn1.disabled = true;
-      if (btn2) btn2.disabled = true;
-
-      // 1. Trigger Screen Shake & Cinematic Vignette
+      // Screen accent & subtle shake
       document.body.classList.add("shake-active");
       const vignette = document.getElementById("cinematic-vignette");
       if (vignette) vignette.style.opacity = "1";
@@ -1568,9 +1149,9 @@
       setTimeout(() => {
         document.body.classList.remove("shake-active");
         if (vignette) vignette.style.opacity = "0";
-      }, 500);
+      }, 400);
 
-      // 2. Barrier Flashing Alert
+      // Barrier Alert
       const barrier = document.getElementById("hardware-barrier");
       const alertTag = document.getElementById("barrier-alert-tag");
       if (barrier) barrier.classList.add("bg-error/30", "border-error");
@@ -1581,39 +1162,40 @@
         if (alertTag) alertTag.classList.add("hidden");
       }, 3500);
 
-      // 3. Shatter / Deflection Particle Explosion at Diode
+      // Trigger shatter sparks at the AI barrier
       spawnDeflectionShatterSparks();
 
-      // 4. Cooldown Timer & Rapid Threat Injections (6-8 packets over 3s)
+      // Cooldown timer
       let countdown = 4;
-      if (label) label.innerText = `BURST (${countdown}s)`;
-      if (socLabel) socLabel.innerText = `BURST (${countdown}s)`;
+      if (btn1) btn1.innerText = `BURST (${countdown}s)`;
+      if (btn2) btn2.innerText = `BURST (${countdown}s)`;
 
       const timer = setInterval(() => {
         countdown--;
         if (countdown > 0) {
-          if (label) label.innerText = `BURST (${countdown}s)`;
-          if (socLabel) socLabel.innerText = `BURST (${countdown}s)`;
+          if (btn1) btn1.innerText = `BURST (${countdown}s)`;
+          if (btn2) btn2.innerText = `BURST (${countdown}s)`;
         } else {
           clearInterval(timer);
-          if (btn1) { btn1.disabled = false; label.innerText = "SIMULATE ATTACK"; }
-          if (btn2) { btn2.disabled = false; socLabel.innerText = "Simulate Reverse Attack"; }
+          if (btn1) btn1.innerText = "SIMULATE ATTACK";
+          if (btn2) btn2.innerText = "Simulate Smuggled Attack";
         }
       }, 1000);
 
-      const burstCount = Math.floor(6 + Math.random() * 3);
+      // Inject 5-7 rapid smuggled flows over 2.5s
+      const burstCount = Math.floor(5 + Math.random() * 3);
       for (let i = 0; i < burstCount; i++) {
         setTimeout(() => {
-          generateSyntheticThreat(true);
+          generateSmuggledThreat(true);
         }, i * 360);
       }
 
-      // 5. Open Cinematic AI Verdict Glitch Modal after deflection impact
+      // Slide in AI Verdict Card
       setTimeout(() => {
         openVerdictModal();
-      }, 1200);
+      }, 1000);
 
-      showToast(`⚡ ATTACK BURST DEFLECTED: ${burstCount} malicious flows intercepted at physical diode barrier!`, "error");
+      showToast(`⚡ PAYLOAD SMUGGLE INTERCEPTED: ${burstCount} malicious flows caught by AI Engine!`, "error");
     }
 
     function openVerdictModal() {
@@ -1636,7 +1218,7 @@
       modal.classList.add("opacity-0", "pointer-events-none");
     }
 
-    // ── 10. Threat Table Rendering & Search ────────────────────
+    // ── 8. Threat Table Rendering & Search ─────────────────────
     function renderThreatTable() {
       const tbody = document.getElementById("soc-transfer-log-body");
       if (!tbody) return;
@@ -1707,7 +1289,7 @@
       }, 300);
     }
 
-    // ── 11. Threat Detail Drawer ───────────────────────────────
+    // ── 9. Drawer Detail Inspection ────────────────────────────
     function openDrawer(flowId) {
       const t = threatStore.find(x => x.flow_id === flowId);
       if (!t) return;
@@ -1716,12 +1298,12 @@
       document.getElementById("drawer-timestamp").innerText = `${t.timestamp}`;
       document.getElementById("drawer-threat-badge").innerText = t.severity || "CRITICAL";
       document.getElementById("drawer-label").innerText = t.label;
-      document.getElementById("drawer-mitre").innerText = t.mitre_technique || "T1498.001";
+      document.getElementById("drawer-mitre").innerText = t.mitre_technique || "T1055";
       document.getElementById("drawer-loss").innerText = `${(t.loss || 0.884).toFixed(3)} (Spike > 3σ)`;
       document.getElementById("drawer-latency").innerText = `${t.latency_ms} ms`;
       document.getElementById("drawer-src-ip").innerText = t.src_ip;
       document.getElementById("drawer-dst-port").innerText = t.dst_port;
-      document.getElementById("drawer-entropy").innerText = `${(t.entropy || 7.82).toFixed(2)} bits (packed)`;
+      document.getElementById("drawer-entropy").innerText = `${(t.entropy || 7.82).toFixed(2)} bits (high)`;
 
       renderDrawerChart(t.iat_series || [0.2, 0.18, 0.22, 0.19, 0.18]);
       document.getElementById("drawer-iat-mean").innerText = `Mean IAT: ${t.iat_ms || 0.18} ms`;
@@ -1755,10 +1337,9 @@
       ctx.stroke();
     }
 
-    // ── 12. Client-Side CSV Export ─────────────────────────────
     function exportCSV() {
-      showToast("Compiling hardware threat ledger CSV...", "info");
-      let csv = "Flow ID,Timestamp,Classification,Confidence,Severity,Reconstruction Loss,Source IP,Target Port,Protocol,Flags,Latency (ms),MITRE ATT&CK\n";
+      showToast("Compiling threat intelligence ledger CSV...", "info");
+      let csv = "Flow ID,Timestamp,Attack Vector,Confidence,Severity,Anomaly Loss,Source IP,Target Port,Protocol,Flags,Latency (ms),MITRE ATT&CK\n";
       threatStore.forEach(t => {
         csv += `"${t.flow_id}","${t.timestamp}","${t.label}","${(t.confidence * 100).toFixed(1)}%","${t.severity}","${(t.loss || 0.034).toFixed(3)}","${t.src_ip}","${t.dst_port}","TCP","${(t.tcp_flags || []).join('|')}","${t.latency_ms}","${t.mitre_technique}"\n`;
       });
@@ -1773,284 +1354,155 @@
       showToast("Threat log CSV downloaded successfully ✓");
     }
 
-    // ── 13. Enhanced Photon Canvas & Deflection Sparks ─────────
-    const photons = [];
+    // ── 10. Forward Photon Canvas & Spark Animation ─────────────
+    const forwardPhotons = [];
     const shatterSparks = [];
-    let socCanvas, socCtx;
+    let flowCanvas, flowCtx;
 
     function initPhotonCanvas() {
-      socCanvas = document.getElementById("soc-photon-canvas");
-      if (!socCanvas) return;
-      socCtx = socCanvas.getContext("2d");
-      resizeSocCanvas();
-      window.addEventListener("resize", resizeSocCanvas);
-      requestAnimationFrame(renderPhotons);
+      flowCanvas = document.getElementById("flow-photon-canvas");
+      if (!flowCanvas) return;
+      flowCtx = flowCanvas.getContext("2d");
+      resizeFlowCanvas();
+      window.addEventListener("resize", resizeFlowCanvas);
+      requestAnimationFrame(renderForwardPhotons);
     }
 
-    function resizeSocCanvas() {
-      if (!socCanvas) return;
-      socCanvas.width = socCanvas.offsetWidth;
-      socCanvas.height = socCanvas.offsetHeight;
+    function resizeFlowCanvas() {
+      if (!flowCanvas) return;
+      flowCanvas.width = flowCanvas.offsetWidth;
+      flowCanvas.height = flowCanvas.offsetHeight;
     }
 
-    function spawnPhoton(isThreat = false) {
-      if (!socCanvas) return;
-      photons.push({
+    function spawnForwardPhoton(isThreat = false) {
+      if (!flowCanvas) return;
+      forwardPhotons.push({
         x: 180,
-        y: socCanvas.height / 2 + (Math.random() * 24 - 12),
-        speed: isThreat ? 9.5 : (4.0 + Math.random() * 2.5),
-        size: isThreat ? 5.0 : 2.5,
+        y: flowCanvas.height / 2 + (Math.random() * 20 - 10),
+        speed: isThreat ? 9.0 : (4.0 + Math.random() * 2.5),
+        size: isThreat ? 4.5 : 2.5,
         isThreat: isThreat,
-        alpha: 1.0,
         trail: []
       });
     }
 
     function spawnDeflectionShatterSparks() {
-      if (!socCanvas) return;
-      const barrierX = socCanvas.width / 2;
-      const barrierY = socCanvas.height / 2;
-      for (let i = 0; i < 30; i++) {
-        const angle = (Math.PI / 2) + (Math.random() * Math.PI - Math.PI / 2); // bounce backwards & radially
-        const speed = Math.random() * 8 + 3;
+      if (!flowCanvas) return;
+      const barrierX = flowCanvas.width / 2;
+      const barrierY = flowCanvas.height / 2;
+      for (let i = 0; i < 25; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 6 + 2;
         shatterSparks.push({
           x: barrierX,
-          y: barrierY + (Math.random() * 40 - 20),
-          vx: -Math.cos(angle) * speed,
+          y: barrierY + (Math.random() * 30 - 15),
+          vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
-          size: Math.random() * 3.5 + 1.5,
+          size: Math.random() * 3 + 1,
           alpha: 1.0,
           decay: Math.random() * 0.03 + 0.02
         });
       }
     }
 
-    function renderPhotons() {
-      if (!socCanvas || !socCtx) return;
-      socCtx.clearRect(0, 0, socCanvas.width, socCanvas.height);
+    function renderForwardPhotons() {
+      if (!flowCanvas || !flowCtx) return;
+      flowCtx.clearRect(0, 0, flowCanvas.width, flowCanvas.height);
 
-      // 1. Render Active Photons with Smooth Motion Trails
-      for (let i = photons.length - 1; i >= 0; i--) {
-        const p = photons[i];
+      // Render Photons
+      for (let i = forwardPhotons.length - 1; i >= 0; i--) {
+        const p = forwardPhotons[i];
         p.trail.push({ x: p.x, y: p.y });
-        if (p.trail.length > 6) p.trail.shift();
+        if (p.trail.length > 5) p.trail.shift();
 
         p.x += p.speed;
 
-        // Render Trail
-        socCtx.save();
+        // Trail
+        flowCtx.save();
         p.trail.forEach((t, idx) => {
           const ratio = idx / p.trail.length;
-          socCtx.fillStyle = p.isThreat ? `rgba(255, 77, 79, ${ratio * 0.5})` : `rgba(0, 212, 255, ${ratio * 0.4})`;
-          socCtx.beginPath();
-          socCtx.arc(t.x, t.y, p.size * ratio, 0, Math.PI * 2);
-          socCtx.fill();
+          flowCtx.fillStyle = p.isThreat ? `rgba(255, 77, 79, ${ratio * 0.5})` : `rgba(0, 212, 255, ${ratio * 0.4})`;
+          flowCtx.beginPath();
+          flowCtx.arc(t.x, t.y, p.size * ratio, 0, Math.PI * 2);
+          flowCtx.fill();
         });
-        socCtx.restore();
+        flowCtx.restore();
 
-        // Render Head
-        socCtx.fillStyle = p.isThreat ? "#ff4d4f" : "#00d4ff";
-        socCtx.shadowColor = p.isThreat ? "rgba(255, 77, 79, 1)" : "rgba(0, 212, 255, 0.9)";
-        socCtx.shadowBlur = p.isThreat ? 16 : 8;
-        socCtx.beginPath();
-        socCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        socCtx.fill();
-        socCtx.shadowBlur = 0;
+        // Particle Head
+        flowCtx.fillStyle = p.isThreat ? "#ff4d4f" : "#00d4ff";
+        flowCtx.shadowColor = p.isThreat ? "rgba(255, 77, 79, 1)" : "rgba(0, 212, 255, 0.9)";
+        flowCtx.shadowBlur = p.isThreat ? 14 : 8;
+        flowCtx.beginPath();
+        flowCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        flowCtx.fill();
+        flowCtx.shadowBlur = 0;
 
-        // Deflect/Exit
-        if (p.isThreat && p.x >= socCanvas.width / 2) {
+        // Threat gets intercepted at barrier
+        if (p.isThreat && p.x >= flowCanvas.width / 2) {
           spawnDeflectionShatterSparks();
-          photons.splice(i, 1);
-        } else if (p.x > socCanvas.width - 180) {
-          photons.splice(i, 1);
+          forwardPhotons.splice(i, 1);
+        } else if (p.x > flowCanvas.width - 180) {
+          forwardPhotons.splice(i, 1);
         }
       }
 
-      // 2. Render Shatter Sparks
+      // Render Interception Sparks
       for (let j = shatterSparks.length - 1; j >= 0; j--) {
         const s = shatterSparks[j];
         s.x += s.vx;
         s.y += s.vy;
         s.alpha -= s.decay;
 
-        socCtx.save();
-        socCtx.fillStyle = `rgba(255, 77, 79, ${Math.max(s.alpha, 0)})`;
-        socCtx.shadowColor = "rgba(255, 77, 79, 0.8)";
-        socCtx.shadowBlur = 6;
-        socCtx.beginPath();
-        socCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        socCtx.fill();
-        socCtx.restore();
+        flowCtx.save();
+        flowCtx.fillStyle = `rgba(255, 77, 79, ${Math.max(s.alpha, 0)})`;
+        flowCtx.shadowColor = "rgba(255, 77, 79, 0.8)";
+        flowCtx.shadowBlur = 5;
+        flowCtx.beginPath();
+        flowCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        flowCtx.fill();
+        flowCtx.restore();
 
         if (s.alpha <= 0) shatterSparks.splice(j, 1);
       }
 
-      requestAnimationFrame(renderPhotons);
+      requestAnimationFrame(renderForwardPhotons);
     }
 
-    // ── 14. Cursor-Reactive Particle Drift with Magnetic Parallax 
-    (function initCursorReactiveParticles() {
-      const c = document.getElementById('unidirectional-particles');
-      if (!c) return;
-      const cx = c.getContext('2d');
-      let w, h, bgParts = [];
-      let mouseX = -1000, mouseY = -1000;
-
-      window.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        const spotlight = document.getElementById("cursor-spotlight");
-        if (spotlight) {
-          spotlight.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
-        }
-      });
-
-      function res() {
-        w = c.width = c.offsetWidth;
-        h = c.height = c.offsetHeight;
-        bgParts = [];
-        for (let i = 0; i < 55; i++) {
-          bgParts.push({
-            x: Math.random() * w,
-            y: Math.random() * h,
-            vx: 0.8 + Math.random() * 2,
-            vy: (Math.random() - 0.5) * 0.4,
-            size: 1.2 + Math.random() * 2,
-            opacity: 0.15 + Math.random() * 0.45
-          });
-        }
-      }
-
-      function loop() {
-        cx.clearRect(0, 0, w, h);
-        bgParts.forEach(p => {
-          // Cursor magnetic attraction
-          const dx = mouseX - p.x;
-          const dy = mouseY - p.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 180) {
-            const force = (180 - dist) / 180;
-            p.x += (dx / dist) * force * 1.5;
-            p.y += (dy / dist) * force * 1.5;
-          }
-
-          p.x += p.vx;
-          p.y += p.vy;
-
-          if (p.x > w) { p.x = 0; p.y = Math.random() * h; }
-          if (p.y > h) p.y = 0;
-          if (p.y < 0) p.y = h;
-
-          cx.fillStyle = `rgba(0, 212, 255, ${p.opacity})`;
-          cx.shadowColor = "rgba(0, 212, 255, 0.4)";
-          cx.shadowBlur = 4;
-          cx.beginPath();
-          cx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          cx.fill();
-          cx.shadowBlur = 0;
-        });
-        requestAnimationFrame(loop);
-      }
-
-      window.addEventListener('resize', res);
-      res();
-      loop();
-    })();
-
-    // ── 15. 3D Perspective Tilt on Architecture Diagram ─────────
-    (function initCardTilt() {
-      const tiltBox = document.getElementById("tilt-box");
-      const wrapper = document.getElementById("live-explainer");
-      if (!tiltBox || !wrapper) return;
-
-      wrapper.addEventListener("mousemove", (e) => {
-        const rect = wrapper.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        const rotX = -(y / (rect.height / 2)) * 6; // max 6 deg
-        const rotY = (x / (rect.width / 2)) * 6;
-        tiltBox.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-      });
-
-      wrapper.addEventListener("mouseleave", () => {
-        tiltBox.style.transform = `rotateX(0deg) rotateY(0deg)`;
-      });
-    })();
-
-    // ── 16. Scroll-Driven Assembly & Progress Bar ──────────────
+    // ── 11. Scroll Progress Bar & Scrollspy Navigation ─────────
     window.addEventListener("scroll", () => {
       const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
       const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
       const scrolled = (winScroll / height) * 100;
       const progressBar = document.getElementById("scroll-progress");
       if (progressBar) progressBar.style.width = scrolled + "%";
-    });
 
-    function initScrollObserver() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("assembly-visible");
+      // Scrollspy active section
+      const sections = ["hero", "live-flow", "soc-dashboard", "how-it-works", "comparison"];
+      const navLinks = document.querySelectorAll(".nav-link");
+
+      let currentSection = "hero";
+      sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 200) {
+            currentSection = id;
           }
-        });
-      }, { threshold: 0.15 });
-
-      document.querySelectorAll(".assembly-left, .assembly-center, .assembly-right").forEach(el => {
-        observer.observe(el);
+        }
       });
 
-      // Stat cards count up on scroll
-      const statObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            animateCountUp("stat-accuracy", 99.42, true);
-            statObserver.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.3 });
-
-      const statRow = document.getElementById("stat-cards-row");
-      if (statRow) statObserver.observe(statRow);
-    }
-
-    function animateCountUp(elementId, targetValue, isDecimal = false) {
-      const el = document.getElementById(elementId);
-      if (!el) return;
-      const duration = 1200;
-      const start = performance.now();
-      function step(now) {
-        const progress = Math.min(1, (now - start) / duration);
-        const val = targetValue * progress;
-        el.innerText = isDecimal ? val.toFixed(2) : Math.floor(val).toLocaleString();
-        if (progress < 1) requestAnimationFrame(step);
-        else el.innerText = isDecimal ? targetValue.toFixed(2) : Math.floor(targetValue).toLocaleString();
-      }
-      requestAnimationFrame(step);
-    }
-
-    // ── 17. Button Click Ripple FX ─────────────────────────────
-    document.addEventListener("click", function(e) {
-      const rippleTarget = e.target.closest(".ripple-effect");
-      if (!rippleTarget) return;
-
-      const rect = rippleTarget.getBoundingClientRect();
-      const circle = document.createElement("span");
-      const d = Math.max(rect.width, rect.height);
-      circle.style.width = circle.style.height = `${d}px`;
-      circle.style.left = `${e.clientX - rect.left - d / 2}px`;
-      circle.style.top = `${e.clientY - rect.top - d / 2}px`;
-      circle.classList.add("ripple-circle");
-
-      const prev = rippleTarget.querySelector(".ripple-circle");
-      if (prev) prev.remove();
-
-      rippleTarget.appendChild(circle);
-      setTimeout(() => circle.remove(), 600);
+      navLinks.forEach(link => {
+        if (link.getAttribute("data-section") === currentSection) {
+          link.classList.add("active-nav");
+        } else {
+          link.classList.remove("active-nav");
+        }
+      });
     });
 
-    // ── 18. Latency Jitter & UTC Live Clock ─────────────────────
+    // ── 12. Latency Jitter & UTC Live Clock ─────────────────────
     setInterval(() => {
-      avgLatency = 12 + Math.random() * 12;
+      avgLatency = 12 + Math.random() * 6;
       updateCounterDisplay("metric-latency", avgLatency, true);
     }, 1200);
 
@@ -2062,30 +1514,22 @@
       }
     }, 100);
 
-    function triggerPhysicsAudit() {
-      showToast("EAL7+ Physical Attestation: 0.000 bps backscatter verified.");
-    }
-
-    // ── 19. Initialization on DOM Load ─────────────────────────
+    // ── 13. DOM Initialization ─────────────────────────────────
     window.addEventListener("DOMContentLoaded", () => {
       updateCounterDisplay("metric-packets", packetsAnalyzed);
       updateCounterDisplay("metric-threats", threatsFlagged);
-      updateCounterDisplay("metric-zeroday", zeroDayCount);
       updateCounterDisplay("metric-latency", avgLatency, true);
       updateCounterDisplay("metric-reconstruction-loss", currentLoss, true, 3);
 
       renderThreatTable();
       initPhotonCanvas();
       renderLossSparkline();
-      initScrollObserver();
       scheduleNextPacket();
 
-      // Trigger assembly animation for initial viewport
-      setTimeout(() => {
-        document.querySelectorAll(".assembly-left, .assembly-center, .assembly-right").forEach(el => {
-          el.classList.add("assembly-visible");
-        });
-      }, 200);
+      // Schedule periodic background threat every 18s
+      setInterval(() => {
+        generateSmuggledThreat(false);
+      }, 18000);
     });
 
     window.addEventListener("keydown", (e) => {
