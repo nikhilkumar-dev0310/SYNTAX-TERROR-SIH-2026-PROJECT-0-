@@ -1,6 +1,7 @@
-# DiodeShield AI — Passive AI Threat Detection Engine
+# IRONGATE / DiodeShield AI — Hardware Data Diode & Passive AI Threat Detection Engine
 **Smart India Hackathon 2026 | Problem Statement: SIH26145 (NTRO)**  
-**Team: SYNTAX TERROR**
+**Team: SYNTAX TERROR**  
+**Repository:** [SYNTAX-TERROR-SIH-2026-PROJECT-0-](https://github.com/nikhilkumar-dev0310/SYNTAX-TERROR-SIH-2026-PROJECT-0-)
 
 ---
 
