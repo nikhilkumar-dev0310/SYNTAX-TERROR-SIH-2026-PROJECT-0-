@@ -1,89 +1,99 @@
-# IRONGATE / DiodeShield AI — Hardware Data Diode & Passive AI Threat Detection Engine
-**Smart India Hackathon 2026 | Problem Statement: SIH26145 (NTRO)**  
-**Team: SYNTAX TERROR**  
-**Repository:** [SYNTAX-TERROR-SIH-2026-PROJECT-0-](https://github.com/nikhilkumar-dev0310/SYNTAX-TERROR-SIH-2026-PROJECT-0-)
+# SemiSim: Band Gap & Charge Transport Explorer
+
+SemiSim is an interactive physics and materials chemistry laboratory simulation platform designed for optoelectronic device modeling (OLEDs and Photovoltaics). It replaces heuristic approximations with rigorous physical solvers for the Shockley-Queisser detailed-balance limit, OLED internal quantum efficiency decomposition, and charge carrier transport models.
 
 ---
 
-## 🛡️ Project Overview
-**DiodeShield AI** is an AI-powered passive threat detection and telemetry engine specifically architected for **unidirectional data diode networks** protecting critical air-gapped enclaves (NTRO / Defense / Critical Infrastructure).
+## 🔬 Core Physics Models & Assumptions
 
-Because physical data diodes strictly prohibit reverse transmissions (100% optical RX only; zero TX return path), standard bidirectional TCP handshakes, active probing, and agent callbacks cannot function. DiodeShield AI performs **passive AST feature extraction, supervised known signature classification (XGBoost), and unsupervised zero-day anomaly detection (Isolation Forest)** at line rate without generating a single reverse packet.
+### 1. Shockley-Queisser Detailed-Balance Limit (`POST /api/solar/efficiency`)
+- **Reference Solar Spectrum**: ASTM G173-03 AM1.5G terrestrial global tilt reference spectrum ($1000\text{ W/m}^2$, $280\text{ nm} - 4000\text{ nm}$, 2002 tabulated wavelengths).
+- **Short-Circuit Current Density ($J_{sc}$)**:
+  $$J_{sc} = q \int_0^{\lambda_g} \Phi(\lambda) d\lambda = q \int_0^{\lambda_g} \frac{I(\lambda) \lambda}{hc} d\lambda$$
+  where $\lambda_g = \frac{hc}{E_g}$ is the optical absorption threshold cutoff.
+- **Dark Saturation Current ($J_0$)**: Radiative blackbody recombination into the hemisphere at cell temperature $T$ ($300\text{ K}$):
+  $$J_0 = q \frac{2\pi}{h^3 c^2} \int_{E_g}^\infty \frac{E^2}{\exp\left(\frac{E}{k_B T}\right) - 1} dE$$
+- **Open-Circuit Voltage ($V_{oc}$)**: Ideal diode equation under open-circuit condition:
+  $$V_{oc} = \frac{k_B T}{q} \ln\left(\frac{C \cdot J_{sc}}{J_0} + 1\right)$$
+- **Fill Factor ($FF$)**: Standard empirical relation for ideal solar cells:
+  $$v_{oc} = \frac{q V_{oc}}{k_B T}, \quad FF = \frac{v_{oc} - \ln(v_{oc} + 0.72)}{v_{oc} + 1}$$
+- **Power Conversion Efficiency ($PCE$)**:
+  $$PCE = \frac{J_{sc} \cdot V_{oc} \cdot FF}{P_{in}} \times 100\%$$
+- **Validation**:
+  - $E_g = 1.34\text{ eV} \implies PCE \approx 33.7\%$ (maximum theoretical limit).
+  - Silicon ($E_g = 1.12\text{ eV}$) $\implies PCE \approx 33.4\%$, $J_{sc} \approx 43.8\text{ mA/cm}^2$.
+  - GaAs ($E_g = 1.42\text{ eV}$) $\implies PCE \approx 33.2\%$, $J_{sc} \approx 32.1\text{ mA/cm}^2$.
 
 ---
 
-## ⚡ Key Architecture & Components
+### 2. OLED Internal Quantum Efficiency (IQE) & Spin Statistics (`POST /api/oled/iqe`)
+- **Decomposition**:
+  $$IQE = \gamma \times \eta_{S/T} \times \Phi_{PL}$$
+  - $\gamma$: Charge carrier balance factor ($\approx 0.90$).
+  - $\eta_{S/T}$: Spin-statistics exciton harvest factor:
+    - **Fluorescent emitters** (e.g. Alq3, PPV): $\eta_S = 0.25$ ($25\%$ singlet harvest ceiling).
+    - **Phosphorescent / TADF emitters** (e.g. $\text{Ir(ppy)}_3$): $\eta_T \approx 1.00$ ($100\%$ singlet + triplet harvest via strong spin-orbit coupling or reverse intersystem crossing).
+  - $\Phi_{PL}$: Photoluminescence Quantum Yield (PLQY) from literature (Alq3 $\approx 0.32$, $\text{Ir(ppy)}_3 \approx 0.88$).
+- **External Quantum Efficiency (EQE) Estimate**:
+  $$EQE = IQE \times \eta_{out}$$
+  using the planar glass/ITO dipole outcoupling approximation $\eta_{out} \approx \frac{1}{2n^2} \approx 0.20$ ($n \approx 1.7-1.8$).
 
-- **Backend (`backend/main.py`)**:
-  - **FastAPI** application with non-blocking `asyncio` task lifecycles.
-  - **Telemetry Simulator Loop**: Generates synthetic unidirectional packet flows every 50–200ms with inter-arrival times (IAT), byte entropy, and TCP flags.
-  - **Dual-Model Inference Engine**:
-    - `classify_known`: Supervised XGBoost classifier (~1.42ms latency, ~97% benign, detects DDoS SYN floods, Port Scans, and C2 beaconing).
-    - `classify_anomaly`: Unsupervised Isolation Forest detector (~2.08ms latency, detects zero-day optical ingress anomalies).
-  - **WebSocket Realtime Channel (`/ws/live`)**: Pushes `packet_event`, `threat_event`, and live metric counters safely to all connected frontends.
-  - **REST Endpoints**:
-    - `GET /health` — Service & model engine status.
-    - `GET /metrics/summary` — Running metrics for count-up cards.
-    - `GET /model-status` — Inference latencies, accuracy, and live classification timestamps.
-    - `GET /threats?filter={type}&search={term}` — Filterable threat store.
-    - `GET /threats/{flow_id}` — Deep feature vector & IAT sequence for drawer.
-    - `GET /threats/export` — Streamed CSV export of all detected threats.
-    - `POST /simulate-attack` — Injects an instantaneous 8-flow DDoS/Zero-day attack burst for live demo evaluation.
+---
 
-- **Frontend (`index.html`)**:
-  - High-density SOC Cyberpunk interface styled with Tailwind CSS, JetBrains Mono, and Geist.
-  - **Animated 4-Card Metric Row**: Real count-up transitions connected to backend metrics.
-  - **Diode Hardware Flow Monitor**: Visual optical laser-to-photodiode pipeline with HTML5 Canvas unidirectional photon streams.
-  - **Interactive Flow Analytics Chart**: 60-second rolling buffer with Volume (pps), Threat Score, and Latency switches.
-  - **Live Threat Log Table**: Search debouncing (300ms), category filters, CSV download, and slide-over threat inspection drawer.
+### 3. Charge Carrier Transport & Exciton Binding (`POST /api/transport/properties`)
+- **Organics (Gaussian Disorder Model, Bässler / Pasveer)**:
+  $$\mu(\sigma, T) = \mu_0 \exp\left(-\left(\frac{2\sigma}{3 k_B T}\right)^2\right)$$
+  where $\mu_0 = 10^{-2}\text{ cm}^2/\text{V}\cdot\text{s}$ is the disorder-free polaron hopping mobility and $\sigma$ is the energetic disorder parameter ($0.02 - 0.18\text{ eV}$).
+- **Frenkel Exciton Binding (Organics)**:
+  $$E_b \approx \frac{e^2}{4\pi \varepsilon_0 \varepsilon_r r_{exc}} \approx 0.3 - 0.8\text{ eV}$$
+  due to low dielectric screening ($\varepsilon_r \approx 3.0 - 3.8$, $r_{exc} \approx 0.8\text{ nm}$).
+- **Inorganics (Hydrogenic Wannier-Mott Model)**:
+  $$E_b = 13.606\text{ eV} \times \frac{\mu^* / m_0}{\varepsilon_r^2}$$
+  where $\mu^* = (m_e^{*-1} + m_h^{*-1})^{-1}$ is the exciton reduced effective mass.
+  - Silicon ($c\text{-Si}$): $\mu^* \approx 0.038 m_0, \varepsilon_r = 11.7 \implies E_b \approx 3.78\text{ meV}$ ($< k_B T \approx 25.85\text{ meV}$ $\implies$ spontaneous thermal ionization into free carriers at room temperature).
+  - Gallium Arsenide (GaAs): $\mu^* \approx 0.050 m_0, \varepsilon_r = 12.9 \implies E_b \approx 4.09\text{ meV}$.
 
 ---
 
 ## 🚀 Running Locally
 
-### 1. Backend Setup
+### 1. Backend (FastAPI + Uvicorn)
 ```bash
-# Navigate to backend directory
 cd backend
-
-# Create & activate virtual environment
 python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
+source venv/bin/activate
 pip install -r requirements.txt
 
-# Start FastAPI server with Uvicorn
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
-Backend will be live at `http://localhost:8000` (API Docs at `http://localhost:8000/docs`).
+API endpoints will be live at `http://localhost:8000` (docs at `http://localhost:8000/docs`).
 
-### 2. Frontend Setup
-Simply serve `index.html` with any static server or open it directly:
+### 2. Frontend (Static HTML/JS)
 ```bash
-# From the project root
+# From project root
 python3 -m http.server 3000
 ```
-Open `http://localhost:3000` in your browser. The frontend automatically connects to the backend at `localhost:8000` (HTTP and WebSockets).
+Open `http://localhost:3000` in your web browser:
+- `index.html`: Overview & Orientation
+- `simulator.html`: Live Simulator Workspace with debounced physics calls & particle dynamics canvas
+- `evaluation.html`: Engineering Decisions (Coatings, Org vs Inorg, Application Scenarios)
+- `export.html`: Publication Lab Report with editable justifications & LaTeX/JSON export
 
 ---
 
-## 🌐 Cloud Deployment (Render + Vercel)
+## 🌐 Deployment Architecture
+- **Backend**: Render Web Service (`uvicorn main:app --host 0.0.0.0 --port $PORT`).
+- **Frontend**: Vercel Static deployment.
+- **Cross-Origin Configuration**: In `api-config.js`, update `API_CONFIG.BASE_URL` with your Render service URL when running in production. CORS is enabled for all origins on the backend.
 
-### Backend on Render (Web Service)
-1. Push this repository to GitHub.
-2. Create a new **Web Service** on [Render](https://render.com).
-3. Set the following build settings:
-   - **Root Directory**: `backend`
-   - **Runtime**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-4. Render will provide a public URL like `https://diodeshield-backend.onrender.com`.
+---
 
-### Frontend on Vercel
-1. In Vercel, import the repository root containing `index.html`.
-2. Framework Preset: `Other` (Static HTML).
-3. If deployed on a separate domain from the backend, update `API_BASE` and `WS_BASE` in `index.html` to point to your Render domain:
-   - `const API_BASE = "https://diodeshield-backend.onrender.com";`
-   - `const WS_BASE = "wss://diodeshield-backend.onrender.com/ws/live";`
-4. Deploy to get your live production demo URL.
+## 🧪 Running Unit Tests
+```bash
+python3 -m unittest backend/test_physics.py
+```
+Validates:
+1. Shockley-Queisser $1.34\text{ eV}$ peak reaches $33.7\% \pm 0.5\%$.
+2. Alq3 fluorescent IQE calculates to $7.2\%$, contrasting with phosphorescent $\approx 79.2\%$.
+3. Crystalline Silicon Wannier-Mott $E_b$ evaluates to $\approx 3.8\text{ meV}$.
+4. Organic GDM mobility decreases monotonically with energetic disorder $\sigma$.

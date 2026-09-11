@@ -6,3 +6,9 @@ __pycache__/
 .env
 venv/
 .venv/
+test_venv/
+Documents.code-workspace
+*.txt
+rebrand.py
+update_script.py
+threat-forensics.html

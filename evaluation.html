@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>SemiSim - Engineering Decisions & Material Evaluation</title>
+  <style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+      main > :first-child { margin-top: 0 !important; }
+      main > :last-child { margin-bottom: 0 !important; }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "secondary": "#ffc640",
+            "on-error-container": "#ffdad6",
+            "on-surface": "#dfe2ee",
+            "inverse-on-surface": "#2c3039",
+            "on-primary-container": "#004965",
+            "primary": "#8ed5ff",
+            "surface-bright": "#353942",
+            "background": "#0f131c",
+            "tertiary": "#e1c0ff",
+            "inverse-primary": "#00668a",
+            "error": "#ffb4ab",
+            "surface-container-lowest": "#0a0e16",
+            "surface-variant": "#31353e",
+            "on-tertiary": "#490081",
+            "on-tertiary-fixed-variant": "#62259b",
+            "surface-container-highest": "#31353e",
+            "surface-container-low": "#181c24",
+            "primary-fixed-dim": "#7bd0ff",
+            "outline-variant": "#3e484f",
+            "tertiary-fixed-dim": "#ddb8ff",
+            "surface": "#0f131c",
+            "on-primary": "#00354a",
+            "on-secondary-container": "#5a4100",
+            "on-tertiary-container": "#5f2198",
+            "primary-fixed": "#c4e7ff",
+            "inverse-surface": "#dfe2ee",
+            "on-secondary-fixed-variant": "#5c4300",
+            "surface-container-high": "#262a33",
+            "tertiary-container": "#ce9cff",
+            "secondary-fixed": "#ffdf9f",
+            "surface-container": "#1c2028",
+            "on-primary-fixed-variant": "#004c69",
+            "on-surface-variant": "#bdc8d1",
+            "on-secondary-fixed": "#261a00",
+            "on-background": "#dfe2ee",
+            "outline": "#87929a",
+            "tertiary-fixed": "#f0dbff",
+            "surface-tint": "#7bd0ff",
+            "surface-dim": "#0f131c",
+            "on-error": "#690005",
+            "on-tertiary-fixed": "#2c0051",
+            "secondary-container": "#e3aa00",
+            "on-secondary": "#402d00",
+            "on-primary-fixed": "#001e2c",
+            "error-container": "#93000a",
+            "primary-container": "#38bdf8",
+            "secondary-fixed-dim": "#f9bd22"
+          },
+          borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+          spacing: {
+            "space-xl": "1.5rem", "space-md": "0.75rem", "space-xs": "0.25rem", "space-sm": "0.5rem",
+            "gutter-mobile": "0.5rem", "margin-mobile": "0.75rem", "space-lg": "1rem", "margin": "1.5rem", "gutter": "1rem"
+          },
+          fontFamily: {
+            "body-sm": ["Inter"], "display-lg-mobile": ["IBM Plex Sans"], "body-lg": ["Inter"],
+            "display-lg": ["IBM Plex Sans"], "label-md": ["JetBrains Mono"], "body-md": ["Inter"],
+            "headline-lg": ["IBM Plex Sans"], "headline-md": ["IBM Plex Sans"], "readout-md": ["JetBrains Mono"],
+            "label-sm": ["JetBrains Mono"], "readout-lg": ["JetBrains Mono"]
+          }
+        }
+      }
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-surface-container-lowest font-body-md text-on-surface antialiased">
+  <header class="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.3)]">
+    <div class="h-28 w-full px-space-lg flex flex-col justify-between">
+      <div class="h-16 flex items-center justify-between gap-space-md">
+        <div class="flex items-center gap-space-md">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none" class="h-8 w-auto">
+            <g transform="translate(4, 4)">
+              <rect x="0" y="2" width="32" height="28" rx="6" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+              <line x1="6" y1="9" x2="26" y2="9" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="6" y1="23" x2="26" y2="23" stroke="#a855f7" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M16 21V11" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2 2"/>
+              <polygon points="16,8 13.5,12 18.5,12" fill="#38bdf8"/>
+              <circle cx="21" cy="9" r="2" fill="#fbbf24"/>
+              <circle cx="11" cy="23" r="2" fill="#c084fc"/>
+            </g>
+            <text x="44" y="22" font-family="'IBM Plex Sans', sans-serif" font-weight="700" font-size="16" fill="#f8fafc" letter-spacing="0.5">SemiSim</text>
+            <text x="44" y="31" font-family="'IBM Plex Mono', 'JetBrains Mono', monospace" font-size="8.5" fill="#38bdf8" letter-spacing="1.2">EXPLORER // LAB</text>
+          </svg>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-space-xs">
+              <span class="font-headline-md text-headline-md font-semibold tracking-tight text-on-surface">SemiSim</span>
+              <span class="px-space-xs py-0.5 rounded bg-surface-container-high border border-outline-variant/50 font-label-sm text-label-sm text-primary">v2.4 [Research Build]</span>
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Band Gap & Transport Lab</span>
+          </div>
+        </div>
+        <div class="hidden xl:flex items-center gap-space-sm bg-surface-container-low px-space-md py-1.5 rounded-lg border border-outline-variant/40">
+          <span class="font-label-md text-label-md text-primary font-medium">Evaluation & Synthesis</span>
+          <span class="text-outline-variant font-label-md text-label-md">|</span>
+          <span class="flex items-center gap-1.5 font-label-sm text-label-sm text-on-surface-variant">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>Active Sim State: Synced
+          </span>
+        </div>
+        <div class="flex items-center gap-space-md">
+          <div class="hidden md:flex items-center gap-2 bg-surface-container-low px-space-md py-1.5 rounded-lg border border-outline-variant/40">
+            <span class="inline-block w-2 h-2 rounded-full bg-secondary"></span>
+            <span class="font-label-sm text-label-sm text-on-surface">Synthesis Ready [300 K]</span>
+          </div>
+          <div class="flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container border border-outline-variant/40">
+            <span class="material-symbols-outlined text-[16px] text-tertiary">group</span>
+            <span class="font-label-sm text-label-sm text-on-surface">Team A-4</span>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+          </div>
+        </div>
+      </div>
+      <div class="h-12 flex items-center justify-between border-t border-outline-variant/20 -mx-space-lg px-space-lg bg-surface-container-low/50">
+        <nav class="flex items-center gap-space-xs">
+          <a class="px-space-md py-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors" data-path="overview" href="index.html">Overview & Orientation</a>
+          <a class="px-space-md py-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors" data-path="simulator" href="simulator.html">Simulator Workspace</a>
+          <a class="px-space-md py-1 bg-primary-container text-on-primary-container font-semibold rounded shadow-sm font-label-md text-label-md transition-colors" data-path="evaluation" href="evaluation.html">Engineering Decisions</a>
+          <a class="px-space-md py-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors" data-path="export" href="export.html">Project Report & Export</a>
+        </nav>
+        <div class="hidden md:flex items-center gap-space-lg font-label-sm text-label-sm">
+          <div class="flex items-center gap-1.5"><span class="text-on-surface-variant">STANDARD:</span><span class="text-primary font-readout-md text-readout-md">SEMI-G80 / IEC-61215</span></div>
+          <div class="flex items-center gap-1.5"><span class="text-on-surface-variant">TEMP:</span><span class="text-secondary font-readout-md text-readout-md">300.0 K</span></div>
+          <div class="flex items-center gap-1.5"><span class="text-on-surface-variant">AUDIT:</span><span class="text-tertiary font-readout-md text-readout-md">3 Decisions Pending</span></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="w-full pt-28 bg-surface-container-lowest min-h-screen">
+    <div class="flex flex-col w-full">
+      <!-- Top Context Ribbon -->
+      <div class="w-full bg-surface-container-low px-space-lg py-space-md">
+        <div class="max-w-[1600px] mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md">
+          <div class="flex items-center gap-space-md">
+            <div class="p-2 rounded bg-primary/10 text-primary flex items-center justify-center">
+              <span class="material-symbols-outlined text-[24px]">balance</span>
+            </div>
+            <div class="flex flex-col">
+              <div class="flex items-center gap-space-sm">
+                <span class="font-headline-md text-headline-md text-on-surface">Material Evaluation & Engineering Synthesis</span>
+                <span class="px-space-xs py-0.5 rounded bg-surface-container-highest text-secondary font-label-sm text-label-sm">DECISION GATEWAY</span>
+              </div>
+              <span class="font-body-sm text-body-sm text-on-surface-variant">Bridging molecular-scale photophysics to utility manufacturing and operational endurance</span>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center gap-space-md font-label-sm text-label-sm">
+            <div class="flex items-center gap-space-xs px-space-sm py-1.5 rounded bg-surface-container">
+              <span class="text-on-surface-variant">Audit Standard:</span>
+              <span class="text-on-surface font-semibold">SEMI-G80 / IEC-61215</span>
+            </div>
+            <div class="flex items-center gap-space-xs px-space-sm py-1.5 rounded bg-surface-container">
+              <span class="text-on-surface-variant">Active Substrate:</span>
+              <span class="text-primary font-medium">Float Glass & PET Foil</span>
+            </div>
+            <div class="flex items-center gap-space-xs px-space-sm py-1.5 rounded bg-surface-container text-secondary">
+              <span class="material-symbols-outlined text-[14px]">verified</span>
+              <span>3 Tasks In Progress</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Primary Engineering Layout Grid -->
+      <div class="w-full max-w-[1600px] mx-auto px-space-lg py-space-xl flex flex-col gap-space-xl">
+        
+        <!-- ========================================================================= -->
+        <!-- TASK 1: SMART MATERIALS & FUNCTIONAL COATINGS EVALUATION -->
+        <!-- ========================================================================= -->
+        <div class="flex flex-col gap-space-lg bg-surface-container-low rounded-xl p-space-lg shadow-md relative overflow-hidden">
+          <div class="absolute -right-16 -top-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+            <div class="flex items-center gap-space-sm">
+              <span class="px-2 py-0.5 rounded bg-primary-container text-on-primary-container font-label-md text-label-md">TASK 01</span>
+              <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Smart Materials & Functional Coatings Evaluation</h2>
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-secondary"></span> Live Optoelectronic Coupled Solver
+            </span>
+          </div>
+          <p class="font-body-md text-body-md text-on-surface-variant max-w-4xl">
+            Functional exterior layers control interfacial photon injection, dielectric passivation, and environmental water vapor barrier dynamics. Inspect the performance trade-offs below to select an optimized thin-film coating architecture.
+          </p>
+
+          <!-- Coating Selector Cards (Options A, B, C) -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-space-md">
+            <!-- OPTION A -->
+            <div class="cursor-pointer bg-surface-container-high rounded-lg p-space-md flex flex-col justify-between gap-space-md transition-all shadow-xl hover:bg-surface-container-highest" id="card-coating-A" onclick="selectCoating('A')">
+              <div class="flex flex-col gap-space-xs">
+                <div class="flex items-center justify-between">
+                  <span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-secondary/10 text-secondary font-medium">OPTION A • DIELECTRIC AR</span>
+                  <div class="w-2.5 h-2.5 rounded-full bg-primary" id="indicator-coating-A"></div>
+                </div>
+                <h3 class="font-headline-md text-headline-md text-on-surface">TiO₂ / SiO₂ Graded Sol-Gel</h3>
+                <span class="font-body-sm text-body-sm text-on-surface-variant">Sol-gel dip coated nanostructured anti-reflective glass stack with superhydrophilic self-cleaning action.</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 bg-surface-container-lowest p-space-sm rounded">
+                <div>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">Optical Trans.</span>
+                  <span class="font-readout-md text-readout-md text-primary">94.8%</span>
+                </div>
+                <div>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">Proc. Temp</span>
+                  <span class="font-readout-md text-readout-md text-on-surface">180 °C</span>
+                </div>
+                <div>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">MVTR Resistance</span>
+                  <span class="font-readout-md text-readout-md text-secondary">Moderate</span>
+                </div>
+                <div>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">Unit Cost</span>
+                  <span class="font-readout-md text-readout-md text-on-surface">$14.50 /m²</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between pt-1">
+                <span class="font-label-sm text-label-sm text-primary">Active Deployment</span>
+                <span class="material-symbols-outlined text-primary text-[18px]">arrow_forward</span>
+              </div>
+            </div>
+
+            <!-- OPTION B -->
+            <div class="cursor-pointer bg-surface-container rounded-lg p-space-md flex flex-col justify-between gap-space-md transition-all hover:bg-surface-container-highest" id="card-coating-B" onclick="selectCoating('B')">
+              <div class="flex flex-col gap-space-xs">
+                <div class="flex items-center justify-between">
+                  <span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-tertiary/10 text-tertiary font-medium">OPTION B • UTE BARRIER</span>
+                  <div class="w-2.5 h-2.5 rounded-full bg-surface-variant" id="indicator-coating-B"></div>
+                </div>
+                <h3 class="font-headline-md text-headline-md text-on-surface">Al₂O₃ / Hybrid Polymer Vitrimer</h3>
+                <span class="font-body-sm text-body-sm text-on-surface-variant">Atomic layer deposition (ALD) inorganic ceramic decoupled with self-healing vitrimer polymer for mechanical flexibility.</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 bg-surface-container-lowest p-space-sm rounded">
+                <div>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">Optical Trans.</span>
+                  <span class="font-readout-md text-readout-md text-primary">89.2%</span>
+                </div>
+                <div>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">Proc. Temp</span>
+                  <span class="font-readout-md text-readout-md text-on-surface">85 °C</span>
+                </div>
+                <div>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">MVTR Resistance</span>
+                  <span class="font-readout-md text-readout-md text-tertiary">&lt;10⁻⁶ g/m²</span>
+                </div>
+                <div>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">Unit Cost</span>
+                  <span class="font-readout-md text-readout-md text-on-surface">$62.00 /m²</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between pt-1">
+                <span class="font-label-sm text-label-sm text-on-surface-variant">Select Alternative</span>
+                <span class="material-symbols-outlined text-on-surface-variant text-[18px]">radio_button_unchecked</span>
+              </div>
+            </div>
+
+            <!-- OPTION C -->
+            <div class="cursor-pointer bg-surface-container rounded-lg p-space-md flex flex-col justify-between gap-space-md transition-all hover:bg-surface-container-highest" id="card-coating-C" onclick="selectCoating('C')">
+              <div class="flex flex-col gap-space-xs">
+                <div class="flex items-center justify-between">
+                  <span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-secondary/10 text-secondary font-medium">OPTION C • SMART GLAZING</span>
+                  <div class="w-2.5 h-2.5 rounded-full bg-surface-variant" id="indicator-coating-C"></div>
+                </div>
+                <h3 class="font-headline-md text-headline-md text-on-surface">VO₂ Reversible Monoclinic Thin-Film</h3>
+                <span class="font-body-sm text-body-sm text-on-surface-variant">Metal-to-insulator phase transition (MIT) film at 68°C to passively deflect incoming infrared thermal radiance.</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 bg-surface-container-lowest p-space-sm rounded">
+                <div>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">Optical Trans.</span>
+                  <span class="font-readout-md text-readout-md text-primary">68.4%</span>
+                </div>
+                <div>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">Proc. Temp</span>
+                  <span class="font-readout-md text-readout-md text-error">420 °C</span>
+                </div>
+                <div>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">MVTR Resistance</span>
+                  <span class="font-readout-md text-readout-md text-secondary">High Ceramic</span>
+                </div>
+                <div>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">Unit Cost</span>
+                  <span class="font-readout-md text-readout-md text-on-surface">$38.00 /m²</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between pt-1">
+                <span class="font-label-sm text-label-sm text-on-surface-variant">Select Alternative</span>
+                <span class="material-symbols-outlined text-on-surface-variant text-[18px]">radio_button_unchecked</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coupled Simulation Response Box -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md bg-surface-container p-space-md rounded-lg">
+            <div class="lg:col-span-7 flex flex-col justify-between gap-space-md">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-space-xs">
+                  <span class="material-symbols-outlined text-[18px] text-primary">query_stats</span>
+                  <span class="font-label-md text-label-md text-on-surface uppercase tracking-wider">Comparative Coating Telemetry</span>
+                </div>
+                <span class="px-space-xs py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm" id="sim-coating-status">High Photothermal Stability</span>
+              </div>
+              <div class="flex flex-col gap-space-sm">
+                <div class="flex flex-col gap-1">
+                  <div class="flex justify-between font-label-sm text-label-sm">
+                    <span class="text-on-surface-variant">Optical Transmittance [λ: 400-1100 nm]</span>
+                    <span class="text-primary font-readout-md text-readout-md" id="meter-val-opt">94.8%</span>
+                  </div>
+                  <div class="w-full h-2 rounded bg-surface-container-lowest overflow-hidden">
+                    <div class="h-full bg-primary transition-all duration-300" id="meter-bar-opt" style="width: 94.8%;"></div>
+                  </div>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <div class="flex justify-between font-label-sm text-label-sm">
+                    <span class="text-on-surface-variant">Mechanical Flexibility [Yield Bending Radius]</span>
+                    <span class="text-secondary font-readout-md text-readout-md" id="meter-val-flex">24.0 mm</span>
+                  </div>
+                  <div class="w-full h-2 rounded bg-surface-container-lowest overflow-hidden">
+                    <div class="h-full bg-secondary transition-all duration-300" id="meter-bar-flex" style="width: 48%;"></div>
+                  </div>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <div class="flex justify-between font-label-sm text-label-sm">
+                    <span class="text-on-surface-variant">Hermetic Moisture Vapor Transmission Resistance [MVTR Index]</span>
+                    <span class="text-tertiary font-readout-md text-readout-md" id="meter-val-mvtr">&lt;10⁻³</span>
+                  </div>
+                  <div class="w-full h-2 rounded bg-surface-container-lowest overflow-hidden">
+                    <div class="h-full bg-tertiary transition-all duration-300" id="meter-bar-mvtr" style="width: 85%;"></div>
+                  </div>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <div class="flex justify-between font-label-sm text-label-sm">
+                    <span class="text-on-surface-variant">Thermal Anneal Processing Budget (°C)</span>
+                    <span class="text-on-surface font-readout-md text-readout-md" id="meter-val-temp">180 °C</span>
+                  </div>
+                  <div class="w-full h-2 rounded bg-surface-container-lowest overflow-hidden">
+                    <div class="h-full bg-surface-variant transition-all duration-300" id="meter-bar-temp" style="width: 36%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 bg-surface-container-high rounded-lg p-space-md flex flex-col justify-between gap-space-sm">
+              <div class="flex flex-col">
+                <span class="font-label-sm text-label-sm text-on-surface-variant">ACTIVE SELECTION RESPONSE</span>
+                <span class="font-headline-md text-headline-md text-on-surface" id="sim-coating-name">TiO₂/SiO₂ Graded Sol-Gel</span>
+                <span class="font-body-sm text-body-sm text-primary" id="sim-coating-role">Solar Front Surface AR/Self-Cleaning</span>
+              </div>
+              <div class="grid grid-cols-2 gap-space-sm">
+                <div class="bg-surface-container-lowest p-space-sm rounded">
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">PV Conversion Efficiency</span>
+                  <span class="font-readout-lg text-readout-lg text-primary" id="sim-val-pce">+1.42%</span>
+                </div>
+                <div class="bg-surface-container-lowest p-space-sm rounded">
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">Outdoor Durability Δ</span>
+                  <span class="font-readout-lg text-readout-lg text-secondary" id="sim-val-life">+4.8 yrs</span>
+                </div>
+                <div class="bg-surface-container-lowest p-space-sm rounded">
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">OLED Lum. Outcoupling</span>
+                  <span class="font-readout-lg text-readout-lg text-on-surface-variant" id="sim-val-lum">-0.2%</span>
+                </div>
+                <div class="bg-surface-container-lowest p-space-sm rounded">
+                  <span class="font-label-sm text-label-sm text-on-surface-variant block">Manufacturing Capex Δ</span>
+                  <span class="font-readout-lg text-readout-lg text-tertiary" id="sim-val-cost">$14.5/m²</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant">
+                <span class="material-symbols-outlined text-[14px] text-secondary">info</span>
+                <span>Simulated over 8760 continuous operational hours under AM1.5G UV stress.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Task 1 Justification Input Box -->
+          <div class="flex flex-col gap-space-xs bg-surface-container-lowest p-space-md rounded-lg">
+            <div class="flex items-center justify-between">
+              <label class="font-label-md text-label-md text-on-surface flex items-center gap-space-xs" for="justification-task1">
+                <span class="material-symbols-outlined text-[16px] text-primary">edit_note</span>
+                <span>Engineering Justification: High-Humidity Outdoor Solar Deployment</span>
+              </label>
+              <span class="font-label-sm text-label-sm text-on-surface-variant">Task Check: 1 of 3</span>
+            </div>
+            <textarea class="w-full bg-surface-container p-space-sm rounded font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:bg-surface-container-high transition-colors" id="justification-task1" placeholder="Synthesize your coating choice for high-humidity outdoor solar deployment. Detail refractive index matching, hydrothermal pinhole corrosion, and thermal anneal limits on front glass..." rows="3"></textarea>
+            <div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+              <span>Target criterion: Water vapor ingress vs. photon transmission balance</span>
+              <button class="px-space-md py-1 rounded bg-surface-container-high text-primary hover:bg-primary hover:text-on-primary font-label-sm text-label-sm transition-colors" onclick="commitJustification(1)">Commit Rationale</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- TASK 2: ORGANIC VS INORGANIC SEMICONDUCTOR EVALUATION MATRIX -->
+        <!-- ========================================================================= -->
+        <div class="flex flex-col gap-space-lg bg-surface-container-low rounded-xl p-space-lg shadow-md relative overflow-hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+            <div class="flex items-center gap-space-sm">
+              <span class="px-2 py-0.5 rounded bg-primary-container text-on-primary-container font-label-md text-label-md">TASK 02</span>
+              <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Organic vs Inorganic Semiconductor Selection</h2>
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Charge Transport Dynamics & Exciton Physics</span>
+          </div>
+          <p class="font-body-md text-body-md text-on-surface-variant max-w-4xl">
+            Examine how crystal symmetry, electronic delocalization, and Coulombic dielectric screening dictate whether carriers propagate as Bloch wavepackets or localized polarons hopping between molecular orbitals.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+            <div class="bg-surface-container p-space-md rounded-lg flex flex-col gap-space-sm">
+              <span class="font-label-sm text-label-sm text-primary font-bold">INORGANIC CRYSTALLINE REGIME (Si / GaAs)</span>
+              <ul class="font-body-sm text-body-sm text-on-surface-variant flex flex-col gap-1.5">
+                <li>• <strong>High Dielectric Constant ($\varepsilon_r \approx 11.7 - 12.9$):</strong> Strong screening creates weakly bound Wannier-Mott excitons ($E_b \approx 3.8 - 4.1\text{ meV}$).</li>
+                <li>• <strong>Bloch Wave Delocalization:</strong> Electron mobility $\mu_e > 1000\text{ cm}^2/\text{V}\cdot\text{s}$, permitting thick absorber layers ($> 2\text{ }\mu\text{m}$) without carrier starvation.</li>
+                <li>• <strong>Thermal Stability:</strong> Invariant performance up to $> 150^\circ\text{C}$; requires high energy epitaxy / cleanroom vacuum fabrication.</li>
+              </ul>
+            </div>
+            <div class="bg-surface-container p-space-md rounded-lg flex flex-col gap-space-sm">
+              <span class="font-label-sm text-label-sm text-tertiary font-bold">ORGANIC CONJUGATED REGIME (Alq3 / PPV)</span>
+              <ul class="font-body-sm text-body-sm text-on-surface-variant flex flex-col gap-1.5">
+                <li>• <strong>Low Dielectric Constant ($\varepsilon_r \approx 3.0 - 3.8$):</strong> Weak screening binds Frenkel excitons tightly ($E_b \approx 300 - 800\text{ meV}$), requiring donor-acceptor interfaces to split.</li>
+                <li>• <strong>Gaussian Disorder Hopping:</strong> Carrier mobility $\mu \sim 10^{-4}\text{ cm}^2/\text{V}\cdot\text{s}$; active layer thickness strictly constrained to $< 100\text{ nm}$.</li>
+                <li>• <strong>Mechanical Flexibility:</strong> Soluble printing, bend radius $< 2\text{ mm}$, continuous roll-to-roll scaling at $< 120^\circ\text{C}$.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Task 2 Justification Input Box -->
+          <div class="flex flex-col gap-space-xs bg-surface-container-lowest p-space-md rounded-lg">
+            <div class="flex items-center justify-between">
+              <label class="font-label-md text-label-md text-on-surface flex items-center gap-space-xs" for="justification-task2">
+                <span class="material-symbols-outlined text-[16px] text-primary">edit_note</span>
+                <span>Engineering Justification: OLED Display vs Crystalline Solar Cell Tradeoff</span>
+              </label>
+              <span class="font-label-sm text-label-sm text-on-surface-variant">Task Check: 2 of 3</span>
+            </div>
+            <textarea class="w-full bg-surface-container p-space-sm rounded font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:bg-surface-container-high transition-colors" id="justification-task2" placeholder="Analyze why low carrier mobility in organics is acceptable for thin emissive OLED displays but catastrophic for thick single-junction solar absorbers..." rows="3"></textarea>
+            <div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+              <span>Target criterion: Delocalized band drift vs polaron hopping length</span>
+              <button class="px-space-md py-1 rounded bg-surface-container-high text-primary hover:bg-primary hover:text-on-primary font-label-sm text-label-sm transition-colors" onclick="commitJustification(2)">Commit Rationale</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- TASK 3: MATERIAL SELECTION FOR ENERGY & APPLICATION SCENARIOS -->
+        <!-- ========================================================================= -->
+        <div class="flex flex-col gap-space-lg bg-surface-container-low rounded-xl p-space-lg shadow-md relative overflow-hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+            <div class="flex items-center gap-space-sm">
+              <span class="px-2 py-0.5 rounded bg-primary-container text-on-primary-container font-label-md text-label-md">TASK 03</span>
+              <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Application Scenario Synthesis</h2>
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant">Shockley-Queisser & Outcoupling Optimization</span>
+          </div>
+          <p class="font-body-md text-body-md text-on-surface-variant max-w-4xl">
+            Select an operational deployment scenario to inspect the target band gap ($E_g$), carrier mobility threshold, and packaging barrier integrity.
+          </p>
+
+          <!-- Scenario Buttons -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <button class="py-2 px-space-sm rounded bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold transition-all text-center shadow-sm" id="btn-scenario-1" onclick="selectScenario('1')">
+              Utility Rooftop PV
+            </button>
+            <button class="py-2 px-space-sm rounded bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all text-center" id="btn-scenario-2" onclick="selectScenario('2')">
+              Wearable Solar Textile
+            </button>
+            <button class="py-2 px-space-sm rounded bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all text-center" id="btn-scenario-3" onclick="selectScenario('3')">
+              Foldable Smartphone OLED
+            </button>
+            <button class="py-2 px-space-sm rounded bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all text-center" id="btn-scenario-4" onclick="selectScenario('4')">
+              Architectural Solid-State Light
+            </button>
+          </div>
+
+          <!-- Scenario Detail Card -->
+          <div class="bg-surface-container p-space-md rounded-lg flex flex-col gap-space-sm">
+            <div class="flex items-center justify-between">
+              <h3 class="font-headline-md text-headline-md text-on-surface" id="scene-title">Utility Scale Rooftop PV</h3>
+              <span class="px-space-xs py-0.5 rounded bg-surface-container-high text-secondary font-label-sm text-label-sm" id="scene-status-tag">Direct Solar AM1.5G Optimized</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-space-sm pt-2">
+              <div class="p-2 rounded bg-surface-container-lowest">
+                <span class="font-label-sm text-label-sm text-on-surface-variant block">Target Band Gap</span>
+                <span class="font-readout-md text-readout-md text-secondary font-semibold" id="scene-eg">1.1 - 1.4 eV</span>
+              </div>
+              <div class="p-2 rounded bg-surface-container-lowest">
+                <span class="font-label-sm text-label-sm text-on-surface-variant block">Target Mobility</span>
+                <span class="font-readout-md text-readout-md text-primary font-semibold" id="scene-mob">μe &gt; 800 cm²/V·s</span>
+              </div>
+              <div class="p-2 rounded bg-surface-container-lowest">
+                <span class="font-label-sm text-label-sm text-on-surface-variant block">Barrier MVTR Limit</span>
+                <span class="font-readout-md text-readout-md text-tertiary font-semibold" id="scene-mvtr">&lt; 10⁻³ g/m²/day</span>
+              </div>
+              <div class="p-2 rounded bg-surface-container-lowest">
+                <span class="font-label-sm text-label-sm text-on-surface-variant block">Optimal Stack Choice</span>
+                <span class="font-readout-md text-readout-md text-on-surface font-semibold" id="scene-mat">c-Si / InGaP-GaAs Tandem</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Task 3 Justification Input Box -->
+          <div class="flex flex-col gap-space-xs bg-surface-container-lowest p-space-md rounded-lg">
+            <div class="flex items-center justify-between">
+              <label class="font-label-md text-label-md text-on-surface flex items-center gap-space-xs" for="justification-task3">
+                <span class="material-symbols-outlined text-[16px] text-primary">edit_note</span>
+                <span>Engineering Justification: Scenario Optimization Rationale</span>
+              </label>
+              <span class="font-label-sm text-label-sm text-on-surface-variant">Task Check: 3 of 3</span>
+            </div>
+            <textarea class="w-full bg-surface-container p-space-sm rounded font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:bg-surface-container-high transition-colors" id="justification-task3" placeholder="Explain your design choice for the selected scenario. Address Shockley-Queisser thermodynamic limits, thermal dissipation, and lifetime encapsulation constraints..." rows="3"></textarea>
+            <div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+              <span>Target criterion: Thermodynamic yield vs real-world environmental stress</span>
+              <button class="px-space-md py-1 rounded bg-surface-container-high text-primary hover:bg-primary hover:text-on-primary font-label-sm text-label-sm transition-colors" onclick="commitJustification(3)">Commit Rationale</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="w-full bg-surface-container-low border-t border-outline-variant/30 py-space-md">
+    <div class="w-full px-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-sm font-label-sm text-label-sm text-on-surface-variant">
+      <div>SemiSim Precision Computational Engine • Solid State Device Physics Workbench</div>
+      <div class="flex items-center gap-space-md">
+        <span>Detailed-Balance Solver</span>
+        <span class="text-outline-variant">|</span>
+        <span>ASTM G173-03 AM1.5G</span>
+        <span class="text-outline-variant">|</span>
+        <span>© 2026 Lab Consortium</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    window.taskState = {
+      selectedCoating: 'A',
+      selectedScenario: '1',
+      coatings: {
+        A: {
+          name: 'TiO₂/SiO₂ Graded Sol-Gel',
+          role: 'Solar Front Surface AR/Self-Cleaning',
+          opt: 94.8,
+          flex: 48,
+          mvtr: 85,
+          temp: 180,
+          cost: 14.5,
+          pceDelta: '+1.42%',
+          lifetimeDelta: '+4.8 yrs',
+          lumDelta: '-0.2%',
+          statusBadge: 'High Photothermal Stability'
+        },
+        B: {
+          name: 'Al₂O₃ / Hybrid Vitrimer Multilayer',
+          role: 'Flexible Ultra-Thin Encapsulation (UTE)',
+          opt: 89.2,
+          flex: 96,
+          mvtr: 99.4,
+          temp: 85,
+          cost: 62.0,
+          pceDelta: '-0.35%',
+          lifetimeDelta: '+18.2 yrs',
+          lumDelta: '+14.6%',
+          statusBadge: 'Hermetic Barrier Level (10⁻⁶)'
+        },
+        C: {
+          name: 'VO₂ Monoclinic-Rutile Glazing',
+          role: 'Passive Solar-Heat Regulating Window',
+          opt: 68.4,
+          flex: 22,
+          mvtr: 70,
+          temp: 420,
+          cost: 38.0,
+          pceDelta: '-3.10%',
+          lifetimeDelta: '+8.0 yrs',
+          lumDelta: '-18.5%',
+          statusBadge: 'NIR Reversible Switching'
+        }
+      },
+      scenarios: {
+        '1': {
+          title: 'Utility Scale Rooftop PV',
+          targetEg: '1.1 - 1.4 eV',
+          targetMob: 'μe > 800 cm²/V·s',
+          mvtrTarget: '< 10⁻³ g/m²/day',
+          thermalLimit: '> 85°C Continuously',
+          idealMat: 'c-Si / InGaP-GaAs Tandem',
+          status: 'Direct Solar AM1.5G Optimized'
+        },
+        '2': {
+          title: 'Wearable Solar Harvesting on Textile',
+          targetEg: '1.6 - 1.9 eV (Indoor/Diffuse)',
+          targetMob: 'μe > 1.0 cm²/V·s',
+          mvtrTarget: '< 10⁻⁴ g/m²/day (Body sweat)',
+          thermalLimit: '< 55°C Safe Contact',
+          idealMat: 'Conjugated Polymer / Perovskite Hybrid',
+          status: 'Mechanical Flex Endurance (r < 3mm)'
+        },
+        '3': {
+          title: 'Next-Gen Foldable Smartphone OLED',
+          targetEg: '2.1 - 2.8 eV (R/G/B)',
+          targetMob: 'μh > 0.5 cm²/V·s (Fast injection)',
+          mvtrTarget: '< 10⁻⁶ g/m²/day (Critical)',
+          thermalLimit: '< 75°C Peak Dissipation',
+          idealMat: 'Thermally Activated Delayed Fluorescence (TADF)',
+          status: '120Hz Switching / Bending Cycle: 200k'
+        },
+        '4': {
+          title: 'Architectural Solid-State White Lighting',
+          targetEg: 'Broadband Continuum (CRI > 90)',
+          targetMob: 'Balanced e-h recombination',
+          mvtrTarget: '< 10⁻² g/m²/day',
+          thermalLimit: '> 105°C Heat-sink coupling',
+          idealMat: 'GaN-on-Sapphire + Ce:YAG Phosphor / Hybrid QD',
+          status: 'High Lumen Maintenance (L70 > 50,000h)'
+        }
+      }
+    };
+
+    function selectCoating(key) {
+      window.taskState.selectedCoating = key;
+      const data = window.taskState.coatings[key];
+      
+      ['A', 'B', 'C'].forEach(k => {
+        const card = document.getElementById('card-coating-' + k);
+        const indicator = document.getElementById('indicator-coating-' + k);
+        if (k === key) {
+          card.classList.remove('bg-surface-container');
+          card.classList.add('bg-surface-container-high', 'shadow-xl');
+          indicator.classList.remove('bg-surface-variant');
+          indicator.classList.add('bg-primary');
+        } else {
+          card.classList.remove('bg-surface-container-high', 'shadow-xl');
+          card.classList.add('bg-surface-container');
+          indicator.classList.remove('bg-primary');
+          indicator.classList.add('bg-surface-variant');
+        }
+      });
+
+      document.getElementById('sim-coating-name').innerText = data.name;
+      document.getElementById('sim-coating-role').innerText = data.role;
+      document.getElementById('sim-coating-status').innerText = data.statusBadge;
+      document.getElementById('sim-val-pce').innerText = data.pceDelta;
+      document.getElementById('sim-val-life').innerText = data.lifetimeDelta;
+      document.getElementById('sim-val-lum').innerText = data.lumDelta;
+      document.getElementById('sim-val-cost').innerText = '$' + data.cost.toFixed(1) + '/m²';
+
+      document.getElementById('meter-bar-opt').style.width = data.opt + '%';
+      document.getElementById('meter-val-opt').innerText = data.opt + '%';
+
+      document.getElementById('meter-bar-flex').style.width = data.flex + '%';
+      document.getElementById('meter-val-flex').innerText = (data.flex * 0.5).toFixed(1) + ' mm';
+
+      document.getElementById('meter-bar-mvtr').style.width = data.mvtr + '%';
+      document.getElementById('meter-val-mvtr').innerText = data.mvtr > 90 ? '<10⁻⁵' : (data.mvtr > 80 ? '<10⁻³' : '<10⁻¹');
+
+      document.getElementById('meter-bar-temp').style.width = (data.temp / 5) + '%';
+      document.getElementById('meter-val-temp').innerText = data.temp + ' °C';
+    }
+
+    function selectScenario(key) {
+      window.taskState.selectedScenario = key;
+      const data = window.taskState.scenarios[key];
+
+      ['1', '2', '3', '4'].forEach(k => {
+        const btn = document.getElementById('btn-scenario-' + k);
+        if (k === key) {
+          btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+          btn.classList.add('bg-primary-container', 'text-on-primary-container', 'font-semibold', 'shadow-sm');
+        } else {
+          btn.classList.remove('bg-primary-container', 'text-on-primary-container', 'font-semibold', 'shadow-sm');
+          btn.classList.add('bg-surface-container', 'text-on-surface-variant');
+        }
+      });
+
+      document.getElementById('scene-title').innerText = data.title;
+      document.getElementById('scene-eg').innerText = data.targetEg;
+      document.getElementById('scene-mob').innerText = data.targetMob;
+      document.getElementById('scene-mvtr').innerText = data.mvtrTarget;
+      document.getElementById('scene-mat').innerText = data.idealMat;
+      document.getElementById('scene-status-tag').innerText = data.status;
+    }
+
+    function commitJustification(taskNum) {
+      const text = document.getElementById(`justification-task${taskNum}`).value;
+      if (!text.trim()) {
+        alert('Please write an engineering justification before committing.');
+        return;
+      }
+      localStorage.setItem(`semisim_justification_${taskNum}`, text);
+      alert(`Rationale for Task ${taskNum} successfully committed to notebook.`);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Load saved justifications if any
+      [1, 2, 3].forEach(n => {
+        const saved = localStorage.getItem(`semisim_justification_${n}`);
+        if (saved) {
+          const el = document.getElementById(`justification-task${n}`);
+          if (el) el.value = saved;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
