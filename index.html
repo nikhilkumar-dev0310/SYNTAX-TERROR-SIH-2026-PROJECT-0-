@@ -6,12 +6,20 @@
   <title>SemiSim: Band Gap & Charge Transport Explorer</title>
   <style>
     @layer base {
-      html, body { margin: 0; padding: 0; }
+      html, body { margin: 0; padding: 0; scroll-behavior: smooth; }
       body { overscroll-behavior: none; }
-      main > :first-child { margin-top: 0 !important; }
-      main > :last-child { margin-bottom: 0 !important; }
     }
     ::-webkit-scrollbar { display: none; }
+    
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease-out;
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
   </style>
   <script src="https://cdn.tailwindcss.com"></script>
   <script id="tailwind-config">
@@ -33,49 +41,15 @@
             "error": "#ffb4ab",
             "surface-container-lowest": "#0a0e16",
             "surface-variant": "#31353e",
-            "on-tertiary": "#490081",
-            "on-tertiary-fixed-variant": "#62259b",
             "surface-container-highest": "#31353e",
             "surface-container-low": "#181c24",
-            "primary-fixed-dim": "#7bd0ff",
-            "outline-variant": "#3e484f",
-            "tertiary-fixed-dim": "#ddb8ff",
             "surface": "#0f131c",
             "on-primary": "#00354a",
-            "on-secondary-container": "#5a4100",
-            "on-tertiary-container": "#5f2198",
-            "primary-fixed": "#c4e7ff",
-            "inverse-surface": "#dfe2ee",
-            "on-secondary-fixed-variant": "#5c4300",
-            "surface-container-high": "#262a33",
-            "tertiary-container": "#ce9cff",
-            "secondary-fixed": "#ffdf9f",
-            "surface-container": "#1c2028",
-            "on-primary-fixed-variant": "#004c69",
-            "on-surface-variant": "#bdc8d1",
-            "on-secondary-fixed": "#261a00",
-            "on-background": "#dfe2ee",
             "outline": "#87929a",
-            "tertiary-fixed": "#f0dbff",
-            "surface-tint": "#7bd0ff",
-            "surface-dim": "#0f131c",
-            "on-error": "#690005",
-            "on-tertiary-fixed": "#2c0051",
-            "secondary-container": "#e3aa00",
-            "on-secondary": "#402d00",
-            "on-primary-fixed": "#001e2c",
-            "error-container": "#93000a",
-            "primary-container": "#38bdf8",
-            "secondary-fixed-dim": "#f9bd22"
-          },
-          borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
-          spacing: {
-            "space-xl": "1.5rem", "space-md": "0.75rem", "space-xs": "0.25rem", "space-sm": "0.5rem",
-            "gutter-mobile": "0.5rem", "margin-mobile": "0.75rem", "space-lg": "1rem", "margin": "1.5rem", "gutter": "1rem"
           },
           fontFamily: {
-            "body-sm": ["Inter"], "display-lg-mobile": ["IBM Plex Sans"], "body-lg": ["Inter"],
-            "display-lg": ["IBM Plex Sans"], "label-md": ["JetBrains Mono"], "body-md": ["Inter"],
+            "body-sm": ["Inter"], "display-lg": ["IBM Plex Sans"], "body-lg": ["Inter"],
+            "label-md": ["JetBrains Mono"], "body-md": ["Inter"],
             "headline-lg": ["IBM Plex Sans"], "headline-md": ["IBM Plex Sans"], "readout-md": ["JetBrains Mono"],
             "label-sm": ["JetBrains Mono"], "readout-lg": ["JetBrains Mono"]
           }
@@ -86,436 +60,222 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
 </head>
-<body class="bg-surface-container-lowest font-body-md text-on-surface antialiased">
-  <header class="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.3)]">
-    <div class="h-28 w-full px-space-lg flex flex-col justify-between">
-      <div class="h-16 flex items-center justify-between gap-space-md">
-        <div class="flex items-center gap-space-md">
-          <!-- SemiSim Brand Logo SVG -->
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none" class="h-8 w-auto">
-            <g transform="translate(4, 4)">
-              <rect x="0" y="2" width="32" height="28" rx="6" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
-              <line x1="6" y1="9" x2="26" y2="9" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
-              <line x1="6" y1="23" x2="26" y2="23" stroke="#a855f7" stroke-width="2.5" stroke-linecap="round"/>
-              <path d="M16 21V11" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2 2"/>
-              <polygon points="16,8 13.5,12 18.5,12" fill="#38bdf8"/>
-              <circle cx="21" cy="9" r="2" fill="#fbbf24"/>
-              <circle cx="11" cy="23" r="2" fill="#c084fc"/>
-            </g>
-            <text x="44" y="22" font-family="'IBM Plex Sans', sans-serif" font-weight="700" font-size="16" fill="#f8fafc" letter-spacing="0.5">SemiSim</text>
-            <text x="44" y="31" font-family="'IBM Plex Mono', 'JetBrains Mono', monospace" font-size="8.5" fill="#38bdf8" letter-spacing="1.2">EXPLORER // LAB</text>
-          </svg>
-          <div class="flex flex-col">
-            <div class="flex items-center gap-space-xs">
-              <span class="font-headline-md text-headline-md font-semibold tracking-tight text-on-surface">SemiSim</span>
-              <span class="px-space-xs py-0.5 rounded bg-surface-container-high border border-outline-variant/50 font-label-sm text-label-sm text-primary">v2.4 [Research Build]</span>
-            </div>
-            <span class="font-label-sm text-label-sm text-on-surface-variant">Band Gap & Transport Lab</span>
-          </div>
-        </div>
-        <div class="hidden xl:flex items-center gap-space-sm bg-surface-container-low px-space-md py-1.5 rounded-lg border border-outline-variant/40">
-          <span class="font-label-md text-label-md text-primary font-medium">OLED vs Solar Cell Mode</span>
-          <span class="text-outline-variant font-label-md text-label-md">|</span>
-          <span class="flex items-center gap-1.5 font-label-sm text-label-sm text-on-surface-variant">
-            <span class="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>Active Sim State: Synced
-          </span>
-        </div>
-        <div class="flex items-center gap-space-md">
-          <div class="hidden md:flex items-center gap-2 bg-surface-container-low px-space-md py-1.5 rounded-lg border border-outline-variant/40">
-            <span class="inline-block w-2 h-2 rounded-full bg-secondary"></span>
-            <span class="font-label-sm text-label-sm text-on-surface">Physics Engine Connected</span>
-          </div>
-          <div class="flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container border border-outline-variant/40">
-            <span class="material-symbols-outlined text-[16px] text-tertiary">group</span>
-            <span class="font-label-sm text-label-sm text-on-surface">Team A-4</span>
-          </div>
-          <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-            <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
-          </div>
-        </div>
+<body class="bg-surface-container-lowest font-body-md text-on-surface antialiased overflow-x-hidden">
+  
+  <header class="fixed top-0 w-full z-50 bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline/10">
+    <div class="h-16 w-full px-8 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <!-- SemiSim Brand Logo SVG -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none" class="h-6 w-auto">
+          <g transform="translate(4, 4)">
+            <rect x="0" y="2" width="32" height="28" rx="6" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+            <line x1="6" y1="9" x2="26" y2="9" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="6" y1="23" x2="26" y2="23" stroke="#a855f7" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M16 21V11" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2 2"/>
+            <polygon points="16,8 13.5,12 18.5,12" fill="#38bdf8"/>
+            <circle cx="21" cy="9" r="2" fill="#fbbf24"/>
+            <circle cx="11" cy="23" r="2" fill="#c084fc"/>
+          </g>
+          <text x="44" y="22" font-family="'IBM Plex Sans', sans-serif" font-weight="700" font-size="16" fill="#f8fafc" letter-spacing="0.5">SemiSim</text>
+        </svg>
       </div>
-      <div class="h-12 flex items-center justify-between border-t border-outline-variant/20 -mx-space-lg px-space-lg bg-surface-container-low/50">
-        <nav class="flex items-center gap-space-xs">
-          <a class="px-space-md py-1 bg-primary-container text-on-primary-container font-semibold rounded shadow-sm font-label-md text-label-md transition-colors" data-path="overview" href="index.html">Overview & Orientation</a>
-          <a class="px-space-md py-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors" data-path="simulator" href="simulator.html">Simulator Workspace</a>
-          <a class="px-space-md py-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors" data-path="evaluation" href="evaluation.html">Engineering Decisions</a>
-          <a class="px-space-md py-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors" data-path="export" href="export.html">Project Report & Export</a>
-        </nav>
-        <div class="hidden md:flex items-center gap-space-lg font-label-sm text-label-sm">
-          <div class="flex items-center gap-1.5"><span class="text-on-surface-variant">TEMP:</span><span class="text-primary font-readout-md text-readout-md">300.0 K</span></div>
-          <div class="flex items-center gap-1.5"><span class="text-on-surface-variant">VAC REF:</span><span class="text-secondary font-readout-md text-readout-md">0.0 eV</span></div>
-          <div class="flex items-center gap-1.5"><span class="text-on-surface-variant">SOLVER:</span><span class="text-tertiary font-readout-md text-readout-md">ASTM G173 SQ / GDM</span></div>
-        </div>
-      </div>
+      <nav class="hidden md:flex items-center gap-8">
+        <a class="text-on-surface font-label-md text-sm transition-colors" href="index.html">Overview</a>
+        <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="simulator.html">Simulator</a>
+        <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="evaluation.html">Decisions</a>
+        <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="export.html">Report</a>
+      </nav>
+      <a href="simulator.html" class="px-6 py-2 bg-on-surface text-surface-container-lowest font-semibold rounded-full font-label-md text-sm hover:scale-105 transition-transform">Enter Lab</a>
     </div>
   </header>
 
-  <main class="w-full pt-28 bg-surface-container-lowest min-h-screen">
-    <div class="flex flex-col w-full">
-      <div class="w-full bg-surface-container-lowest text-on-surface px-margin py-space-xl flex flex-col gap-space-xl">
-        
-        <!-- Reticle Header / Title Hub -->
-        <div class="relative overflow-hidden rounded-xl bg-surface-container-low p-space-xl shadow-xl flex flex-col gap-space-lg">
-          <div class="absolute -right-16 -top-16 w-96 h-96 rounded-full bg-primary/5 blur-3xl pointer-events-none"></div>
-          <div class="absolute -left-12 -bottom-12 w-80 h-80 rounded-full bg-secondary/5 blur-3xl pointer-events-none"></div>
-          
-          <div class="flex flex-wrap items-center justify-between gap-space-md">
-            <div class="flex items-center gap-space-sm flex-wrap">
-              <span class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded bg-surface-container-high font-label-md text-label-md text-primary">
-                <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
-                SIM-STATE: DETAILED-BALANCE CALIBRATED
-              </span>
-              <span class="inline-flex items-center gap-1 px-space-sm py-1 rounded bg-surface-container font-label-sm text-label-sm text-secondary">
-                <span class="material-symbols-outlined text-[14px]">bolt</span>
-                OLED Electroluminescence
-              </span>
-              <span class="inline-flex items-center gap-1 px-space-sm py-1 rounded bg-surface-container font-label-sm text-label-sm text-tertiary">
-                <span class="material-symbols-outlined text-[14px]">wb_sunny</span>
-                Photovoltaic Light Harvesting
-              </span>
-            </div>
-            <div class="flex items-center gap-space-md font-label-sm text-label-sm text-on-surface-variant">
-              <span>FIELD EMISSION: <strong class="text-on-surface font-readout-md text-readout-md" title="Illustrative benchmark field emission scale across 100nm active layer">3.2×10⁵ V/cm</strong></span>
-              <span class="hidden sm:inline text-outline-variant">|</span>
-              <span>PLANCK CONSTANT: <strong class="text-on-surface font-readout-md text-readout-md">4.1357 eV·fs</strong></span>
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-space-xs max-w-5xl">
-            <span class="font-label-md text-label-md tracking-widest text-primary uppercase">Modular Quantum Workbench • PHY-492 / MSE-508</span>
-            <h1 class="font-display-lg text-display-lg text-on-surface tracking-tight">
-              SemiSim: Band Gap & Charge Transport Explorer
-            </h1>
-            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-4xl">
-              An Interactive Physics & Chemistry Engineering Laboratory for Optoelectronic Material Selection. Probe the quantum mechanics governing exciton creation, charge hopping mobility, and photon dissociation across flexible conjugated polymers and high-symmetry inorganic lattices.
-            </p>
-          </div>
-
-          <!-- Quick Telemetry HUD Strip -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-space-md pt-space-xs">
-            <div class="rounded-lg bg-surface-container-high p-space-md flex flex-col gap-space-xs">
-              <div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
-                <span>SQ THEORETICAL MAX</span>
-                <span class="material-symbols-outlined text-[16px] text-secondary">verified</span>
-              </div>
-              <div class="flex items-baseline gap-space-xs">
-                <span class="font-readout-lg text-readout-lg text-secondary font-semibold">33.7%</span>
-                <span class="font-label-sm text-label-sm text-on-surface-variant">at 1.34 eV</span>
-              </div>
-              <span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Shockley-Queisser AM1.5G</span>
-            </div>
-            <div class="rounded-lg bg-surface-container-high p-space-md flex flex-col gap-space-xs">
-              <div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
-                <span>BINDING ENERGY (ORGANIC)</span>
-                <span class="material-symbols-outlined text-[16px] text-tertiary">grain</span>
-              </div>
-              <div class="flex items-baseline gap-space-xs">
-                <span class="font-readout-lg text-readout-lg text-tertiary font-semibold">0.3 - 1.0</span>
-                <span class="font-label-sm text-label-sm text-on-surface-variant">eV (Frenkel)</span>
-              </div>
-              <span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Requires heterojunction split</span>
-            </div>
-            <div class="rounded-lg bg-surface-container-high p-space-md flex flex-col gap-space-xs">
-              <div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
-                <span>INORGANIC MOBILITY (Si)</span>
-                <span class="material-symbols-outlined text-[16px] text-primary">speed</span>
-              </div>
-              <div class="flex items-baseline gap-space-xs">
-                <span class="font-readout-lg text-readout-lg text-primary font-semibold">1,400</span>
-                <span class="font-label-sm text-label-sm text-on-surface-variant">cm²/V·s</span>
-              </div>
-              <span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Delocalized Bloch wave states</span>
-            </div>
-            <div class="rounded-lg bg-surface-container-high p-space-md flex flex-col gap-space-xs">
-              <div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
-                <span>ORGANIC MOBILITY (P3HT)</span>
-                <span class="material-symbols-outlined text-[16px] text-error">shuffle</span>
-              </div>
-              <div class="flex items-baseline gap-space-xs">
-                <span class="font-readout-lg text-readout-lg text-on-surface font-semibold">10⁻⁴ - 0.1</span>
-                <span class="font-label-sm text-label-sm text-on-surface-variant">cm²/V·s</span>
-              </div>
-              <span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Polaron phonon-assisted hop</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Scientific Comparison Matrix -->
-        <div class="w-full rounded-xl bg-surface-container-low p-space-lg shadow-md flex flex-col gap-space-md">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-xs">
-            <div class="flex items-center gap-space-sm">
-              <span class="p-2 rounded bg-primary/10 text-primary">
-                <span class="material-symbols-outlined text-[22px]">compare_arrows</span>
-              </span>
-              <div>
-                <h2 class="font-headline-md text-headline-md text-on-surface">Scientific Foundation: The Microscopic Dilemma</h2>
-                <p class="font-body-sm text-body-sm text-on-surface-variant">Why Band Gap ($E_g$) and Carrier Mobility dictate photophysical efficiency versus processability</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-space-xs bg-surface-container px-space-md py-1.5 rounded-lg self-start sm:self-auto">
-              <span class="font-label-sm text-label-sm text-on-surface-variant">Micro-state:</span>
-              <span class="font-label-md text-label-md text-secondary font-medium">Bands vs Molecular Orbitals (HOMO/LUMO)</span>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-stretch">
-            <!-- Inorganic Side -->
-            <div class="lg:col-span-6 rounded-xl bg-surface-container p-space-lg flex flex-col justify-between gap-space-md relative overflow-hidden">
-              <div class="flex flex-col gap-space-sm">
-                <div class="flex items-center justify-between">
-                  <span class="px-space-xs py-0.5 rounded bg-primary/20 text-primary font-label-sm text-label-sm">COVALENT / CRYSTALLINE SOLID</span>
-                  <span class="font-readout-md text-readout-md text-primary font-medium">Wannier-Mott Excitons</span>
-                </div>
-                <h3 class="font-headline-md text-headline-md text-on-surface">Delocalized Band Transport</h3>
-                <p class="font-body-md text-body-md text-on-surface-variant">
-                  In crystalline semiconductors (Si, GaAs, InGaN), rigid spatial periodicity yields continuous valence and conduction energy bands. Electron-hole pairs possess tiny Coulombic binding ($E_b \approx 4\text{–}15\text{ meV}$), which readily dissociate spontaneously at room thermal energy ($k_B T \approx 25.9\text{ meV}$).
-                </p>
-              </div>
-              <div class="w-full bg-surface-container-lowest p-space-md rounded-lg flex flex-col gap-space-xs">
-                <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
-                  <span>Conduction Band ($E_c$)</span>
-                  <span class="text-primary">Continuous Free Carrier Drift</span>
-                </div>
-                <div class="relative h-16 w-full bg-gradient-to-b from-primary/20 to-transparent rounded overflow-hidden flex items-center justify-center">
-                  <svg class="w-full h-full text-primary" preserveAspectRatio="none" viewBox="0 0 400 60">
-                    <path d="M0,35 Q100,10 200,35 T400,35" fill="none" stroke="currentColor" stroke-width="2"></path>
-                    <path d="M0,45 Q100,20 200,45 T400,45" fill="none" opacity="0.6" stroke="currentColor" stroke-dasharray="3 3" stroke-width="1.5"></path>
-                    <circle cx="200" cy="35" fill="currentColor" r="4"></circle>
-                    <circle cx="230" cy="28" fill="currentColor" r="3"></circle>
-                    <circle cx="170" cy="28" fill="currentColor" r="3"></circle>
-                  </svg>
-                  <span class="absolute font-label-sm text-label-sm text-primary tracking-widest">E_k = ℏ²k² / 2m* (Parabolic Disp.)</span>
-                </div>
-                <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant pt-1">
-                  <span>Valence Band ($E_v$)</span>
-                  <span>High Mobility: 500 - 8500 cm²/V·s</span>
-                </div>
-              </div>
-              <div class="grid grid-cols-3 gap-space-sm pt-space-xs">
-                <div class="bg-surface-container-high rounded p-space-sm">
-                  <span class="font-label-sm text-label-sm text-on-surface-variant block">EXCITON RADIUS</span>
-                  <span class="font-readout-md text-readout-md text-on-surface font-semibold">&gt; 10 nm</span>
-                </div>
-                <div class="bg-surface-container-high rounded p-space-sm">
-                  <span class="font-label-sm text-label-sm text-on-surface-variant block">THERMAL STABILITY</span>
-                  <span class="font-readout-md text-readout-md text-secondary font-semibold">&gt; 600 °C</span>
-                </div>
-                <div class="bg-surface-container-high rounded p-space-sm">
-                  <span class="font-label-sm text-label-sm text-on-surface-variant block">FABRICATION</span>
-                  <span class="font-readout-md text-readout-md text-on-surface font-semibold">CVD / MBE high-T</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Organic Side -->
-            <div class="lg:col-span-6 rounded-xl bg-surface-container p-space-lg flex flex-col justify-between gap-space-md relative overflow-hidden">
-              <div class="flex flex-col gap-space-sm">
-                <div class="flex items-center justify-between">
-                  <span class="px-space-xs py-0.5 rounded bg-tertiary/20 text-tertiary font-label-sm text-label-sm">CONJUGATED ORGANIC POLYMER</span>
-                  <span class="font-readout-md text-readout-md text-tertiary font-medium">Frenkel Excitons</span>
-                </div>
-                <h3 class="font-headline-md text-headline-md text-on-surface">Localized Polaron Hopping</h3>
-                <p class="font-body-md text-body-md text-on-surface-variant">
-                  In molecular thin-films (Alq3, Poly-TPD, PCBM), weak van der Waals coupling and low dielectric constants ($\varepsilon_r \approx 3\text{–}4$) tightly confine electron-hole pairs to single monomer sites ($r \approx 0.8\text{ nm}$). Carriers travel via phonon-assisted, thermally activated tunneling between discrete HOMO and LUMO energy levels.
-                </p>
-              </div>
-              <div class="w-full bg-surface-container-lowest p-space-md rounded-lg flex flex-col gap-space-xs">
-                <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
-                  <span>LUMO Potentials (Unoccupied)</span>
-                  <span class="text-tertiary">Marcus Hopping Rate ν_hop</span>
-                </div>
-                <div class="relative h-16 w-full bg-gradient-to-b from-tertiary/20 to-transparent rounded overflow-hidden flex items-center justify-center">
-                  <svg class="w-full h-full text-tertiary" preserveAspectRatio="none" viewBox="0 0 400 60">
-                    <path d="M20,15 L40,15 L50,45 L70,45 L80,15 L120,15 L130,45 L150,45 L160,15 L220,15 L230,45 L250,45 L260,15 L320,15 L330,45 L350,45 L360,15" fill="none" stroke="currentColor" stroke-width="1.8"></path>
-                    <path d="M60,35 C100,10 100,50 140,35" fill="none" stroke="#ffc640" stroke-dasharray="2 2" stroke-width="2"></path>
-                    <circle cx="60" cy="35" fill="#ffc640" r="4"></circle>
-                    <circle cx="140" cy="35" fill="currentColor" r="4"></circle>
-                    <circle cx="240" cy="35" fill="currentColor" r="4"></circle>
-                  </svg>
-                  <span class="absolute font-label-sm text-label-sm text-tertiary tracking-widest">ΔG‡ Activation Barrier Hopping</span>
-                </div>
-                <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant pt-1">
-                  <span>HOMO Orbitals (Occupied)</span>
-                  <span>Constrained Mobility: 10⁻⁵ - 1.0 cm²/V·s</span>
-                </div>
-              </div>
-              <div class="grid grid-cols-3 gap-space-sm pt-space-xs">
-                <div class="bg-surface-container-high rounded p-space-sm">
-                  <span class="font-label-sm text-label-sm text-on-surface-variant block">EXCITON RADIUS</span>
-                  <span class="font-readout-md text-readout-md text-tertiary font-semibold">&lt; 1 nm (Localized)</span>
-                </div>
-                <div class="bg-surface-container-high rounded p-space-sm">
-                  <span class="font-label-sm text-label-sm text-on-surface-variant block">FLEXIBILITY</span>
-                  <span class="font-readout-md text-readout-md text-secondary font-semibold">&lt; 2 mm Bend Radius</span>
-                </div>
-                <div class="bg-surface-container-high rounded p-space-sm">
-                  <span class="font-label-sm text-label-sm text-on-surface-variant block">FABRICATION</span>
-                  <span class="font-readout-md text-readout-md text-on-surface font-semibold">Roll-to-Roll &lt; 120°C</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Primary Dual Entry Exploration Tracks -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-space-xl items-stretch">
-          <!-- Card A: OLED Track -->
-          <div class="rounded-xl bg-surface-container-low p-space-xl shadow-xl flex flex-col justify-between gap-space-lg relative overflow-hidden group hover:shadow-2xl transition-all">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-2xl pointer-events-none group-hover:bg-primary/20 transition-colors"></div>
-            <div class="flex flex-col gap-space-md z-10">
-              <div class="flex items-center justify-between">
-                <div class="inline-flex items-center gap-2 px-space-sm py-1 rounded-full bg-primary/15 text-primary font-label-md text-label-md">
-                  <span class="material-symbols-outlined text-[16px]">wb_twilight</span>
-                  TRACK A: PHOTON EMISSION
-                </div>
-                <span class="font-label-sm text-label-sm text-on-surface-variant">PROCESS: J_rec → hν</span>
-              </div>
-              <div>
-                <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">OLED Electroluminescence Track</h2>
-                <p class="font-body-md text-body-md text-on-surface-variant pt-1">
-                  Construct high-efficiency multilayer Organic LEDs. Model dual charge injection, tune recombination zones, and evaluate singlet vs triplet spin-statistics (25% singlet ceiling vs 100% phosphor/TADF harvesting).
-                </p>
-              </div>
-              <ul class="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
-                <li class="flex items-center gap-space-xs">
-                  <span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
-                  Photoluminescence Quantum Yield (PLQY) grounded calculations
-                </li>
-                <li class="flex items-center gap-space-xs">
-                  <span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
-                  Outcoupling efficiency analysis ($\eta_{out} \approx 1/(2n^2)$)
-                </li>
-                <li class="flex items-center gap-space-xs">
-                  <span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
-                  Evaluate RGB CIE 1931 color chromaticity from band gap $E_g$
-                </li>
-              </ul>
-            </div>
-            <div class="pt-space-md z-10">
-              <a href="simulator.html?mode=oled" class="w-full py-space-md px-space-lg rounded-lg bg-primary hover:bg-primary-container text-on-primary-container font-headline-md text-headline-md font-semibold tracking-wide shadow-md flex items-center justify-center gap-space-sm transition-all transform active:scale-[0.99]" id="launch-oled">
-                <span>Launch OLED Simulator</span>
-                <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Card B: Solar Track -->
-          <div class="rounded-xl bg-surface-container-low p-space-xl shadow-xl flex flex-col justify-between gap-space-lg relative overflow-hidden group hover:shadow-2xl transition-all">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-2xl pointer-events-none group-hover:bg-secondary/20 transition-colors"></div>
-            <div class="flex flex-col gap-space-md z-10">
-              <div class="flex items-center justify-between">
-                <div class="inline-flex items-center gap-2 px-space-sm py-1 rounded-full bg-secondary/15 text-secondary font-label-md text-label-md">
-                  <span class="material-symbols-outlined text-[16px]">solar_power</span>
-                  TRACK B: LIGHT HARVESTING
-                </div>
-                <span class="font-label-sm text-label-sm text-on-surface-variant">PROCESS: hν → J_photo</span>
-              </div>
-              <div>
-                <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Photovoltaic Simulator Track</h2>
-                <p class="font-body-md text-body-md text-on-surface-variant pt-1">
-                  Design next-generation solar energy converters. Calculate the Shockley-Queisser thermodynamic bandgap limit via ASTM G173-03 numerical integration and evaluate $J_{sc}$, $V_{oc}$, and fill factor $FF$.
-                </p>
-              </div>
-              <ul class="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
-                <li class="flex items-center gap-space-xs">
-                  <span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
-                  Real detailed-balance integration with AM1.5G photon flux
-                </li>
-                <li class="flex items-center gap-space-xs">
-                  <span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
-                  Blackbody dark saturation current ($J_0$) cell temperature model
-                </li>
-                <li class="flex items-center gap-space-xs">
-                  <span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
-                  Ideal diode $V_{oc} = (kT/q)\ln(J_{sc}/J_0 + 1)$ and empirical FF
-                </li>
-              </ul>
-            </div>
-            <div class="pt-space-md z-10">
-              <a href="simulator.html?mode=solar" class="w-full py-space-md px-space-lg rounded-lg bg-secondary hover:bg-secondary-container text-on-secondary-container font-headline-md text-headline-md font-semibold tracking-wide shadow-md flex items-center justify-center gap-space-sm transition-all transform active:scale-[0.99]" id="launch-pv">
-                <span>Launch Photovoltaics Simulator</span>
-                <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Material Trade-Off Benchmark Table -->
-        <div class="rounded-xl bg-surface-container-low p-space-lg shadow-md flex flex-col gap-space-md">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-xs">
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary text-[20px]">table_chart</span>
-                <h3 class="font-headline-md text-headline-md text-on-surface">Material Class Reference & Trade-off Engine</h3>
-              </div>
-              <p class="font-body-sm text-body-sm text-on-surface-variant">Fundamental Solid-State Physics vs Molecular Chemistry Benchmark</p>
-            </div>
-            <div class="flex items-center gap-space-xs font-label-sm text-label-sm">
-              <span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface-variant">Standardized at 300 K</span>
-              <span class="px-space-xs py-0.5 rounded bg-surface-container text-primary">N_A = 10¹⁶ cm⁻³</span>
-            </div>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left font-body-sm text-body-sm border-collapse">
-              <thead>
-                <tr class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-                  <th class="py-space-md px-space-md rounded-l">Engineering Parameter</th>
-                  <th class="py-space-md px-space-md text-primary">Inorganic Semiconductors (Si, GaAs, InP)</th>
-                  <th class="py-space-md px-space-md text-tertiary">Organic Semiconductors (Small Mol. / Polymers)</th>
-                  <th class="py-space-md px-space-md text-secondary rounded-r">Optoelectronic Design Consequence</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-outline-variant/10">
-                <tr class="hover:bg-surface-container/50 transition-colors">
-                  <td class="py-space-md px-space-md font-semibold text-on-surface">Electronic Delocalization</td>
-                  <td class="py-space-md px-space-md font-readout-md text-readout-md text-primary">Broad 3D energy bands ($W > 2\text{ eV}$)</td>
-                  <td class="py-space-md px-space-md font-readout-md text-readout-md text-tertiary">Discrete HOMO/LUMO states ($W < 0.2\text{ eV}$)</td>
-                  <td class="py-space-md px-space-md text-on-surface-variant">Inorganics achieve fast drift; organics depend on structural hopping order.</td>
-                </tr>
-                <tr class="hover:bg-surface-container/50 transition-colors">
-                  <td class="py-space-md px-space-md font-semibold text-on-surface">Exciton Binding ($E_b$)</td>
-                  <td class="py-space-md px-space-md font-readout-md text-readout-md text-primary">Weak: $3.8 \text{ to } 15\text{ meV}$ ($\varepsilon_r \approx 12$)</td>
-                  <td class="py-space-md px-space-md font-readout-md text-readout-md text-tertiary">Strong: $300 \text{ to } 800\text{ meV}$ ($\varepsilon_r \approx 3.5$)</td>
-                  <td class="py-space-md px-space-md text-on-surface-variant">Organics require Donor-Acceptor interfaces to overcome the Onsager-Braun barrier.</td>
-                </tr>
-                <tr class="hover:bg-surface-container/50 transition-colors">
-                  <td class="py-space-md px-space-md font-semibold text-on-surface">Carrier Mobility ($\mu$)</td>
-                  <td class="py-space-md px-space-md font-readout-md text-readout-md text-primary">$100 \text{ to } 8,500\text{ cm}^2/\text{V}\cdot\text{s}$</td>
-                  <td class="py-space-md px-space-md font-readout-md text-readout-md text-tertiary">$10^{-5} \text{ to } 1\text{ cm}^2/\text{V}\cdot\text{s}$</td>
-                  <td class="py-space-md px-space-md text-on-surface-variant">Organics require sub-100nm active layer thickness to prevent catastrophic RC time-lag.</td>
-                </tr>
-                <tr class="hover:bg-surface-container/50 transition-colors">
-                  <td class="py-space-md px-space-md font-semibold text-on-surface">Mechanical Compliancy</td>
-                  <td class="py-space-md px-space-md font-readout-md text-readout-md text-on-surface">Rigid, brittle crystalline wafer (fracture strain &lt; 1%)</td>
-                  <td class="py-space-md px-space-md font-readout-md text-readout-md text-tertiary">Extremely flexible, rollable polymer (strain &gt; 15%)</td>
-                  <td class="py-space-md px-space-md text-on-surface-variant">Enables bendable displays, smart textiles, conformal aerospace arrays.</td>
-                </tr>
-                <tr class="hover:bg-surface-container/50 transition-colors">
-                  <td class="py-space-md px-space-md font-semibold text-on-surface">Fabrication Footprint</td>
-                  <td class="py-space-md px-space-md font-readout-md text-readout-md text-on-surface">High-temperature ($900\text{--}1400^\circ\text{C}$), vacuum litho</td>
-                  <td class="py-space-md px-space-md font-readout-md text-readout-md text-secondary">Solution printing, slot-die, thermal evp ($&lt; 150^\circ\text{C}$)</td>
-                  <td class="py-space-md px-space-md text-on-surface-variant">Drastically reduced thermal energy budget & continuous roll-to-roll scaling.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
+  <main class="w-full flex flex-col items-center">
+    
+    <!-- Hero Section -->
+    <section class="min-h-screen w-full flex flex-col items-center justify-center text-center px-4 relative">
+      <div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none"></div>
+      
+      <div class="z-10 reveal active flex flex-col items-center mt-16">
+        <span class="font-label-md text-sm tracking-[0.3em] text-primary uppercase mb-6">Quantum Engineering Lab</span>
+        <h1 class="font-display-lg text-[64px] md:text-[120px] text-on-surface tracking-tighter leading-none mb-8 font-medium">
+          Band Gap &<br/>Charge Transport
+        </h1>
+        <p class="font-body-lg text-xl md:text-2xl text-on-surface-variant max-w-2xl mb-16 font-light leading-relaxed">
+          Probe the quantum mechanics governing exciton creation, charge hopping mobility, and photon dissociation.
+        </p>
+        <a href="#dilemma" class="material-symbols-outlined text-4xl text-on-surface-variant/50 hover:text-on-surface transition-colors animate-bounce">south</a>
       </div>
-    </div>
+    </section>
+
+    <!-- Section 1: Microscopic Dilemma -->
+    <section id="dilemma" class="min-h-screen w-full flex flex-col items-center justify-center px-8 py-24 max-w-6xl">
+      <div class="reveal w-full flex flex-col items-center text-center mb-24">
+        <span class="text-on-surface-variant font-label-md tracking-[0.2em] uppercase mb-4">The Microscopic Dilemma</span>
+        <h2 class="font-display-lg text-5xl md:text-7xl text-on-surface leading-tight font-medium">
+          Bands vs Molecular Orbitals
+        </h2>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-24 w-full">
+        <div class="reveal flex flex-col gap-6">
+          <div class="text-8xl md:text-9xl font-readout-lg text-primary font-light tracking-tighter">1,400</div>
+          <div>
+            <h3 class="text-3xl font-headline-md text-on-surface mb-4">Delocalized Band Transport</h3>
+            <p class="text-on-surface-variant text-lg leading-relaxed font-light">cm²/V·s mobility in crystalline semiconductors like Silicon. Rigid spatial periodicity yields continuous energy bands and weak exciton binding (3.8 meV), allowing immediate charge dissociation.</p>
+          </div>
+        </div>
+        <div class="reveal flex flex-col gap-6" style="transition-delay: 200ms;">
+          <div class="text-8xl md:text-9xl font-readout-lg text-tertiary font-light tracking-tighter">10⁻⁴</div>
+          <div>
+            <h3 class="text-3xl font-headline-md text-on-surface mb-4">Localized Polaron Hopping</h3>
+            <p class="text-on-surface-variant text-lg leading-relaxed font-light">cm²/V·s mobility in Organic molecules. Weak van der Waals coupling confines electron-hole pairs, requiring thermal activation to hop between discrete HOMO/LUMO states.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: OLED Track -->
+    <section class="min-h-screen w-full flex flex-col items-center justify-center px-8 py-24 bg-surface-container-low relative overflow-hidden group">
+      <div class="absolute inset-0 bg-primary/5 blur-3xl opacity-50 transition-opacity duration-1000 group-hover:opacity-100 pointer-events-none"></div>
+      
+      <div class="reveal z-10 flex flex-col items-center text-center max-w-5xl">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 text-primary font-label-md text-xs tracking-[0.2em] uppercase mb-12">
+          <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span> Track A: Photon Emission
+        </div>
+        <h2 class="font-display-lg text-6xl md:text-8xl text-on-surface mb-16 font-medium tracking-tight">OLED<br/>Electroluminescence</h2>
+        
+        <div class="flex flex-wrap justify-center gap-16 md:gap-32 mb-20">
+          <div class="flex flex-col items-center">
+            <span class="text-5xl md:text-6xl font-readout-lg text-primary font-light">79.2%</span>
+            <span class="text-on-surface-variant font-label-md tracking-wider uppercase text-xs mt-4">IQE Limit (Phosphor)</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="text-5xl md:text-6xl font-readout-lg text-primary font-light">590nm</span>
+            <span class="text-on-surface-variant font-label-md tracking-wider uppercase text-xs mt-4">Amber Emission</span>
+          </div>
+        </div>
+        
+        <a href="simulator.html?mode=oled" class="px-10 py-5 bg-primary text-on-primary rounded-full font-headline-md text-xl hover:scale-105 transition-transform flex items-center gap-3 shadow-lg hover:shadow-primary/20">
+          Launch OLED Simulator <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Section 3: Solar Track -->
+    <section class="min-h-screen w-full flex flex-col items-center justify-center px-8 py-24 relative overflow-hidden group">
+      <div class="absolute inset-0 bg-secondary/5 blur-3xl opacity-50 transition-opacity duration-1000 group-hover:opacity-100 pointer-events-none"></div>
+      
+      <div class="reveal z-10 flex flex-col items-center text-center max-w-5xl">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-secondary/30 text-secondary font-label-md text-xs tracking-[0.2em] uppercase mb-12">
+          <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span> Track B: Light Harvesting
+        </div>
+        <h2 class="font-display-lg text-6xl md:text-8xl text-on-surface mb-16 font-medium tracking-tight">Photovoltaic<br/>Absorption</h2>
+        
+        <div class="flex flex-wrap justify-center gap-16 md:gap-32 mb-20">
+          <div class="flex flex-col items-center">
+            <span class="text-5xl md:text-6xl font-readout-lg text-secondary font-light">33.7%</span>
+            <span class="text-on-surface-variant font-label-md tracking-wider uppercase text-xs mt-4">Shockley-Queisser Max</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="text-5xl md:text-6xl font-readout-lg text-secondary font-light">1.34 eV</span>
+            <span class="text-on-surface-variant font-label-md tracking-wider uppercase text-xs mt-4">Optimal Band Gap</span>
+          </div>
+        </div>
+        
+        <a href="simulator.html?mode=solar" class="px-10 py-5 bg-secondary text-on-secondary rounded-full font-headline-md text-xl hover:scale-105 transition-transform flex items-center gap-3 shadow-lg hover:shadow-secondary/20">
+          Launch Solar Simulator <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Section 4: Material Dossier (Progressive Disclosure) -->
+    <section class="min-h-screen w-full flex flex-col items-center justify-center px-4 py-24 bg-surface-container-low">
+      <div class="reveal w-full max-w-4xl">
+        <h2 class="font-display-lg text-4xl md:text-5xl text-on-surface mb-12 text-center font-medium">Material Trade-Off Dossier</h2>
+        
+        <div class="flex flex-col gap-4">
+          <!-- Dossier Item 1 -->
+          <details class="group bg-surface-container rounded-xl overflow-hidden cursor-pointer" open>
+            <summary class="flex justify-between items-center p-6 text-xl font-headline-md text-on-surface select-none outline-none group-hover:bg-surface-container-high transition-colors">
+              Mechanical Flexibility
+              <span class="material-symbols-outlined text-outline group-open:-scale-y-100 transition-transform">expand_more</span>
+            </summary>
+            <div class="p-6 pt-0 border-t border-outline/10 text-on-surface-variant font-body-lg font-light leading-relaxed">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+                <div>
+                  <h4 class="text-primary font-label-md tracking-wider text-sm mb-2 uppercase">Inorganic (Wafer)</h4>
+                  <p>Rigid, brittle crystalline structure. Fracture strain is typically less than 1%. Requires flat, rigid encapsulation (glass).</p>
+                </div>
+                <div>
+                  <h4 class="text-tertiary font-label-md tracking-wider text-sm mb-2 uppercase">Organic (Polymer)</h4>
+                  <p>Extremely flexible, rollable polymer films. Strain can exceed 15%, enabling bendable displays, smart textiles, and conformal aerospace arrays.</p>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <!-- Dossier Item 2 -->
+          <details class="group bg-surface-container rounded-xl overflow-hidden cursor-pointer">
+            <summary class="flex justify-between items-center p-6 text-xl font-headline-md text-on-surface select-none outline-none group-hover:bg-surface-container-high transition-colors">
+              Exciton Binding & Dielectric Screening
+              <span class="material-symbols-outlined text-outline group-open:-scale-y-100 transition-transform">expand_more</span>
+            </summary>
+            <div class="p-6 pt-0 border-t border-outline/10 text-on-surface-variant font-body-lg font-light leading-relaxed">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+                <div>
+                  <h4 class="text-primary font-label-md tracking-wider text-sm mb-2 uppercase">Inorganic (High ε)</h4>
+                  <p>Strong dielectric screening (ε ≈ 12). Exciton binding energy is extremely weak (4-15 meV), allowing spontaneous thermal dissociation at room temperature.</p>
+                </div>
+                <div>
+                  <h4 class="text-tertiary font-label-md tracking-wider text-sm mb-2 uppercase">Organic (Low ε)</h4>
+                  <p>Weak screening (ε ≈ 3-4). Exciton binding energy is strong (300-800 meV). Requires a heterojunction interface (Donor-Acceptor) with sufficient energy offset to overcome the Onsager-Braun barrier.</p>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <!-- Dossier Item 3 -->
+          <details class="group bg-surface-container rounded-xl overflow-hidden cursor-pointer">
+            <summary class="flex justify-between items-center p-6 text-xl font-headline-md text-on-surface select-none outline-none group-hover:bg-surface-container-high transition-colors">
+              Fabrication Footprint
+              <span class="material-symbols-outlined text-outline group-open:-scale-y-100 transition-transform">expand_more</span>
+            </summary>
+            <div class="p-6 pt-0 border-t border-outline/10 text-on-surface-variant font-body-lg font-light leading-relaxed">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+                <div>
+                  <h4 class="text-primary font-label-md tracking-wider text-sm mb-2 uppercase">Inorganic</h4>
+                  <p>High-temperature processing (900-1400°C), requiring cleanrooms, vacuum lithography, and extensive energy budgets.</p>
+                </div>
+                <div>
+                  <h4 class="text-tertiary font-label-md tracking-wider text-sm mb-2 uppercase">Organic</h4>
+                  <p>Solution printing, slot-die coating, and thermal evaporation at low temperatures (< 150°C). Drastically reduced thermal budget enabling continuous roll-to-roll manufacturing.</p>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <footer class="w-full bg-surface-container-low border-t border-outline-variant/30 py-space-md">
-    <div class="w-full px-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-sm font-label-sm text-label-sm text-on-surface-variant">
-      <div>SemiSim Precision Computational Engine • Solid State Device Physics Workbench</div>
-      <div class="flex items-center gap-space-md">
-        <span>Detailed-Balance Solver</span>
-        <span class="text-outline-variant">|</span>
-        <span>ASTM G173-03 AM1.5G</span>
-        <span class="text-outline-variant">|</span>
-        <span>© 2026 Lab Consortium</span>
-      </div>
-    </div>
+  <footer class="w-full bg-surface-container-lowest py-8 text-center text-on-surface-variant font-label-sm text-sm">
+    <p>SemiSim Lab • ASTM G173-03 AM1.5G Solver • © 2026</p>
   </footer>
+
+  <script>
+    // Scroll Reveal Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach((el) => {
+      observer.observe(el);
+    });
+  </script>
 </body>
 </html>
