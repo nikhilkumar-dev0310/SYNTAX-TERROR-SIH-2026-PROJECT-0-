@@ -3,15 +3,19 @@
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>SemiSim - Simulator Workspace</title>
+  <title>SemiSim - Simulator</title>
   <style>
     @layer base {
-      html, body { margin: 0; padding: 0; }
+      html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
       body { overscroll-behavior: none; }
-      main > :first-child { margin-top: 0 !important; }
-      main > :last-child { margin-bottom: 0 !important; }
     }
     ::-webkit-scrollbar { display: none; }
+    #drawer { transform: translateX(0); transition: transform 0.3s ease-in-out; }
+    #drawer.closed { transform: translateX(-100%); }
+    #main-stage { transition: margin-left 0.3s ease-in-out; }
+    .drawer-open #main-stage { margin-left: 24rem; }
+    .dossier-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+    .dossier-open .dossier-content { max-height: 2000px; }
   </style>
   <script src="https://cdn.tailwindcss.com"></script>
   <script id="tailwind-config">
@@ -20,62 +24,17 @@
       theme: {
         extend: {
           colors: {
-            "secondary": "#ffc640",
-            "on-error-container": "#ffdad6",
-            "on-surface": "#dfe2ee",
-            "inverse-on-surface": "#2c3039",
-            "on-primary-container": "#004965",
-            "primary": "#8ed5ff",
-            "surface-bright": "#353942",
-            "background": "#0f131c",
-            "tertiary": "#e1c0ff",
-            "inverse-primary": "#00668a",
-            "error": "#ffb4ab",
-            "surface-container-lowest": "#0a0e16",
-            "surface-variant": "#31353e",
-            "on-tertiary": "#490081",
-            "on-tertiary-fixed-variant": "#62259b",
-            "surface-container-highest": "#31353e",
-            "surface-container-low": "#181c24",
-            "primary-fixed-dim": "#7bd0ff",
-            "outline-variant": "#3e484f",
-            "tertiary-fixed-dim": "#ddb8ff",
-            "surface": "#0f131c",
-            "on-primary": "#00354a",
-            "on-secondary-container": "#5a4100",
-            "on-tertiary-container": "#5f2198",
-            "primary-fixed": "#c4e7ff",
-            "inverse-surface": "#dfe2ee",
-            "on-secondary-fixed-variant": "#5c4300",
-            "surface-container-high": "#262a33",
-            "tertiary-container": "#ce9cff",
-            "secondary-fixed": "#ffdf9f",
-            "surface-container": "#1c2028",
-            "on-primary-fixed-variant": "#004c69",
-            "on-surface-variant": "#bdc8d1",
-            "on-secondary-fixed": "#261a00",
-            "on-background": "#dfe2ee",
-            "outline": "#87929a",
-            "tertiary-fixed": "#f0dbff",
-            "surface-tint": "#7bd0ff",
-            "surface-dim": "#0f131c",
-            "on-error": "#690005",
-            "on-tertiary-fixed": "#2c0051",
-            "secondary-container": "#e3aa00",
-            "on-secondary": "#402d00",
-            "on-primary-fixed": "#001e2c",
-            "error-container": "#93000a",
-            "primary-container": "#38bdf8",
-            "secondary-fixed-dim": "#f9bd22"
-          },
-          borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
-          spacing: {
-            "space-xl": "1.5rem", "space-md": "0.75rem", "space-xs": "0.25rem", "space-sm": "0.5rem",
-            "gutter-mobile": "0.5rem", "margin-mobile": "0.75rem", "space-lg": "1rem", "margin": "1.5rem", "gutter": "1rem"
+            "secondary": "#ffc640", "primary": "#8ed5ff", "tertiary": "#e1c0ff",
+            "surface-container-lowest": "#0a0e16", "surface-variant": "#31353e",
+            "surface-container-highest": "#31353e", "surface-container-low": "#181c24",
+            "surface-container": "#1c2028", "surface": "#0f131c", "on-surface": "#dfe2ee",
+            "on-surface-variant": "#bdc8d1", "outline": "#87929a", "on-primary-container": "#004965",
+            "primary-container": "#38bdf8", "error": "#ffb4ab", "on-primary": "#00354a", "on-secondary": "#402d00",
+            "on-tertiary": "#490081"
           },
           fontFamily: {
-            "body-sm": ["Inter"], "display-lg-mobile": ["IBM Plex Sans"], "body-lg": ["Inter"],
-            "display-lg": ["IBM Plex Sans"], "label-md": ["JetBrains Mono"], "body-md": ["Inter"],
+            "body-sm": ["Inter"], "display-lg": ["IBM Plex Sans"], "body-lg": ["Inter"],
+            "label-md": ["JetBrains Mono"], "body-md": ["Inter"],
             "headline-lg": ["IBM Plex Sans"], "headline-md": ["IBM Plex Sans"], "readout-md": ["JetBrains Mono"],
             "label-sm": ["JetBrains Mono"], "readout-lg": ["JetBrains Mono"]
           }
@@ -87,607 +46,319 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
   <script src="api-config.js"></script>
 </head>
-<body class="bg-surface-container-lowest font-body-md text-on-surface antialiased">
-  <header class="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.3)]">
-    <div class="h-28 w-full px-space-lg flex flex-col justify-between">
-      <div class="h-16 flex items-center justify-between gap-space-md">
-        <div class="flex items-center gap-space-md">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none" class="h-8 w-auto">
-            <g transform="translate(4, 4)">
-              <rect x="0" y="2" width="32" height="28" rx="6" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
-              <line x1="6" y1="9" x2="26" y2="9" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
-              <line x1="6" y1="23" x2="26" y2="23" stroke="#a855f7" stroke-width="2.5" stroke-linecap="round"/>
-              <path d="M16 21V11" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2 2"/>
-              <polygon points="16,8 13.5,12 18.5,12" fill="#38bdf8"/>
-              <circle cx="21" cy="9" r="2" fill="#fbbf24"/>
-              <circle cx="11" cy="23" r="2" fill="#c084fc"/>
-            </g>
-            <text x="44" y="22" font-family="'IBM Plex Sans', sans-serif" font-weight="700" font-size="16" fill="#f8fafc" letter-spacing="0.5">SemiSim</text>
-            <text x="44" y="31" font-family="'IBM Plex Mono', 'JetBrains Mono', monospace" font-size="8.5" fill="#38bdf8" letter-spacing="1.2">EXPLORER // LAB</text>
-          </svg>
-          <div class="flex flex-col">
-            <div class="flex items-center gap-space-xs">
-              <span class="font-headline-md text-headline-md font-semibold tracking-tight text-on-surface">SemiSim</span>
-              <span class="px-space-xs py-0.5 rounded bg-surface-container-high border border-outline-variant/50 font-label-sm text-label-sm text-primary">v2.4 [Research Build]</span>
-            </div>
-            <span class="font-label-sm text-label-sm text-on-surface-variant">Band Gap & Transport Lab</span>
-          </div>
-        </div>
-        <div class="hidden xl:flex items-center gap-space-sm bg-surface-container-low px-space-md py-1.5 rounded-lg border border-outline-variant/40">
-          <span class="font-label-md text-label-md text-primary font-medium">OLED vs Solar Cell Mode</span>
-          <span class="text-outline-variant font-label-md text-label-md">|</span>
-          <span class="flex items-center gap-1.5 font-label-sm text-label-sm text-on-surface-variant">
-            <span class="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>Active Sim State: Synced
-          </span>
-        </div>
-        <div class="flex items-center gap-space-md">
-          <div class="hidden md:flex items-center gap-2 bg-surface-container-low px-space-md py-1.5 rounded-lg border border-outline-variant/40">
-            <span class="inline-block w-2 h-2 rounded-full bg-secondary"></span>
-            <span class="font-label-sm text-label-sm text-on-surface">FastAPI Physics Engine [300 K]</span>
-          </div>
-          <div class="flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container border border-outline-variant/40">
-            <span class="material-symbols-outlined text-[16px] text-tertiary">group</span>
-            <span class="font-label-sm text-label-sm text-on-surface">Team A-4</span>
-          </div>
-          <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-            <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
-          </div>
-        </div>
+<body class="bg-surface-container-lowest font-body-md text-on-surface antialiased drawer-open flex flex-col h-screen">
+
+  <!-- Restrained Header -->
+  <header class="h-16 shrink-0 w-full px-6 flex items-center justify-between border-b border-outline/10 bg-surface-container-lowest z-40 relative">
+    <div class="flex items-center gap-4">
+      <button onclick="toggleDrawer()" class="p-2 hover:bg-surface-container rounded-full text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none" class="h-6 w-auto">
+          <g transform="translate(4, 4)">
+            <rect x="0" y="2" width="32" height="28" rx="6" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+            <line x1="6" y1="9" x2="26" y2="9" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="6" y1="23" x2="26" y2="23" stroke="#a855f7" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M16 21V11" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2 2"/>
+            <polygon points="16,8 13.5,12 18.5,12" fill="#38bdf8"/>
+            <circle cx="21" cy="9" r="2" fill="#fbbf24"/>
+            <circle cx="11" cy="23" r="2" fill="#c084fc"/>
+          </g>
+          <text x="44" y="22" font-family="'IBM Plex Sans', sans-serif" font-weight="700" font-size="16" fill="#f8fafc" letter-spacing="0.5">SemiSim</text>
+        </svg>
+        <span class="text-outline mx-2">|</span>
+        <span class="font-label-md text-sm text-primary tracking-widest uppercase">Simulator</span>
       </div>
-      <div class="h-12 flex items-center justify-between border-t border-outline-variant/20 -mx-space-lg px-space-lg bg-surface-container-low/50">
-        <nav class="flex items-center gap-space-xs">
-          <a class="px-space-md py-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors" data-path="overview" href="index.html">Overview & Orientation</a>
-          <a class="px-space-md py-1 bg-primary-container text-on-primary-container font-semibold rounded shadow-sm font-label-md text-label-md transition-colors" data-path="simulator" href="simulator.html">Simulator Workspace</a>
-          <a class="px-space-md py-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors" data-path="evaluation" href="evaluation.html">Engineering Decisions</a>
-          <a class="px-space-md py-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded font-label-md text-label-md transition-colors" data-path="export" href="export.html">Project Report & Export</a>
-        </nav>
-        <div class="hidden md:flex items-center gap-space-lg font-label-sm text-label-sm">
-          <div class="flex items-center gap-1.5"><span class="text-on-surface-variant">TEMP:</span><span class="text-primary font-readout-md text-readout-md" id="headerTemp">300.0 K</span></div>
-          <div class="flex items-center gap-1.5"><span class="text-on-surface-variant">VAC REF:</span><span class="text-secondary font-readout-md text-readout-md">0.0 eV</span></div>
-          <div class="flex items-center gap-1.5"><span class="text-on-surface-variant">ENGINE:</span><span class="text-tertiary font-readout-md text-readout-md">FastAPI Physics / ASTM G173</span></div>
-        </div>
-      </div>
+    </div>
+    
+    <nav class="hidden md:flex items-center gap-8">
+      <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="index.html">Overview</a>
+      <a class="text-on-surface font-label-md text-sm transition-colors" href="simulator.html">Simulator</a>
+      <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="evaluation.html">Decisions</a>
+      <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="export.html">Report</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <span class="px-2 py-0.5 rounded font-label-sm text-xs bg-secondary text-on-secondary font-medium" id="headerCouplingBadge">EMISSION ACTIVE [OLED]</span>
     </div>
   </header>
 
-  <main class="w-full pt-28 bg-surface-container-lowest min-h-screen">
-    <div class="flex flex-col w-full">
-      <div class="w-full px-space-lg py-space-md flex flex-col gap-space-md">
+  <div class="flex flex-1 relative overflow-hidden">
+    
+    <!-- Left Drawer (Controls) -->
+    <aside id="drawer" class="absolute top-0 left-0 h-full w-96 bg-surface-container-low border-r border-outline/10 z-30 overflow-y-auto flex flex-col">
+      <div class="p-6 flex flex-col gap-8">
         
-        <!-- Top Subheader / Telemetry Bar -->
-        <div class="w-full flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-low px-space-md py-2 rounded-lg shadow-sm">
-          <div class="flex items-center gap-space-md">
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
-              <span class="font-label-md text-label-md text-on-surface font-semibold tracking-wide" id="solverStatusText">DETAILED BALANCE SOLVER: LIVE PHYSICS ONLINE</span>
-            </div>
-            <span class="hidden sm:inline-block text-on-surface-variant font-label-sm text-label-sm">ASTM G173 AM1.5G Numerical Integration (2002 Points)</span>
+        <!-- Mode & Architecture -->
+        <div class="flex flex-col gap-4">
+          <span class="font-label-sm text-xs text-on-surface-variant tracking-wider uppercase">Operating Regime</span>
+          <div class="grid grid-cols-2 p-1 bg-surface-container-lowest rounded-lg gap-1">
+            <button class="py-2 px-2 rounded font-label-md text-sm text-on-primary-container bg-primary-container font-semibold transition-all text-center" id="modeOledBtn" onclick="setAppMode('oled')">OLED Display</button>
+            <button class="py-2 px-2 rounded font-label-md text-sm text-on-surface-variant hover:text-on-surface transition-all text-center" id="modeSolarBtn" onclick="setAppMode('solar')">Solar Cell</button>
           </div>
-          <div class="flex items-center gap-space-sm">
-            <span class="font-label-sm text-label-sm text-on-surface-variant">PHOTON COUPLING:</span>
-            <span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-secondary text-on-secondary font-medium" id="headerCouplingBadge">EMISSION ACTIVE [OLED]</span>
-            <span class="font-label-sm text-label-sm text-on-surface-variant ml-2">T: 300.0 K</span>
-          </div>
-        </div>
-
-        <!-- 3-Column Instrument Station Grid -->
-        <div class="w-full grid grid-cols-1 xl:grid-cols-12 gap-space-md">
           
-          <!-- COLUMN 1: LEFT CONTROL PARAMETER DOCK (3 Cols) -->
-          <div class="xl:col-span-3 flex flex-col gap-space-md">
-            
-            <!-- Mode & Architecture Card -->
-            <div class="bg-surface-container p-space-md rounded-xl shadow-md flex flex-col gap-space-md">
-              <div class="flex items-center justify-between">
-                <span class="font-label-md text-label-md uppercase tracking-wider text-primary font-semibold flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[16px]">tune</span> Device Regime
-                </span>
-                <span class="font-label-sm text-label-sm text-on-surface-variant">PHY-REG-01</span>
-              </div>
+          <span class="font-label-sm text-xs text-on-surface-variant tracking-wider uppercase mt-2">Material Class</span>
+          <div class="grid grid-cols-2 p-1 bg-surface-container-lowest rounded-lg gap-1">
+            <button class="py-2 px-2 rounded font-label-md text-sm text-on-primary-container bg-primary-container font-semibold transition-all text-center" id="matOrganicBtn" onclick="setMatClass('organic')">Organic</button>
+            <button class="py-2 px-2 rounded font-label-md text-sm text-on-surface-variant hover:text-on-surface transition-all text-center" id="matInorganicBtn" onclick="setMatClass('inorganic')">Inorganic</button>
+          </div>
 
-              <!-- Application Mode Segmented Switch -->
-              <div class="flex flex-col gap-1.5">
-                <span class="font-label-sm text-label-sm text-on-surface-variant">OPERATING REGIME</span>
-                <div class="grid grid-cols-2 p-1 bg-surface-container-lowest rounded-lg gap-1">
-                  <button class="py-1.5 px-2 rounded font-label-md text-label-md text-on-primary-container bg-primary-container font-semibold transition-all text-center" id="modeOledBtn" onclick="setAppMode('oled')">
-                    OLED Display
-                  </button>
-                  <button class="py-1.5 px-2 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all text-center" id="modeSolarBtn" onclick="setAppMode('solar')">
-                    Solar Cell
-                  </button>
-                </div>
-              </div>
+          <span class="font-label-sm text-xs text-on-surface-variant tracking-wider uppercase mt-2">Preset Material</span>
+          <select class="w-full bg-surface-container-lowest text-on-surface font-label-md text-sm py-3 px-4 rounded-lg outline-none focus:bg-surface-bright transition-colors cursor-pointer border border-outline/10" id="presetSelect" onchange="applyPreset(this.value)"></select>
+        </div>
 
-              <!-- Material Class Toggle -->
-              <div class="flex flex-col gap-1.5">
-                <span class="font-label-sm text-label-sm text-on-surface-variant">MATERIAL CLASS</span>
-                <div class="grid grid-cols-2 p-1 bg-surface-container-lowest rounded-lg gap-1">
-                  <button class="py-1.5 px-2 rounded font-label-md text-label-md text-on-primary-container bg-primary-container font-semibold transition-all text-center" id="matOrganicBtn" onclick="setMatClass('organic')">
-                    Organic (π-conj)
-                  </button>
-                  <button class="py-1.5 px-2 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all text-center" id="matInorganicBtn" onclick="setMatClass('inorganic')">
-                    Inorganic (Cryst)
-                  </button>
-                </div>
-              </div>
+        <hr class="border-outline/10"/>
 
-              <!-- Preset Selector -->
-              <div class="flex flex-col gap-1.5">
-                <div class="flex items-center justify-between">
-                  <span class="font-label-sm text-label-sm text-on-surface-variant">MATERIAL PRESET</span>
-                  <span class="font-label-sm text-label-sm text-tertiary">Verified Database</span>
-                </div>
-                <select class="w-full bg-surface-container-lowest text-on-surface font-label-md text-label-md py-2 px-space-sm rounded-lg outline-none focus:bg-surface-bright transition-colors cursor-pointer" id="presetSelect" onchange="applyPreset(this.value)">
-                </select>
-              </div>
+        <!-- Primary Control (Band Gap) -->
+        <div class="flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <span class="font-label-sm text-xs text-secondary tracking-wider uppercase">Band Gap Tuning</span>
+            <span class="px-2 py-0.5 rounded font-label-sm text-[10px] bg-secondary text-on-secondary font-semibold" id="spectralBadge">590 nm • Amber</span>
+          </div>
+          <div class="flex items-baseline justify-between mb-2">
+            <label class="font-label-sm text-xs text-on-surface-variant" for="egSlider">Energy ($E_g$)</label>
+            <div class="flex items-center gap-1 bg-surface-container-lowest px-2 py-1 rounded">
+              <span class="font-readout-md text-base text-secondary font-semibold" id="egValueDisplay">2.10</span>
+              <span class="font-label-sm text-xs text-on-surface-variant">eV</span>
             </div>
+          </div>
+          <input class="w-full accent-secondary bg-surface-container-lowest h-2 rounded cursor-pointer" id="egSlider" max="3.8" min="0.5" oninput="onEgInput(parseFloat(this.value))" step="0.02" type="range" value="2.10"/>
+        </div>
 
-            <!-- Band Gap Primary Control Card -->
-            <div class="bg-surface-container p-space-md rounded-xl shadow-md flex flex-col gap-space-md">
-              <div class="flex items-center justify-between">
-                <span class="font-label-md text-label-md uppercase tracking-wider text-secondary font-semibold flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[16px]">bolt</span> Band Gap Tuning
-                </span>
-                <span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-secondary text-on-secondary font-semibold" id="spectralBadge">
-                  590 nm • Amber
-                </span>
+        <hr class="border-outline/10"/>
+
+        <!-- Contextual Secondary Parameters -->
+        <div class="flex flex-col gap-4">
+          <span class="font-label-sm text-xs text-primary tracking-wider uppercase" id="contextParamsHeading">Organic Parameters</span>
+          
+          <div class="flex flex-col gap-3" id="organicParamsGroup">
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between font-label-sm text-xs text-on-surface-variant">
+                <span>Disorder (σ)</span>
+                <span class="text-on-surface" id="disorderDisplay">0.08 eV</span>
               </div>
-              <div class="flex flex-col gap-2">
-                <div class="flex items-baseline justify-between">
-                  <label class="font-label-sm text-label-sm text-on-surface-variant" for="egSlider">BAND GAP (E<sub>g</sub>)</label>
-                  <div class="flex items-center gap-1 bg-surface-container-lowest px-2 py-0.5 rounded">
-                    <span class="font-readout-md text-readout-md text-secondary font-semibold" id="egValueDisplay">2.10</span>
-                    <span class="font-label-sm text-label-sm text-on-surface-variant">eV</span>
-                  </div>
-                </div>
-                <input class="w-full accent-secondary bg-surface-container-lowest h-2 rounded cursor-pointer" id="egSlider" max="3.8" min="0.5" oninput="onEgInput(parseFloat(this.value))" step="0.02" type="range" value="2.10"/>
-                <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
-                  <span>0.5 eV (IR)</span>
-                  <span>1.8 eV (Red)</span>
-                  <span>3.8 eV (UV)</span>
-                </div>
-              </div>
+              <input class="w-full accent-primary bg-surface-container-lowest h-1.5 rounded cursor-pointer" id="disorderSlider" max="0.18" min="0.02" oninput="onDisorderInput(parseFloat(this.value))" step="0.01" type="range" value="0.08"/>
             </div>
-
-            <!-- Contextual Secondary Parameters Card -->
-            <div class="bg-surface-container p-space-md rounded-xl shadow-md flex flex-col gap-space-md">
-              <div class="flex items-center justify-between">
-                <span class="font-label-md text-label-md uppercase tracking-wider text-primary font-semibold flex items-center gap-1.5" id="contextParamsHeading">
-                  <span class="material-symbols-outlined text-[16px]">layers</span> Organic Parameters
-                </span>
-                <span class="font-label-sm text-label-sm text-on-surface-variant">DYNAMIC DECK</span>
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between font-label-sm text-xs text-on-surface-variant">
+                <span>Thickness</span>
+                <span class="text-on-surface" id="thickDisplay">100 nm</span>
               </div>
-
-              <!-- Organic Set -->
-              <div class="flex flex-col gap-space-sm" id="organicParamsGroup">
-                <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest">
-                  <span class="font-label-sm text-label-sm text-on-surface-variant">HOMO Level (E<sub>HOMO</sub>)</span>
-                  <span class="font-readout-md text-readout-md text-tertiary" id="homoVal">-5.40 eV</span>
-                </div>
-                <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest">
-                  <span class="font-label-sm text-label-sm text-on-surface-variant">LUMO Level (E<sub>LUMO</sub>)</span>
-                  <span class="font-readout-md text-readout-md text-secondary" id="lumoVal">-3.30 eV</span>
-                </div>
-                <div class="flex flex-col gap-1">
-                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
-                    <span>Active Layer Thickness</span>
-                    <span class="text-on-surface font-label-sm text-label-sm" id="thickDisplay">100 nm</span>
-                  </div>
-                  <input class="w-full accent-primary bg-surface-container-lowest h-1.5 rounded cursor-pointer" id="thickSlider" max="250" min="40" oninput="document.getElementById('thickDisplay').innerText = this.value + ' nm'" type="range" value="100"/>
-                </div>
-                <div class="flex flex-col gap-1">
-                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
-                    <span>Energetic Disorder (σ)</span>
-                    <span class="text-on-surface font-label-sm text-label-sm" id="disorderDisplay">0.08 eV</span>
-                  </div>
-                  <input class="w-full accent-primary bg-surface-container-lowest h-1.5 rounded cursor-pointer" id="disorderSlider" max="0.18" min="0.02" oninput="onDisorderInput(parseFloat(this.value))" step="0.01" type="range" value="0.08"/>
-                </div>
-              </div>
-
-              <!-- Inorganic Set -->
-              <div class="hidden flex flex-col gap-space-sm" id="inorganicParamsGroup">
-                <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest">
-                  <span class="font-label-sm text-label-sm text-on-surface-variant">Valence Max (E<sub>v</sub>)</span>
-                  <span class="font-readout-md text-readout-md text-tertiary" id="evVal">-5.17 eV</span>
-                </div>
-                <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest">
-                  <span class="font-label-sm text-label-sm text-on-surface-variant">Conduction Min (E<sub>c</sub>)</span>
-                  <span class="font-readout-md text-readout-md text-secondary" id="ecVal">-4.05 eV</span>
-                </div>
-                <div class="flex flex-col gap-1">
-                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
-                    <span>Doping Density (N<sub>d</sub>)</span>
-                    <span class="text-on-surface font-label-sm text-label-sm">5.0×10¹⁶ cm⁻³</span>
-                  </div>
-                  <input class="w-full accent-primary bg-surface-container-lowest h-1.5 rounded cursor-pointer" max="100" min="1" type="range" value="50"/>
-                </div>
-                <div class="flex flex-col gap-1">
-                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
-                    <span>Carrier Lifetime (τ<sub>c</sub>)</span>
-                    <span class="text-on-surface font-label-sm text-label-sm">15.0 μs</span>
-                  </div>
-                  <input class="w-full accent-primary bg-surface-container-lowest h-1.5 rounded cursor-pointer" max="100" min="1" type="range" value="15"/>
-                </div>
-              </div>
-
-              <!-- Operating Driving Force -->
-              <div class="pt-2">
-                <div class="flex flex-col gap-1" id="biasControlWrapper">
-                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
-                    <span>Applied Bias Voltage (V<sub>app</sub>)</span>
-                    <span class="text-primary font-readout-md text-readout-md" id="biasDisplay">3.80 V</span>
-                  </div>
-                  <input class="w-full accent-primary bg-surface-container-lowest h-2 rounded cursor-pointer" id="biasSlider" max="8.0" min="0.0" oninput="document.getElementById('biasDisplay').innerText=parseFloat(this.value).toFixed(2)+' V'" step="0.1" type="range" value="3.8"/>
-                </div>
-                <div class="hidden flex flex-col gap-1" id="solarFluxControlWrapper">
-                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
-                    <span>Incident Solar Concentration</span>
-                    <span class="text-secondary font-readout-md text-readout-md" id="fluxDisplay">1.0 Sun (1000 W/m²)</span>
-                  </div>
-                  <input class="w-full accent-secondary bg-surface-container-lowest h-2 rounded cursor-pointer" id="fluxSlider" max="5.0" min="1.0" oninput="onConcentrationInput(parseFloat(this.value))" step="0.5" type="range" value="1.0"/>
-                </div>
-              </div>
-            </div>
-
-            <!-- Action Panel -->
-            <div class="flex flex-col gap-2">
-              <button class="w-full py-2.5 px-space-md rounded-lg bg-primary text-on-primary font-label-md text-label-md font-bold uppercase tracking-wider shadow hover:brightness-110 flex items-center justify-center gap-2 transition-all" onclick="triggerDynamics()">
-                <span class="material-symbols-outlined text-[18px]">play_arrow</span> Run Transport Dynamics
-              </button>
-              <div class="grid grid-cols-2 gap-2">
-                <button class="py-2 px-space-sm rounded bg-surface-container-high hover:bg-surface-container text-on-surface font-label-sm text-label-sm transition-all flex items-center justify-center gap-1" onclick="resetDefaults()">
-                  <span class="material-symbols-outlined text-[14px]">restart_alt</span> Reset Defaults
-                </button>
-                <button class="py-2 px-space-sm rounded bg-surface-container-high hover:bg-surface-container text-primary font-label-sm text-label-sm transition-all flex items-center justify-center gap-1" onclick="saveSnapshot()">
-                  <span class="material-symbols-outlined text-[14px]">post_add</span> Record Config
-                </button>
-              </div>
+              <input class="w-full accent-primary bg-surface-container-lowest h-1.5 rounded cursor-pointer" id="thickSlider" max="250" min="40" oninput="document.getElementById('thickDisplay').innerText = this.value + ' nm'" type="range" value="100"/>
             </div>
           </div>
 
-          <!-- COLUMN 2: CENTER LIVE VISUALIZATION VIEWPORT (6 Cols) -->
-          <div class="xl:col-span-6 flex flex-col gap-space-md">
-            <div class="bg-surface-container p-space-md rounded-xl shadow-md flex flex-col gap-space-md">
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <div class="flex items-center gap-2">
-                  <span class="material-symbols-outlined text-primary text-[20px]">science</span>
-                  <div>
-                    <h2 class="font-headline-md text-headline-md text-on-surface">Dynamic Energy Band & Charge Transport Engine</h2>
-                    <span class="font-label-sm text-label-sm text-on-surface-variant">Real-time Drift-Diffusion / Kinetic Monte-Carlo Particle Canvas</span>
-                  </div>
-                </div>
-                <div class="flex items-center gap-2">
-                  <span class="font-label-sm text-label-sm text-on-surface-variant">SOLVER:</span>
-                  <span class="px-2 py-0.5 rounded bg-surface-container-highest text-primary font-label-sm text-label-sm">POISSON-COUPLED</span>
-                </div>
-              </div>
-
-              <!-- Energy Band Diagram (SVG canvas style) -->
-              <div class="relative w-full bg-surface-container-lowest rounded-xl p-space-md overflow-hidden shadow-inner">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="font-label-md text-label-md text-on-surface font-medium flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[14px] text-tertiary">stacked_line_chart</span> 
-                    Energy Levels vs. Vacuum Reference (E<sub>vac</sub> = 0.00 eV)
-                  </span>
-                  <span class="font-label-sm text-label-sm text-on-surface-variant">k-space projection / Spatial z</span>
-                </div>
-
-                <svg class="w-full h-44 sm:h-52 select-none" id="bandDiagramSvg" preserveAspectRatio="none" viewBox="0 0 600 220">
-                  <defs>
-                    <pattern height="20" id="reticleGrid" patternUnits="userSpaceOnUse" width="40">
-                      <path class="text-surface-variant" d="M 40 0 L 0 0 0 20" fill="none" opacity="0.3" stroke="currentColor" stroke-width="0.5"></path>
-                    </pattern>
-                    <linearGradient id="lumoGradient" x1="0%" x2="100%" y1="0%" y2="0%">
-                      <stop offset="0%" stop-color="#ffc640" stop-opacity="0.9"></stop>
-                      <stop offset="100%" stop-color="#e3aa00" stop-opacity="0.8"></stop>
-                    </linearGradient>
-                    <linearGradient id="homoGradient" x1="0%" x2="100%" y1="0%" y2="0%">
-                      <stop offset="0%" stop-color="#e1c0ff" stop-opacity="0.9"></stop>
-                      <stop offset="100%" stop-color="#ce9cff" stop-opacity="0.8"></stop>
-                    </linearGradient>
-                    <marker id="arrow" markerHeight="6" markerWidth="6" orient="auto-start-reverse" refX="5" refY="5" viewBox="0 0 10 10">
-                      <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#8ed5ff"></path>
-                    </marker>
-                  </defs>
-                  <rect fill="url(#reticleGrid)" height="100%" width="100%"></rect>
-                  
-                  <!-- Vacuum Reference Line (0 eV) -->
-                  <line stroke="#87929a" stroke-dasharray="4 4" stroke-width="1.5" x1="40" x2="560" y1="20" y2="20"></line>
-                  <text class="font-label-sm text-[10px]" fill="#87929a" x="45" y="16">Vacuum Level (0.0 eV)</text>
-
-                  <!-- Conduction Band / LUMO Level -->
-                  <g id="lumoGroup">
-                    <rect fill="url(#lumoGradient)" height="8" id="lumoBar" rx="2" width="440" x="80" y="75"></rect>
-                    <text class="font-readout-md text-[12px]" fill="#ffc640" id="lumoLabel" x="525" y="81">LUMO: -3.30 eV</text>
-                  </g>
-
-                  <!-- Valence Band / HOMO Level -->
-                  <g id="homoGroup">
-                    <rect fill="url(#homoGradient)" height="8" id="homoBar" rx="2" width="440" x="80" y="165"></rect>
-                    <text class="font-readout-md text-[12px]" fill="#e1c0ff" id="homoLabel" x="525" y="171">HOMO: -5.40 eV</text>
-                  </g>
-
-                  <!-- Vertical Transition Double Arrow for Eg -->
-                  <line id="transitionArrow" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="#8ed5ff" stroke-width="2" x1="280" x2="280" y1="163" y2="85"></line>
-
-                  <!-- Band Gap Indicator Badge -->
-                  <g id="egBadgeGroup">
-                    <rect class="fill-surface-container-high" height="24" id="egBadgeBg" rx="4" width="120" x="220" y="112"></rect>
-                    <text class="font-readout-md text-[12px] font-bold" fill="#8ed5ff" id="svgEgText" text-anchor="middle" x="280" y="128">Eg = 2.10 eV</text>
-                  </g>
-
-                  <!-- Photon Wave -->
-                  <g id="photonParticle">
-                    <path d="M 285,124 Q 295,114 305,124 T 325,124 T 345,124" fill="none" id="photonWave" stroke="#ffc640" stroke-linecap="round" stroke-width="2"></path>
-                    <polygon fill="#ffc640" points="348,124 340,119 340,129"></polygon>
-                    <text class="font-label-sm text-[10px]" fill="#ffc640" id="photonLabelText" x="355" y="127">hν (590 nm)</text>
-                  </g>
-
-                  <!-- Axes -->
-                  <line stroke="#3e484f" stroke-width="1.5" x1="40" x2="40" y1="20" y2="200"></line>
-                  <text class="font-label-sm text-[10px]" fill="#87929a" text-anchor="end" x="35" y="195">-6.5 eV</text>
-                  <text class="font-label-sm text-[10px]" fill="#87929a" text-anchor="end" x="35" y="25">0 eV</text>
-                </svg>
-              </div>
-
-              <!-- Interactive Canvas Carrier Transport (Single Clean Version) -->
-              <div class="relative w-full bg-surface-container-lowest rounded-xl p-space-md flex flex-col gap-space-sm shadow-inner">
-                <div class="flex items-center justify-between">
-                  <span class="font-label-md text-label-md text-on-surface font-medium flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[16px] text-primary">motion_photos_on</span> 
-                    Active Layer Microscopic Carrier Transport
-                  </span>
-                  <span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-tertiary text-on-tertiary font-semibold" id="transportModelBadge">
-                    Miller-Abrahams Hopping (Polaron)
-                  </span>
-                </div>
-
-                <!-- Canvas Viewport for particle dynamics -->
-                <div class="relative w-full h-44 bg-surface-container-low rounded-lg overflow-hidden border border-outline-variant/30">
-                  <canvas id="transportCanvas" class="w-full h-full block"></canvas>
-                  
-                  <!-- Overlay Labels for Cathode / Anode -->
-                  <div class="absolute inset-y-0 left-0 w-8 bg-surface-container-highest/80 flex flex-col items-center justify-between py-2 pointer-events-none">
-                    <span class="font-label-sm text-[9px] text-primary [writing-mode:vertical-rl] rotate-180 font-bold">CATHODE (e⁻)</span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-                  </div>
-                  <div class="absolute inset-y-0 right-0 w-8 bg-surface-container-highest/80 flex flex-col items-center justify-between py-2 pointer-events-none">
-                    <span class="font-label-sm text-[9px] text-tertiary [writing-mode:vertical-rl] rotate-180 font-bold">ANODE (h⁺)</span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
-                  </div>
-                </div>
-
-                <div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
-                  <span class="flex items-center gap-1.5">
-                    <span class="inline-block w-2 h-2 rounded-full bg-primary"></span> e⁻ Drift Velocity: 3.2×10² cm/s
-                  </span>
-                  <span class="flex items-center gap-1.5">
-                    <span class="inline-block w-2 h-2 rounded-full bg-tertiary"></span> h⁺ Hopping Mobility: <span id="canvasMobilitySub">1.4×10⁻⁴ cm²/(V·s)</span>
-                  </span>
-                </div>
-              </div>
-
-              <!-- Bottom Visualizer: OLED Stack Cross-Section vs Solar Cutoff -->
-              <div class="bg-surface-container-lowest p-space-md rounded-xl flex flex-col gap-space-sm shadow-inner" id="oledSubPanel">
-                <div class="flex items-center justify-between">
-                  <span class="font-label-md text-label-md text-on-surface font-medium flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[16px] text-secondary">palette</span>
-                    Photometric Output & Device Stack Cross-Section
-                  </span>
-                  <span class="font-label-sm text-label-sm text-on-surface-variant">EL ARCHITECTURE</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-space-sm items-center">
-                  <div class="md:col-span-4 flex items-center gap-space-sm bg-surface-container-low p-2 rounded-lg">
-                    <div class="w-12 h-12 rounded-lg shadow-lg flex items-center justify-center font-label-sm text-[10px] font-bold text-on-secondary" id="colorSwatchBox" style="background-color: #f59e0b;">
-                      590nm
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="font-readout-md text-readout-md text-on-surface font-semibold" id="colorHexDisplay">#F59E0B</span>
-                      <span class="font-label-sm text-label-sm text-on-surface-variant" id="colorCieDisplay">CIE 1931: (0.58, 0.41)</span>
-                      <span class="font-label-sm text-label-sm text-secondary">Peak Emission: Amber</span>
-                    </div>
-                  </div>
-                  <div class="md:col-span-8 flex flex-col gap-1">
-                    <div class="grid grid-cols-5 text-center font-label-sm text-[10px] text-on-surface-variant mb-1">
-                      <span>Cathode</span>
-                      <span>ETL</span>
-                      <span class="text-secondary font-semibold">EML (Active)</span>
-                      <span>HTL</span>
-                      <span>Anode</span>
-                    </div>
-                    <div class="grid grid-cols-5 h-8 rounded-lg overflow-hidden shadow">
-                      <div class="bg-surface-bright flex items-center justify-center text-[10px] font-label-sm text-on-surface">Al / LiF</div>
-                      <div class="bg-primary-container/60 flex items-center justify-center text-[10px] font-label-sm text-on-surface">Alq3</div>
-                      <div class="bg-secondary text-on-secondary flex items-center justify-center text-[10px] font-label-sm font-bold shadow-inner" id="emlStackLayer">
-                        Emitter
-                      </div>
-                      <div class="bg-tertiary/40 flex items-center justify-center text-[10px] font-label-sm text-on-surface">NPB</div>
-                      <div class="bg-surface-bright flex items-center justify-center text-[10px] font-label-sm text-on-surface">ITO / Glass</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Solar Cell Sub-panel -->
-              <div class="hidden bg-surface-container-lowest p-space-md rounded-xl flex flex-col gap-space-sm shadow-inner" id="solarSubPanel">
-                <div class="flex items-center justify-between">
-                  <span class="font-label-md text-label-md text-on-surface font-medium flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[16px] text-primary">solar_power</span>
-                    ASTM G173-03 AM1.5G Solar Photon Absorption Spectrum
-                  </span>
-                  <span class="font-label-sm text-label-sm text-on-surface-variant" id="solarCutoffLabel">Cutoff: λ<sub>c</sub> = 590 nm</span>
-                </div>
-                <div class="w-full bg-surface-container-low rounded-lg p-2">
-                  <svg class="w-full h-24" preserveAspectRatio="none" viewBox="0 0 500 100">
-                    <path d="M 30,90 Q 60,15 120,25 T 220,60 L 220,90 Z" fill="#8ed5ff" fill-opacity="0.35" id="solarAbsorbedArea"></path>
-                    <path d="M 220,60 Q 280,70 340,78 T 470,88 L 470,90 L 220,90 Z" fill="#31353e" fill-opacity="0.6" id="solarLossArea"></path>
-                    <path d="M 30,90 Q 60,15 120,25 T 220,60 T 340,78 T 470,88" fill="none" stroke="#ffc640" stroke-width="2"></path>
-                    <line stroke="#ffb4ab" stroke-dasharray="3 3" stroke-width="1.5" x1="220" x2="220" y1="10" y2="90" id="solarCutoffLine"></line>
-                    <text class="font-label-sm text-[10px]" fill="#ffb4ab" id="solarCutoffSvgText" x="225" y="25">λ Cutoff (590 nm)</text>
-                    <text class="font-label-sm text-[10px]" fill="#8ed5ff" x="70" y="80">Absorbed Photons</text>
-                    <text class="font-label-sm text-[10px]" fill="#87929a" x="320" y="80">Sub-bandgap Transmission</text>
-                  </svg>
-                  <div class="flex justify-between font-label-sm text-[10px] text-on-surface-variant mt-1">
-                    <span>280 nm (UV)</span>
-                    <span>590 nm (Visible Peak)</span>
-                    <span>1500 nm (Infrared)</span>
-                  </div>
-                </div>
-              </div>
-
+          <div class="hidden flex flex-col gap-3" id="inorganicParamsGroup">
+            <div class="flex justify-between font-label-sm text-xs text-on-surface-variant">
+                <span>Doping (N<sub>d</sub>)</span>
+                <span class="text-on-surface">5.0×10¹⁶</span>
             </div>
           </div>
 
-          <!-- COLUMN 3: RIGHT ANALYTICS & TRADEOFF DOCK (3 Cols) -->
-          <div class="xl:col-span-3 flex flex-col gap-space-md">
-            
-            <!-- Computed Quantum Metrics Card -->
-            <div class="bg-surface-container p-space-md rounded-xl shadow-md flex flex-col gap-space-md">
-              <div class="flex items-center justify-between">
-                <span class="font-label-md text-label-md uppercase tracking-wider text-primary font-semibold flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[16px]">analytics</span> Quantum Readouts
-                </span>
-                <span class="font-label-sm text-label-sm text-on-surface-variant">REAL-TIME</span>
-              </div>
-
-              <div class="flex flex-col gap-space-sm">
-                <!-- Photon Energy -->
-                <div class="p-2.5 rounded-lg bg-surface-container-lowest flex items-center justify-between">
-                  <div class="flex flex-col">
-                    <span class="font-label-sm text-label-sm text-on-surface-variant">PHOTON ENERGY / WAVELENGTH</span>
-                    <span class="font-readout-md text-readout-md text-on-surface font-semibold" id="quantumWavelength">2.10 eV (590.4 nm)</span>
-                  </div>
-                  <span class="material-symbols-outlined text-secondary text-[20px]">light_mode</span>
-                </div>
-
-                <!-- Efficiency Metric -->
-                <div class="p-2.5 rounded-lg bg-surface-container-lowest flex items-center justify-between">
-                  <div class="flex flex-col">
-                    <span class="font-label-sm text-label-sm text-on-surface-variant" id="efficiencyLabel">INTERNAL QUANTUM EFF. (IQE)</span>
-                    <span class="font-readout-lg text-readout-lg text-secondary font-bold" id="efficiencyValue">7.2%</span>
-                    <span class="font-label-sm text-[10px] text-on-surface-variant" id="efficiencySub">η_S=25% (fluorescent singlet limit)</span>
-                  </div>
-                  <span class="material-symbols-outlined text-secondary text-[24px]">verified</span>
-                </div>
-
-                <!-- Carrier Mobility -->
-                <div class="p-2.5 rounded-lg bg-surface-container-lowest flex items-center justify-between">
-                  <div class="flex flex-col">
-                    <span class="font-label-sm text-label-sm text-on-surface-variant">CHARGE CARRIER MOBILITY (μ)</span>
-                    <span class="font-readout-md text-readout-md text-primary font-semibold" id="mobilityValue">1.4 × 10⁻⁴ cm²/(V·s)</span>
-                    <span class="font-label-sm text-[10px] text-tertiary" id="mobilityType">Gaussian Disorder Model (Bässler)</span>
-                  </div>
-                  <span class="material-symbols-outlined text-primary text-[20px]">speed</span>
-                </div>
-
-                <!-- Exciton Binding Energy -->
-                <div class="p-2.5 rounded-lg bg-surface-container-lowest flex items-center justify-between">
-                  <div class="flex flex-col">
-                    <span class="font-label-sm text-label-sm text-on-surface-variant">EXCITON BINDING ENERGY (E<sub>b</sub>)</span>
-                    <span class="font-readout-md text-readout-md text-tertiary font-semibold" id="excitonBindingVal">0.529 eV (529 meV)</span>
-                    <span class="font-label-sm text-[10px] text-on-surface-variant" id="excitonType">Frenkel Exciton (Localized)</span>
-                  </div>
-                  <span class="material-symbols-outlined text-tertiary text-[20px]">hub</span>
-                </div>
-
-                <!-- Detailed PV Parameters (Visible in Solar Mode) -->
-                <div class="hidden flex-col gap-1.5 p-2.5 rounded-lg bg-surface-container-lowest" id="pvDetailedCard">
-                  <span class="font-label-sm text-label-sm text-secondary font-semibold">DETAILED BALANCE METRICS (AM1.5G)</span>
-                  <div class="grid grid-cols-3 gap-1 text-center font-label-sm text-[10px] pt-1">
-                    <div class="p-1 rounded bg-surface-container-low">
-                      <span class="text-on-surface-variant block">J_sc</span>
-                      <span class="text-primary font-bold font-readout-md" id="jscVal">35.0 mA/cm²</span>
-                    </div>
-                    <div class="p-1 rounded bg-surface-container-low">
-                      <span class="text-on-surface-variant block">V_oc</span>
-                      <span class="text-secondary font-bold font-readout-md" id="vocVal">1.08 V</span>
-                    </div>
-                    <div class="p-1 rounded bg-surface-container-low">
-                      <span class="text-on-surface-variant block">Fill Factor</span>
-                      <span class="text-on-surface font-bold font-readout-md" id="ffVal">88.9%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <div class="flex flex-col gap-1 mt-2" id="biasControlWrapper">
+            <div class="flex justify-between font-label-sm text-xs text-on-surface-variant">
+              <span>Applied Bias (V)</span>
+              <span class="text-primary font-readout-md text-sm" id="biasDisplay">3.80 V</span>
             </div>
-
-            <!-- Material Trade-off Comparison Strip -->
-            <div class="bg-surface-container p-space-md rounded-xl shadow-md flex flex-col gap-space-md">
-              <div class="flex items-center justify-between">
-                <span class="font-label-md text-label-md uppercase tracking-wider text-secondary font-semibold flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[16px]">compare_arrows</span> Systemic Trade-offs
-                </span>
-                <span class="font-label-sm text-label-sm text-primary" id="tradeoffEgBadge">At 2.10 eV</span>
-              </div>
-              <div class="flex flex-col gap-space-sm font-label-sm text-label-sm">
-                <div class="p-2 rounded-lg bg-surface-container-lowest flex flex-col gap-1">
-                  <span class="text-on-surface-variant uppercase tracking-wider text-[10px]">Mechanical Flexibility</span>
-                  <div class="grid grid-cols-2 gap-2 text-[11px]">
-                    <div class="p-1.5 rounded bg-surface-container-low text-tertiary">
-                      <span class="font-bold">Organic:</span> High (Roll-to-roll printing)
-                    </div>
-                    <div class="p-1.5 rounded bg-surface-container-low text-primary">
-                      <span class="font-bold">Inorganic:</span> Rigid / Brittle wafer
-                    </div>
-                  </div>
-                </div>
-                <div class="p-2 rounded-lg bg-surface-container-lowest flex flex-col gap-1">
-                  <span class="text-on-surface-variant uppercase tracking-wider text-[10px]">Fabrication & Cost</span>
-                  <div class="grid grid-cols-2 gap-2 text-[11px]">
-                    <div class="p-1.5 rounded bg-surface-container-low text-tertiary">
-                      <span class="font-bold">Organic:</span> Low-temp wet coating
-                    </div>
-                    <div class="p-1.5 rounded bg-surface-container-low text-primary">
-                      <span class="font-bold">Inorganic:</span> High-temp MBE / Epitaxy
-                    </div>
-                  </div>
-                </div>
-                <div class="p-2 rounded-lg bg-surface-container-lowest flex flex-col gap-1">
-                  <span class="text-on-surface-variant uppercase tracking-wider text-[10px]">Moisture & O₂ Stability</span>
-                  <div class="grid grid-cols-2 gap-2 text-[11px]">
-                    <div class="p-1.5 rounded bg-surface-container-low text-tertiary">
-                      <span class="font-bold">Organic:</span> Strict encapsulation needed
-                    </div>
-                    <div class="p-1.5 rounded bg-surface-container-low text-primary">
-                      <span class="font-bold">Inorganic:</span> Decades outdoor longevity
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <input class="w-full accent-primary bg-surface-container-lowest h-1.5 rounded cursor-pointer" id="biasSlider" max="8.0" min="0.0" oninput="document.getElementById('biasDisplay').innerText=parseFloat(this.value).toFixed(2)+' V'" step="0.1" type="range" value="3.8"/>
+          </div>
+          
+          <div class="hidden flex flex-col gap-1 mt-2" id="solarFluxControlWrapper">
+            <div class="flex justify-between font-label-sm text-xs text-on-surface-variant">
+              <span>Incident Flux</span>
+              <span class="text-secondary font-readout-md text-sm" id="fluxDisplay">1.0 Sun</span>
             </div>
-
-            <!-- Save Snapshot Button -->
-            <button class="w-full py-3 px-space-md rounded-xl bg-surface-container-high hover:bg-surface-container text-on-surface font-label-md text-label-md font-semibold tracking-wide flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all" onclick="saveSnapshot()">
-              <span class="material-symbols-outlined text-secondary text-[20px]">save_as</span> Save Snapshot to Lab Notebook
-            </button>
-
-            <!-- Toast Notification Box -->
-            <div class="hidden p-space-md bg-secondary text-on-secondary rounded-lg shadow-xl flex items-center justify-between font-label-sm text-label-sm" id="toastNotification">
-              <span id="toastMsg">State logged to workspace record.</span>
-              <span class="material-symbols-outlined text-[16px]">check_circle</span>
-            </div>
-
+            <input class="w-full accent-secondary bg-surface-container-lowest h-1.5 rounded cursor-pointer" id="fluxSlider" max="5.0" min="1.0" oninput="onConcentrationInput(parseFloat(this.value))" step="0.5" type="range" value="1.0"/>
           </div>
         </div>
-      </div>
-    </div>
-  </main>
 
-  <footer class="w-full bg-surface-container-low border-t border-outline-variant/30 py-space-md">
-    <div class="w-full px-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-sm font-label-sm text-label-sm text-on-surface-variant">
-      <div>SemiSim Precision Computational Engine • Solid State Device Physics Workbench</div>
-      <div class="flex items-center gap-space-md">
-        <span>Detailed-Balance Solver</span>
-        <span class="text-outline-variant">|</span>
-        <span>ASTM G173-03 AM1.5G</span>
-        <span class="text-outline-variant">|</span>
-        <span>© 2026 Lab Consortium</span>
       </div>
-    </div>
-  </footer>
+    </aside>
 
-  <!-- Single Clean Canvas Particle Transport & API Integration Script -->
+    <!-- Main Center Stage -->
+    <main id="main-stage" class="flex-1 overflow-y-auto p-8 flex flex-col items-center bg-surface-container-lowest relative">
+      <div class="w-full max-w-5xl flex flex-col gap-12 pt-8 pb-32">
+        
+        <!-- Hero Metric -->
+        <div class="flex flex-col items-center justify-center text-center">
+          <span class="font-label-md tracking-[0.3em] text-on-surface-variant uppercase mb-4" id="efficiencyLabel">INTERNAL QUANTUM EFF. (IQE)</span>
+          <div class="flex items-center gap-6">
+            <div class="w-16 h-16 rounded-2xl shadow-2xl flex items-center justify-center font-label-sm text-xs font-bold text-on-secondary transition-colors duration-500" id="colorSwatchBox" style="background-color: #f59e0b;">
+              590nm
+            </div>
+            <h2 class="font-display-lg text-[100px] leading-none text-on-surface tracking-tighter" id="efficiencyValue">7.2%</h2>
+          </div>
+          <span class="font-label-sm text-sm text-on-surface-variant mt-4" id="efficiencySub">η_S=25% (fluorescent singlet limit)</span>
+        </div>
+
+        <!-- Huge Visualization Stage -->
+        <div class="w-full flex flex-col gap-8">
+          
+          <!-- Band Diagram -->
+          <div class="relative w-full aspect-[3/1] bg-surface-container-low rounded-3xl p-6 overflow-hidden shadow-2xl border border-outline/5">
+            <div class="absolute top-6 left-6 font-label-sm text-xs text-on-surface-variant tracking-wider uppercase">Energy Landscape</div>
+            <div class="absolute top-6 right-6 px-3 py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-[10px]" id="transportModelBadge">Miller-Abrahams Hopping</div>
+            
+            <svg class="w-full h-full pt-8 select-none" id="bandDiagramSvg" preserveAspectRatio="none" viewBox="0 0 600 220">
+              <defs>
+                <pattern height="20" id="reticleGrid" patternUnits="userSpaceOnUse" width="40">
+                  <path class="text-surface-variant" d="M 40 0 L 0 0 0 20" fill="none" opacity="0.3" stroke="currentColor" stroke-width="0.5"></path>
+                </pattern>
+                <linearGradient id="lumoGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+                  <stop offset="0%" stop-color="#ffc640" stop-opacity="0.9"></stop>
+                  <stop offset="100%" stop-color="#e3aa00" stop-opacity="0.8"></stop>
+                </linearGradient>
+                <linearGradient id="homoGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+                  <stop offset="0%" stop-color="#e1c0ff" stop-opacity="0.9"></stop>
+                  <stop offset="100%" stop-color="#ce9cff" stop-opacity="0.8"></stop>
+                </linearGradient>
+                <marker id="arrow" markerHeight="6" markerWidth="6" orient="auto-start-reverse" refX="5" refY="5" viewBox="0 0 10 10">
+                  <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#8ed5ff"></path>
+                </marker>
+              </defs>
+              <rect fill="url(#reticleGrid)" height="100%" width="100%"></rect>
+              <line stroke="#87929a" stroke-dasharray="4 4" stroke-width="1.5" x1="40" x2="560" y1="20" y2="20"></line>
+              <g id="lumoGroup">
+                <rect fill="url(#lumoGradient)" height="12" id="lumoBar" rx="6" width="440" x="80" y="75"></rect>
+                <text class="font-readout-md text-[14px]" fill="#ffc640" id="lumoLabel" x="525" y="85">LUMO</text>
+              </g>
+              <g id="homoGroup">
+                <rect fill="url(#homoGradient)" height="12" id="homoBar" rx="6" width="440" x="80" y="165"></rect>
+                <text class="font-readout-md text-[14px]" fill="#e1c0ff" id="homoLabel" x="525" y="175">HOMO</text>
+              </g>
+              <line id="transitionArrow" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="#8ed5ff" stroke-width="2" x1="280" x2="280" y1="163" y2="87"></line>
+              <g id="egBadgeGroup">
+                <rect class="fill-surface-container-highest" height="28" id="egBadgeBg" rx="14" width="120" x="220" y="105"></rect>
+                <text class="font-readout-md text-[14px] font-bold" fill="#8ed5ff" id="svgEgText" text-anchor="middle" x="280" y="124">Eg = 2.10 eV</text>
+              </g>
+              <g id="photonParticle">
+                <path d="M 285,119 Q 295,109 305,119 T 325,119 T 345,119" fill="none" id="photonWave" stroke="#ffc640" stroke-linecap="round" stroke-width="3"></path>
+                <polygon fill="#ffc640" points="348,119 340,114 340,124"></polygon>
+                <text class="font-label-sm text-[12px]" fill="#ffc640" id="photonLabelText" x="355" y="123">hν (590 nm)</text>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Transport Canvas -->
+          <div class="relative w-full aspect-[4/1] bg-surface-container-low rounded-3xl overflow-hidden shadow-2xl border border-outline/5">
+            <canvas id="transportCanvas" class="w-full h-full block"></canvas>
+            <div class="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-surface-container-highest to-transparent flex items-center justify-center pointer-events-none">
+              <span class="font-label-sm text-[10px] text-primary [writing-mode:vertical-rl] rotate-180 font-bold opacity-50">CATHODE</span>
+            </div>
+            <div class="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-surface-container-highest to-transparent flex items-center justify-center pointer-events-none">
+              <span class="font-label-sm text-[10px] text-tertiary [writing-mode:vertical-rl] rotate-180 font-bold opacity-50">ANODE</span>
+            </div>
+          </div>
+          
+        </div>
+
+        <!-- Progressive Disclosure: The Dossier -->
+        <div class="w-full max-w-4xl mx-auto mt-16" id="dossier-container">
+          <button onclick="toggleDossier()" class="w-full flex items-center justify-between p-6 bg-surface-container rounded-2xl hover:bg-surface-container-high transition-colors outline-none focus:ring-2 ring-primary/50 group">
+            <div class="flex items-center gap-4">
+              <span class="material-symbols-outlined text-primary">data_object</span>
+              <span class="font-headline-md text-xl text-on-surface">Open Full Physics Dossier</span>
+            </div>
+            <span class="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface transition-colors" id="dossier-icon">expand_more</span>
+          </button>
+          
+          <div class="dossier-content px-2 mt-4" id="dossier-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-8">
+              
+              <!-- Metrics grid -->
+              <div class="bg-surface-container-low p-6 rounded-2xl border border-outline/5 flex flex-col gap-6">
+                <span class="font-label-sm text-xs text-on-surface-variant tracking-wider uppercase">Extracted Metrics</span>
+                
+                <div class="flex flex-col gap-4">
+                  <div class="flex justify-between items-end border-b border-outline/10 pb-2">
+                    <span class="font-body-sm text-on-surface-variant">Charge Mobility (μ)</span>
+                    <span class="font-readout-lg text-lg text-primary" id="mobilityValue">1.4 × 10⁻⁴ cm²/(V·s)</span>
+                  </div>
+                  <div class="flex justify-between items-end border-b border-outline/10 pb-2">
+                    <span class="font-body-sm text-on-surface-variant">Transport Model</span>
+                    <span class="font-readout-md text-sm text-on-surface" id="mobilityType">GDM (Bässler)</span>
+                  </div>
+                  <div class="flex justify-between items-end border-b border-outline/10 pb-2">
+                    <span class="font-body-sm text-on-surface-variant">Exciton Binding (E<sub>b</sub>)</span>
+                    <span class="font-readout-lg text-lg text-tertiary" id="excitonBindingVal">529 meV</span>
+                  </div>
+                  <div class="flex justify-between items-end border-b border-outline/10 pb-2">
+                    <span class="font-body-sm text-on-surface-variant">Exciton Character</span>
+                    <span class="font-readout-md text-sm text-on-surface" id="excitonType">Frenkel</span>
+                  </div>
+                  <div class="flex justify-between items-end border-b border-outline/10 pb-2">
+                    <span class="font-body-sm text-on-surface-variant">Photon Wavelength</span>
+                    <span class="font-readout-lg text-lg text-secondary" id="quantumWavelength">590.4 nm</span>
+                  </div>
+                  
+                  <div id="pvDetailedCard" class="hidden flex-col gap-4 mt-2">
+                    <div class="flex justify-between items-end border-b border-outline/10 pb-2">
+                      <span class="font-body-sm text-on-surface-variant">Short-Circuit Current (J<sub>sc</sub>)</span>
+                      <span class="font-readout-lg text-lg text-primary" id="jscVal">35.0 mA/cm²</span>
+                    </div>
+                    <div class="flex justify-between items-end border-b border-outline/10 pb-2">
+                      <span class="font-body-sm text-on-surface-variant">Open-Circuit Voltage (V<sub>oc</sub>)</span>
+                      <span class="font-readout-lg text-lg text-secondary" id="vocVal">1.08 V</span>
+                    </div>
+                    <div class="flex justify-between items-end border-b border-outline/10 pb-2">
+                      <span class="font-body-sm text-on-surface-variant">Fill Factor (FF)</span>
+                      <span class="font-readout-lg text-lg text-on-surface" id="ffVal">88.9%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Supplementary info -->
+              <div class="flex flex-col gap-6">
+                <!-- Color Box -->
+                <div class="bg-surface-container-low p-6 rounded-2xl border border-outline/5" id="oledSubPanel">
+                  <span class="font-label-sm text-xs text-on-surface-variant tracking-wider uppercase block mb-4">Photometric Output</span>
+                  <div class="flex items-center gap-4">
+                    <div class="flex flex-col">
+                      <span class="font-readout-lg text-xl text-on-surface" id="colorHexDisplay">#F59E0B</span>
+                      <span class="font-label-sm text-sm text-on-surface-variant mt-1" id="colorCieDisplay">CIE 1931: (0.58, 0.41)</span>
+                    </div>
+                  </div>
+                  <div class="mt-6 flex flex-col gap-2">
+                    <span class="font-label-sm text-[10px] text-on-surface-variant uppercase">Device Stack</span>
+                    <div class="h-6 w-full flex rounded overflow-hidden">
+                      <div class="w-1/5 bg-surface-bright border-r border-background/20"></div>
+                      <div class="w-1/5 bg-primary-container/50 border-r border-background/20"></div>
+                      <div class="w-1/5 bg-secondary" id="emlStackLayer"></div>
+                      <div class="w-1/5 bg-tertiary/40 border-l border-background/20"></div>
+                      <div class="w-1/5 bg-surface-bright"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="hidden bg-surface-container-low p-6 rounded-2xl border border-outline/5" id="solarSubPanel">
+                  <span class="font-label-sm text-xs text-on-surface-variant tracking-wider uppercase block mb-4">Absorption Spectrum</span>
+                  <div class="font-label-sm text-sm text-on-surface" id="solarCutoffLabel">Cutoff: λ<sub>c</sub> = 590 nm</div>
+                  <svg class="w-full h-24 mt-4" preserveAspectRatio="none" viewBox="0 0 500 100">
+                    <path d="M 30,90 Q 60,15 120,25 T 220,60 L 220,90 Z" fill="#8ed5ff" fill-opacity="0.35"></path>
+                    <path d="M 220,60 Q 280,70 340,78 T 470,88 L 470,90 L 220,90 Z" fill="#31353e" fill-opacity="0.6"></path>
+                    <line stroke="#ffb4ab" stroke-dasharray="3 3" stroke-width="1.5" x1="220" x2="220" y1="10" y2="90" id="solarCutoffLine"></line>
+                    <text class="font-label-sm text-[10px]" fill="#ffb4ab" id="solarCutoffSvgText" x="225" y="25">Cutoff</text>
+                  </svg>
+                </div>
+                
+                <!-- Raw Values for DOM logic preservation -->
+                <div class="hidden">
+                  <span id="homoVal"></span><span id="lumoVal"></span><span id="ecVal"></span><span id="evVal"></span>
+                  <span id="tradeoffEgBadge"></span><span id="canvasMobilitySub"></span>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
   <script>
+
     const state = {
       mode: 'oled',          // 'oled' | 'solar'
       matClass: 'organic',   // 'organic' | 'inorganic'
@@ -1174,6 +845,33 @@
 
     // Launch workspace on load
     window.addEventListener('DOMContentLoaded', init);
+  
+    
+    // UI Drawer Logic
+    function toggleDrawer() {
+      const drawer = document.getElementById('drawer');
+      const body = document.body;
+      if (drawer.classList.contains('closed')) {
+        drawer.classList.remove('closed');
+        body.classList.add('drawer-open');
+      } else {
+        drawer.classList.add('closed');
+        body.classList.remove('drawer-open');
+      }
+    }
+
+    // Dossier Accordion Logic
+    function toggleDossier() {
+      const container = document.getElementById('dossier-container');
+      const icon = document.getElementById('dossier-icon');
+      if (container.classList.contains('dossier-open')) {
+        container.classList.remove('dossier-open');
+        icon.style.transform = 'rotate(0deg)';
+      } else {
+        container.classList.add('dossier-open');
+        icon.style.transform = 'rotate(180deg)';
+      }
+    }
   </script>
 </body>
 </html>
