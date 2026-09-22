@@ -195,11 +195,11 @@
         <div class="w-full flex flex-col gap-8">
           
           <!-- Band Diagram -->
-          <div class="relative w-full aspect-[3/1] bg-surface-container-low rounded-3xl p-6 overflow-hidden shadow-2xl border border-outline/5">
+          <div class="relative w-full aspect-[600/220] min-w-[600px] bg-surface-container-low rounded-3xl p-6 overflow-x-auto overflow-y-hidden shadow-2xl border border-outline/5">
             <div class="absolute top-6 left-6 font-label-sm text-xs text-on-surface-variant tracking-wider uppercase">Energy Landscape</div>
             <div class="absolute top-6 right-6 px-3 py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-[10px]" id="transportModelBadge">Miller-Abrahams Hopping</div>
             
-            <svg class="w-full h-full pt-8 select-none" id="bandDiagramSvg" preserveAspectRatio="none" viewBox="0 0 600 220">
+            <svg class="w-full h-full pt-8 select-none" id="bandDiagramSvg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 600 220">
               <defs>
                 <pattern height="20" id="reticleGrid" patternUnits="userSpaceOnUse" width="40">
                   <path class="text-surface-variant" d="M 40 0 L 0 0 0 20" fill="none" opacity="0.3" stroke="currentColor" stroke-width="0.5"></path>
@@ -240,7 +240,7 @@
           </div>
 
           <!-- Transport Canvas -->
-          <div class="relative w-full aspect-[4/1] bg-surface-container-low rounded-3xl overflow-hidden shadow-2xl border border-outline/5">
+          <div class="relative w-full aspect-[4/1] bg-surface-container-low rounded-3xl overflow-x-auto overflow-y-hidden shadow-2xl border border-outline/5">
             <canvas id="transportCanvas" class="w-full h-full block"></canvas>
             <div class="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-surface-container-highest to-transparent flex items-center justify-center pointer-events-none">
               <span class="font-label-sm text-[10px] text-primary [writing-mode:vertical-rl] rotate-180 font-bold opacity-50">CATHODE</span>
@@ -334,7 +334,7 @@
                 <div class="hidden bg-surface-container-low p-6 rounded-2xl border border-outline/5" id="solarSubPanel">
                   <span class="font-label-sm text-xs text-on-surface-variant tracking-wider uppercase block mb-4">Absorption Spectrum</span>
                   <div class="font-label-sm text-sm text-on-surface" id="solarCutoffLabel">Cutoff: λ<sub>c</sub> = 590 nm</div>
-                  <svg class="w-full h-24 mt-4" preserveAspectRatio="none" viewBox="0 0 500 100">
+                  <svg class="w-full h-24 mt-4" preserveAspectRatio="xMidYMid meet" viewBox="0 0 500 100">
                     <path d="M 30,90 Q 60,15 120,25 T 220,60 L 220,90 Z" fill="#8ed5ff" fill-opacity="0.35"></path>
                     <path d="M 220,60 Q 280,70 340,78 T 470,88 L 470,90 L 220,90 Z" fill="#31353e" fill-opacity="0.6"></path>
                     <line stroke="#ffb4ab" stroke-dasharray="3 3" stroke-width="1.5" x1="220" x2="220" y1="10" y2="90" id="solarCutoffLine"></line>
