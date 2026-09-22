@@ -1,4 +1,13 @@
-<!DOCTYPE html>
+import re
+
+with open("evaluation.html", "r") as f:
+    html = f.read()
+
+# Extract script at the bottom
+script_match = re.search(r'<script>(.*?)</script>\s*</body>', html, re.DOTALL)
+script_content = script_match.group(1) if script_match else ""
+
+new_html = """<!DOCTYPE html>
 <html class="dark" lang="en">
 <head>
   <meta charset="utf-8"/>
@@ -42,7 +51,7 @@
 </head>
 <body class="bg-surface-container-lowest font-body-md text-on-surface antialiased">
 
-  <header class="h-16 shrink-0 w-full px-4 md:px-8 flex items-center justify-between border-b border-outline/10 bg-surface-container-lowest z-40 fixed top-0">
+  <header class="h-16 shrink-0 w-full px-8 flex items-center justify-between border-b border-outline/10 bg-surface-container-lowest z-40 fixed top-0">
     <div class="flex items-center gap-4">
       <div class="flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none" class="h-6 w-auto">
@@ -66,6 +75,7 @@
       <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="index.html">Overview</a>
       <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="simulator.html">Simulator</a>
       <a class="text-on-surface font-label-md text-sm transition-colors" href="evaluation.html">Decisions</a>
+      <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="export.html">Report</a>
     </nav>
   </header>
 
@@ -156,7 +166,7 @@
               <label class="font-label-md text-sm text-on-surface" for="justification-task1">Engineering Justification</label>
               <textarea class="w-full bg-surface-container-lowest p-4 rounded-lg font-body-md text-on-surface focus:outline-none focus:ring-1 focus:ring-primary border border-outline/10 resize-none h-32" id="justification-task1" placeholder="Synthesize your coating choice for high-humidity outdoor solar deployment..."></textarea>
               <div class="flex justify-end">
-                <button class="px-6 py-2 rounded-full bg-primary text-on-primary font-label-md text-sm font-semibold hover:scale-105 transition-transform shadow-sm hover:shadow-md hover:shadow-primary/20" onclick="commitJustification(1)">Commit Rationale</button>
+                <button class="px-6 py-2 rounded-full bg-primary text-on-primary font-label-md text-sm font-semibold hover:scale-105 transition-transform shadow-lg shadow-primary/20" onclick="commitJustification(1)">Commit Rationale</button>
               </div>
             </div>
           </div>
@@ -201,7 +211,7 @@
               <label class="font-label-md text-sm text-on-surface" for="justification-task2">Tradeoff Analysis</label>
               <textarea class="w-full bg-surface-container-lowest p-4 rounded-lg font-body-md text-on-surface focus:outline-none focus:ring-1 focus:ring-primary border border-outline/10 resize-none h-32" id="justification-task2" placeholder="Analyze why low carrier mobility in organics is acceptable for thin emissive OLED displays..."></textarea>
               <div class="flex justify-end">
-                <button class="px-6 py-2 rounded-full bg-primary text-on-primary font-label-md text-sm font-semibold hover:scale-105 transition-transform shadow-sm hover:shadow-md hover:shadow-primary/20" onclick="commitJustification(2)">Commit Rationale</button>
+                <button class="px-6 py-2 rounded-full bg-primary text-on-primary font-label-md text-sm font-semibold hover:scale-105 transition-transform shadow-lg shadow-primary/20" onclick="commitJustification(2)">Commit Rationale</button>
               </div>
             </div>
           </div>
@@ -221,7 +231,7 @@
           </summary>
           <div class="p-8 pt-0 border-t border-outline/10">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 mt-6">
+            <div class="grid grid-cols-2 gap-4 mb-8 mt-6">
               <button class="py-4 px-4 rounded-xl bg-primary-container text-on-primary-container font-headline-md text-lg transition-all text-center border border-transparent" id="btn-scenario-1" onclick="selectScenario('1')">Utility PV</button>
               <button class="py-4 px-4 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface font-headline-md text-lg transition-all text-center border border-outline/5" id="btn-scenario-2" onclick="selectScenario('2')">Wearable Textile</button>
               <button class="py-4 px-4 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface font-headline-md text-lg transition-all text-center border border-outline/5" id="btn-scenario-3" onclick="selectScenario('3')">Foldable OLED</button>
@@ -243,7 +253,7 @@
               <label class="font-label-md text-sm text-on-surface" for="justification-task3">Scenario Rationale</label>
               <textarea class="w-full bg-surface-container-lowest p-4 rounded-lg font-body-md text-on-surface focus:outline-none focus:ring-1 focus:ring-primary border border-outline/10 resize-none h-32" id="justification-task3" placeholder="Explain your design choice for the selected scenario..."></textarea>
               <div class="flex justify-end">
-                <button class="px-6 py-2 rounded-full bg-primary text-on-primary font-label-md text-sm font-semibold hover:scale-105 transition-transform shadow-sm hover:shadow-md hover:shadow-primary/20" onclick="commitJustification(3)">Commit Rationale</button>
+                <button class="px-6 py-2 rounded-full bg-primary text-on-primary font-label-md text-sm font-semibold hover:scale-105 transition-transform shadow-lg shadow-primary/20" onclick="commitJustification(3)">Commit Rationale</button>
               </div>
             </div>
           </div>
@@ -254,176 +264,11 @@
   </main>
 
   <script>
-
-    window.taskState = {
-      selectedCoating: 'A',
-      selectedScenario: '1',
-      coatings: {
-        A: {
-          name: 'TiO₂/SiO₂ Graded Sol-Gel',
-          role: 'Solar Front Surface AR/Self-Cleaning',
-          opt: 94.8,
-          flex: 48,
-          mvtr: 85,
-          temp: 180,
-          cost: 14.5,
-          pceDelta: '+1.42%',
-          lifetimeDelta: '+4.8 yrs',
-          lumDelta: '-0.2%',
-          statusBadge: 'High Photothermal Stability'
-        },
-        B: {
-          name: 'Al₂O₃ / Hybrid Vitrimer Multilayer',
-          role: 'Flexible Ultra-Thin Encapsulation (UTE)',
-          opt: 89.2,
-          flex: 96,
-          mvtr: 99.4,
-          temp: 85,
-          cost: 62.0,
-          pceDelta: '-0.35%',
-          lifetimeDelta: '+18.2 yrs',
-          lumDelta: '+14.6%',
-          statusBadge: 'Hermetic Barrier Level (10⁻⁶)'
-        },
-        C: {
-          name: 'VO₂ Monoclinic-Rutile Glazing',
-          role: 'Passive Solar-Heat Regulating Window',
-          opt: 68.4,
-          flex: 22,
-          mvtr: 70,
-          temp: 420,
-          cost: 38.0,
-          pceDelta: '-3.10%',
-          lifetimeDelta: '+8.0 yrs',
-          lumDelta: '-18.5%',
-          statusBadge: 'NIR Reversible Switching'
-        }
-      },
-      scenarios: {
-        '1': {
-          title: 'Utility Scale Rooftop PV',
-          targetEg: '1.1 - 1.4 eV',
-          targetMob: 'μe > 800 cm²/V·s',
-          mvtrTarget: '< 10⁻³ g/m²/day',
-          thermalLimit: '> 85°C Continuously',
-          idealMat: 'c-Si / InGaP-GaAs Tandem',
-          status: 'Direct Solar AM1.5G Optimized'
-        },
-        '2': {
-          title: 'Wearable Solar Harvesting on Textile',
-          targetEg: '1.6 - 1.9 eV (Indoor/Diffuse)',
-          targetMob: 'μe > 1.0 cm²/V·s',
-          mvtrTarget: '< 10⁻⁴ g/m²/day (Body sweat)',
-          thermalLimit: '< 55°C Safe Contact',
-          idealMat: 'Conjugated Polymer / Perovskite Hybrid',
-          status: 'Mechanical Flex Endurance (r < 3mm)'
-        },
-        '3': {
-          title: 'Next-Gen Foldable Smartphone OLED',
-          targetEg: '2.1 - 2.8 eV (R/G/B)',
-          targetMob: 'μh > 0.5 cm²/V·s (Fast injection)',
-          mvtrTarget: '< 10⁻⁶ g/m²/day (Critical)',
-          thermalLimit: '< 75°C Peak Dissipation',
-          idealMat: 'Thermally Activated Delayed Fluorescence (TADF)',
-          status: '120Hz Switching / Bending Cycle: 200k'
-        },
-        '4': {
-          title: 'Architectural Solid-State White Lighting',
-          targetEg: 'Broadband Continuum (CRI > 90)',
-          targetMob: 'Balanced e-h recombination',
-          mvtrTarget: '< 10⁻² g/m²/day',
-          thermalLimit: '> 105°C Heat-sink coupling',
-          idealMat: 'GaN-on-Sapphire + Ce:YAG Phosphor / Hybrid QD',
-          status: 'High Lumen Maintenance (L70 > 50,000h)'
-        }
-      }
-    };
-
-    function selectCoating(key) {
-      window.taskState.selectedCoating = key;
-      const data = window.taskState.coatings[key];
-      
-      ['A', 'B', 'C'].forEach(k => {
-        const card = document.getElementById('card-coating-' + k);
-        const indicator = document.getElementById('indicator-coating-' + k);
-        if (k === key) {
-          card.classList.remove('bg-surface-container');
-          card.classList.add('bg-surface-container-high', 'shadow-xl');
-          indicator.classList.remove('bg-surface-variant');
-          indicator.classList.add('bg-primary');
-        } else {
-          card.classList.remove('bg-surface-container-high', 'shadow-xl');
-          card.classList.add('bg-surface-container');
-          indicator.classList.remove('bg-primary');
-          indicator.classList.add('bg-surface-variant');
-        }
-      });
-
-      document.getElementById('sim-coating-name').innerText = data.name;
-      document.getElementById('sim-coating-role').innerText = data.role;
-      document.getElementById('sim-coating-status').innerText = data.statusBadge;
-      document.getElementById('sim-val-pce').innerText = data.pceDelta;
-      document.getElementById('sim-val-life').innerText = data.lifetimeDelta;
-      document.getElementById('sim-val-lum').innerText = data.lumDelta;
-      document.getElementById('sim-val-cost').innerText = '$' + data.cost.toFixed(1) + '/m²';
-
-      document.getElementById('meter-bar-opt').style.width = data.opt + '%';
-      document.getElementById('meter-val-opt').innerText = data.opt + '%';
-
-      document.getElementById('meter-bar-flex').style.width = data.flex + '%';
-      document.getElementById('meter-val-flex').innerText = (data.flex * 0.5).toFixed(1) + ' mm';
-
-      document.getElementById('meter-bar-mvtr').style.width = data.mvtr + '%';
-      document.getElementById('meter-val-mvtr').innerText = data.mvtr > 90 ? '<10⁻⁵' : (data.mvtr > 80 ? '<10⁻³' : '<10⁻¹');
-
-      document.getElementById('meter-bar-temp').style.width = (data.temp / 5) + '%';
-      document.getElementById('meter-val-temp').innerText = data.temp + ' °C';
-    }
-
-    function selectScenario(key) {
-      window.taskState.selectedScenario = key;
-      const data = window.taskState.scenarios[key];
-
-      ['1', '2', '3', '4'].forEach(k => {
-        const btn = document.getElementById('btn-scenario-' + k);
-        if (k === key) {
-          btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
-          btn.classList.add('bg-primary-container', 'text-on-primary-container', 'font-semibold', 'shadow-sm');
-        } else {
-          btn.classList.remove('bg-primary-container', 'text-on-primary-container', 'font-semibold', 'shadow-sm');
-          btn.classList.add('bg-surface-container', 'text-on-surface-variant');
-        }
-      });
-
-      document.getElementById('scene-title').innerText = data.title;
-      document.getElementById('scene-eg').innerText = data.targetEg;
-      document.getElementById('scene-mob').innerText = data.targetMob;
-      document.getElementById('scene-mvtr').innerText = data.mvtrTarget;
-      document.getElementById('scene-mat').innerText = data.idealMat;
-      document.getElementById('scene-status-tag').innerText = data.status;
-    }
-
-    function commitJustification(taskNum) {
-      const text = document.getElementById(`justification-task${taskNum}`).value;
-      if (!text.trim()) {
-        alert('Please write an engineering justification before committing.');
-        return;
-      }
-      localStorage.setItem(`semisim_justification_${taskNum}`, text);
-      alert(`Rationale for Task ${taskNum} successfully committed to notebook.`);
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      // Load saved justifications if any
-      [1, 2, 3].forEach(n => {
-        const saved = localStorage.getItem(`semisim_justification_${n}`);
-        if (saved) {
-          const el = document.getElementById(`justification-task${n}`);
-          if (el) el.value = saved;
-        }
-      });
-    });
-  
+""" + script_content + """
   </script>
 </body>
 </html>
+"""
+
+with open("evaluation.html", "w") as f:
+    f.write(new_html)

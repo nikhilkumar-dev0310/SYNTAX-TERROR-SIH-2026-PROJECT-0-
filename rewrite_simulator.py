@@ -1,4 +1,14 @@
-<!DOCTYPE html>
+import re
+
+with open("simulator.html", "r") as f:
+    html = f.read()
+
+# Extract the script block
+script_match = re.search(r'<script>(.*?)</script>\s*</body>', html, re.DOTALL)
+script_content = script_match.group(1) if script_match else ""
+
+# Prepare the new HTML layout
+new_html = """<!DOCTYPE html>
 <html class="dark" lang="en">
 <head>
   <meta charset="utf-8"/>
@@ -13,7 +23,7 @@
     #drawer { transform: translateX(0); transition: transform 0.3s ease-in-out; }
     #drawer.closed { transform: translateX(-100%); }
     #main-stage { transition: margin-left 0.3s ease-in-out; }
-    @media (min-width: 640px) { .drawer-open #main-stage { margin-left: 24rem; } }
+    .drawer-open #main-stage { margin-left: 24rem; }
     .dossier-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
     .dossier-open .dossier-content { max-height: 2000px; }
   </style>
@@ -76,6 +86,7 @@
       <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="index.html">Overview</a>
       <a class="text-on-surface font-label-md text-sm transition-colors" href="simulator.html">Simulator</a>
       <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="evaluation.html">Decisions</a>
+      <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="export.html">Report</a>
     </nav>
     <div class="flex items-center gap-2">
       <span class="px-2 py-0.5 rounded font-label-sm text-xs bg-secondary text-on-secondary font-medium" id="headerCouplingBadge">EMISSION ACTIVE [OLED]</span>
@@ -85,7 +96,7 @@
   <div class="flex flex-1 relative overflow-hidden">
     
     <!-- Left Drawer (Controls) -->
-    <aside id="drawer" class="absolute top-0 left-0 h-full w-[90vw] sm:w-96 bg-surface-container-low border-r border-outline/10 z-30 overflow-y-auto flex flex-col">
+    <aside id="drawer" class="absolute top-0 left-0 h-full w-96 bg-surface-container-low border-r border-outline/10 z-30 overflow-y-auto flex flex-col">
       <div class="p-6 flex flex-col gap-8">
         
         <!-- Mode & Architecture -->
@@ -115,7 +126,7 @@
             <span class="px-2 py-0.5 rounded font-label-sm text-[10px] bg-secondary text-on-secondary font-semibold" id="spectralBadge">590 nm • Amber</span>
           </div>
           <div class="flex items-baseline justify-between mb-2">
-            <label class="font-label-sm text-xs text-on-surface-variant" for="egSlider">Energy (E<sub>g</sub>)</label>
+            <label class="font-label-sm text-xs text-on-surface-variant" for="egSlider">Energy ($E_g$)</label>
             <div class="flex items-center gap-1 bg-surface-container-lowest px-2 py-1 rounded">
               <span class="font-readout-md text-base text-secondary font-semibold" id="egValueDisplay">2.10</span>
               <span class="font-label-sm text-xs text-on-surface-variant">eV</span>
@@ -187,18 +198,18 @@
             </div>
             <h2 class="font-display-lg text-[100px] leading-none text-on-surface tracking-tighter" id="efficiencyValue">7.2%</h2>
           </div>
-          <span class="font-label-sm text-sm text-on-surface-variant mt-4" id="efficiencySub">η<sub>S</sub>=25% (fluorescent singlet limit)</span>
+          <span class="font-label-sm text-sm text-on-surface-variant mt-4" id="efficiencySub">η_S=25% (fluorescent singlet limit)</span>
         </div>
 
         <!-- Huge Visualization Stage -->
         <div class="w-full flex flex-col gap-8">
           
           <!-- Band Diagram -->
-          <div class="relative w-full aspect-[600/220] min-w-[600px] bg-surface-container-low rounded-3xl p-6 overflow-x-auto overflow-y-hidden shadow-2xl border border-outline/5">
+          <div class="relative w-full aspect-[3/1] bg-surface-container-low rounded-3xl p-6 overflow-hidden shadow-2xl border border-outline/5">
             <div class="absolute top-6 left-6 font-label-sm text-xs text-on-surface-variant tracking-wider uppercase">Energy Landscape</div>
             <div class="absolute top-6 right-6 px-3 py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-[10px]" id="transportModelBadge">Miller-Abrahams Hopping</div>
             
-            <svg class="w-full h-full pt-8 select-none" id="bandDiagramSvg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 600 220">
+            <svg class="w-full h-full pt-8 select-none" id="bandDiagramSvg" preserveAspectRatio="none" viewBox="0 0 600 220">
               <defs>
                 <pattern height="20" id="reticleGrid" patternUnits="userSpaceOnUse" width="40">
                   <path class="text-surface-variant" d="M 40 0 L 0 0 0 20" fill="none" opacity="0.3" stroke="currentColor" stroke-width="0.5"></path>
@@ -225,22 +236,21 @@
                 <rect fill="url(#homoGradient)" height="12" id="homoBar" rx="6" width="440" x="80" y="165"></rect>
                 <text class="font-readout-md text-[14px]" fill="#e1c0ff" id="homoLabel" x="525" y="175">HOMO</text>
               </g>
-              <line id="transitionArrowTop" marker-end="url(#arrow)" stroke="#8ed5ff" stroke-width="2" x1="280" x2="280" y1="120" y2="87"></line>
-              <line id="transitionArrowBottom" marker-end="url(#arrow)" stroke="#8ed5ff" stroke-width="2" x1="280" x2="280" y1="130" y2="163"></line>
+              <line id="transitionArrow" marker-end="url(#arrow)" marker-start="url(#arrow)" stroke="#8ed5ff" stroke-width="2" x1="280" x2="280" y1="163" y2="87"></line>
               <g id="egBadgeGroup">
                 <rect class="fill-surface-container-highest" height="28" id="egBadgeBg" rx="14" width="120" x="220" y="105"></rect>
                 <text class="font-readout-md text-[14px] font-bold" fill="#8ed5ff" id="svgEgText" text-anchor="middle" x="280" y="124">Eg = 2.10 eV</text>
               </g>
               <g id="photonParticle">
-                <path d="M 350,119 Q 360,109 370,119 T 390,119 T 410,119" fill="none" id="photonWave" stroke="#ffc640" stroke-linecap="round" stroke-width="3"></path>
-                <polygon fill="#ffc640" points="413,119 405,114 405,124"></polygon>
-                <text class="font-label-sm text-[12px]" fill="#ffc640" id="photonLabelText" x="420" y="123">hν (590 nm)</text>
+                <path d="M 285,119 Q 295,109 305,119 T 325,119 T 345,119" fill="none" id="photonWave" stroke="#ffc640" stroke-linecap="round" stroke-width="3"></path>
+                <polygon fill="#ffc640" points="348,119 340,114 340,124"></polygon>
+                <text class="font-label-sm text-[12px]" fill="#ffc640" id="photonLabelText" x="355" y="123">hν (590 nm)</text>
               </g>
             </svg>
           </div>
 
           <!-- Transport Canvas -->
-          <div class="relative w-full aspect-[4/1] bg-surface-container-low rounded-3xl overflow-x-auto overflow-y-hidden shadow-2xl border border-outline/5">
+          <div class="relative w-full aspect-[4/1] bg-surface-container-low rounded-3xl overflow-hidden shadow-2xl border border-outline/5">
             <canvas id="transportCanvas" class="w-full h-full block"></canvas>
             <div class="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-surface-container-highest to-transparent flex items-center justify-center pointer-events-none">
               <span class="font-label-sm text-[10px] text-primary [writing-mode:vertical-rl] rotate-180 font-bold opacity-50">CATHODE</span>
@@ -334,7 +344,7 @@
                 <div class="hidden bg-surface-container-low p-6 rounded-2xl border border-outline/5" id="solarSubPanel">
                   <span class="font-label-sm text-xs text-on-surface-variant tracking-wider uppercase block mb-4">Absorption Spectrum</span>
                   <div class="font-label-sm text-sm text-on-surface" id="solarCutoffLabel">Cutoff: λ<sub>c</sub> = 590 nm</div>
-                  <svg class="w-full h-24 mt-4" preserveAspectRatio="xMidYMid meet" viewBox="0 0 500 100">
+                  <svg class="w-full h-24 mt-4" preserveAspectRatio="none" viewBox="0 0 500 100">
                     <path d="M 30,90 Q 60,15 120,25 T 220,60 L 220,90 Z" fill="#8ed5ff" fill-opacity="0.35"></path>
                     <path d="M 220,60 Q 280,70 340,78 T 470,88 L 470,90 L 220,90 Z" fill="#31353e" fill-opacity="0.6"></path>
                     <line stroke="#ffb4ab" stroke-dasharray="3 3" stroke-width="1.5" x1="220" x2="220" y1="10" y2="90" id="solarCutoffLine"></line>
@@ -358,502 +368,7 @@
   </div>
 
   <script>
-
-    const state = {
-      mode: 'oled',          // 'oled' | 'solar'
-      matClass: 'organic',   // 'organic' | 'inorganic'
-      eg: 2.10,              // Band gap in eV
-      disorder: 0.08,        // eV
-      concentration: 1.0,    // Suns
-      preset: 'Alq3 (Tris(8-hydroxyquinolinato)aluminium)',
-      presets: {
-        organic: [
-          { name: 'Alq3 (Tris(8-hydroxyquinolinato)aluminium)', eg: 2.70, homo: -5.7, lumo: -3.0, color: '#8ed5ff', wl: '460 nm', hue: 'Blue' },
-          { name: 'Poly(p-phenylene vinylene) PPV', eg: 2.25, homo: -5.1, lumo: -2.85, color: '#ffc640', wl: '551 nm', hue: 'Yellow-Green' },
-          { name: 'P3HT:PCBM Blend (OPV Benchmark)', eg: 1.90, homo: -5.2, lumo: -3.3, color: '#ffb4ab', wl: '652 nm', hue: 'Orange-Red' },
-          { name: 'Spiro-OMeTAD (HTL Emissive)', eg: 3.00, homo: -5.22, lumo: -2.22, color: '#e1c0ff', wl: '413 nm', hue: 'Violet' },
-          { name: 'Ir(ppy)3 (Green Phosphor Benchmark)', eg: 2.50, homo: -5.30, lumo: -2.80, color: '#10b981', wl: '496 nm', hue: 'Green' }
-        ],
-        inorganic: [
-          { name: 'Crystalline Silicon (c-Si)', eg: 1.12, homo: -5.17, lumo: -4.05, color: '#87929a', wl: '1107 nm', hue: 'Infrared' },
-          { name: 'Gallium Arsenide (GaAs Direct)', eg: 1.42, homo: -5.49, lumo: -4.07, color: '#ffb4ab', wl: '873 nm', hue: 'Near-IR' },
-          { name: 'Cadmium Telluride (CdTe)', eg: 1.50, homo: -5.80, lumo: -4.30, color: '#ffb4ab', wl: '826 nm', hue: 'Deep-Red' },
-          { name: 'Halide Perovskite (CH3NH3PbI3)', eg: 1.55, homo: -5.45, lumo: -3.90, color: '#ffb4ab', wl: '800 nm', hue: 'Near-IR / Red' }
-        ]
-      }
-    };
-
-    // Debounce timers
-    let debounceEgTimer = null;
-    let debounceDisorderTimer = null;
-
-    function init() {
-      // Parse query params if provided
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('mode') === 'solar' || params.get('track') === 'photovoltaic') {
-        setAppMode('solar');
-      } else {
-        setAppMode('oled');
-      }
-      renderPresets();
-      updateEgUI(state.eg);
-      initCanvas();
-      recalculateMetricsLive();
-    }
-
-    function renderPresets() {
-      const sel = document.getElementById('presetSelect');
-      sel.innerHTML = '';
-      const list = state.presets[state.matClass];
-      list.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.name;
-        opt.innerText = p.name;
-        sel.appendChild(opt);
-      });
-      sel.value = list[0].name;
-      applyPreset(list[0].name);
-    }
-
-    function applyPreset(presetName) {
-      const list = state.presets[state.matClass];
-      const item = list.find(p => p.name === presetName) || list[0];
-      state.preset = item.name;
-      document.getElementById('egSlider').value = item.eg;
-      updateEgUI(item.eg);
-      recalculateMetricsLive();
-    }
-
-    function setAppMode(m) {
-      state.mode = m;
-      const oledBtn = document.getElementById('modeOledBtn');
-      const solarBtn = document.getElementById('modeSolarBtn');
-      const hdrBadge = document.getElementById('headerCouplingBadge');
-      const oledSub = document.getElementById('oledSubPanel');
-      const solarSub = document.getElementById('solarSubPanel');
-      const pvCard = document.getElementById('pvDetailedCard');
-      const effLabel = document.getElementById('efficiencyLabel');
-      const biasWrap = document.getElementById('biasControlWrapper');
-      const solarWrap = document.getElementById('solarFluxControlWrapper');
-
-      if (m === 'oled') {
-        oledBtn.className = 'py-1.5 px-2 rounded font-label-md text-label-md text-on-primary-container bg-primary-container font-semibold transition-all text-center';
-        solarBtn.className = 'py-1.5 px-2 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all text-center';
-        hdrBadge.innerText = 'EMISSION ACTIVE [OLED]';
-        hdrBadge.className = 'px-2 py-0.5 rounded font-label-sm text-label-sm bg-secondary text-on-secondary font-medium';
-        oledSub.classList.remove('hidden');
-        solarSub.classList.add('hidden');
-        pvCard.classList.add('hidden');
-        pvCard.classList.remove('flex');
-        effLabel.innerText = 'INTERNAL QUANTUM EFF. (IQE)';
-        biasWrap.classList.remove('hidden');
-        solarWrap.classList.add('hidden');
-      } else {
-        solarBtn.className = 'py-1.5 px-2 rounded font-label-md text-label-md text-on-primary-container bg-primary-container font-semibold transition-all text-center';
-        oledBtn.className = 'py-1.5 px-2 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all text-center';
-        hdrBadge.innerText = 'PHOTO-GENERATION [PV]';
-        hdrBadge.className = 'px-2 py-0.5 rounded font-label-sm text-label-sm bg-primary text-on-primary font-medium';
-        oledSub.classList.add('hidden');
-        solarSub.classList.remove('hidden');
-        pvCard.classList.remove('hidden');
-        pvCard.classList.add('flex');
-        effLabel.innerText = 'SHOCKLEY-QUEISSER LIMIT (PCE)';
-        solarWrap.classList.remove('hidden');
-        biasWrap.classList.add('hidden');
-      }
-      recalculateMetricsLive();
-    }
-
-    function setMatClass(c) {
-      state.matClass = c;
-      const orgBtn = document.getElementById('matOrganicBtn');
-      const inorgBtn = document.getElementById('matInorganicBtn');
-      const orgParams = document.getElementById('organicParamsGroup');
-      const inorgParams = document.getElementById('inorganicParamsGroup');
-      const contextHeading = document.getElementById('contextParamsHeading');
-      const transportBadge = document.getElementById('transportModelBadge');
-
-      if (c === 'organic') {
-        orgBtn.className = 'py-1.5 px-2 rounded font-label-md text-label-md text-on-primary-container bg-primary-container font-semibold transition-all text-center';
-        inorgBtn.className = 'py-1.5 px-2 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all text-center';
-        orgParams.classList.remove('hidden');
-        inorgParams.classList.add('hidden');
-        contextHeading.innerHTML = '<span class="material-symbols-outlined text-[16px]">layers</span> Organic Parameters';
-        transportBadge.innerText = 'Miller-Abrahams Hopping (Polaron)';
-        transportBadge.className = 'px-2 py-0.5 rounded font-label-sm text-label-sm bg-tertiary text-on-tertiary font-semibold';
-      } else {
-        inorgBtn.className = 'py-1.5 px-2 rounded font-label-md text-label-md text-on-primary-container bg-primary-container font-semibold transition-all text-center';
-        orgBtn.className = 'py-1.5 px-2 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all text-center';
-        orgParams.classList.add('hidden');
-        inorgParams.classList.remove('hidden');
-        contextHeading.innerHTML = '<span class="material-symbols-outlined text-[16px]">memory</span> Inorganic Crystal Parameters';
-        transportBadge.innerText = 'Boltzmann Band Transport (Bloch Waves)';
-        transportBadge.className = 'px-2 py-0.5 rounded font-label-sm text-label-sm bg-primary text-on-primary font-semibold';
-      }
-      renderPresets();
-    }
-
-    function onEgInput(val) {
-      updateEgUI(val);
-      // Debounce live API call by 120ms
-      clearTimeout(debounceEgTimer);
-      debounceEgTimer = setTimeout(() => {
-        recalculateMetricsLive();
-      }, 120);
-    }
-
-    function onDisorderInput(val) {
-      state.disorder = val;
-      document.getElementById('disorderDisplay').innerText = val.toFixed(2) + ' eV';
-      clearTimeout(debounceDisorderTimer);
-      debounceDisorderTimer = setTimeout(() => {
-        recalculateMetricsLive();
-      }, 120);
-    }
-
-    function onConcentrationInput(val) {
-      state.concentration = val;
-      document.getElementById('fluxDisplay').innerText = `${val.toFixed(1)} Sun (${(val * 1000).toFixed(0)} W/m²)`;
-      recalculateMetricsLive();
-    }
-
-    function updateEgUI(val) {
-      state.eg = val;
-      document.getElementById('egValueDisplay').innerText = val.toFixed(2);
-      document.getElementById('svgEgText').textContent = 'Eg = ' + val.toFixed(2) + ' eV';
-      document.getElementById('tradeoffEgBadge').innerText = 'At ' + val.toFixed(2) + ' eV';
-
-      const wavelength = Math.round(1239.84 / val);
-      const colorInfo = wavelengthToColor(wavelength);
-
-      // Spectral Badge & Swatches
-      const badge = document.getElementById('spectralBadge');
-      badge.innerText = wavelength + ' nm • ' + colorInfo.name;
-      badge.style.backgroundColor = colorInfo.hex;
-      badge.style.color = '#000000';
-
-      const swatch = document.getElementById('colorSwatchBox');
-      if (swatch) {
-        swatch.style.backgroundColor = colorInfo.hex;
-        swatch.innerText = wavelength + 'nm';
-      }
-      const hexDisp = document.getElementById('colorHexDisplay');
-      if (hexDisp) hexDisp.innerText = colorInfo.hex.toUpperCase();
-
-      const cieDisp = document.getElementById('colorCieDisplay');
-      if (cieDisp) cieDisp.innerText = 'CIE 1931: (' + colorInfo.cie.x + ', ' + colorInfo.cie.y + ')';
-
-      const emlLayer = document.getElementById('emlStackLayer');
-      if (emlLayer) emlLayer.style.backgroundColor = colorInfo.hex;
-
-      // SVG Band Geometry Updates
-      const homoY = 165;
-      const lumoY = Math.max(35, homoY - (val * 24));
-
-      const lumoBar = document.getElementById('lumoBar');
-      const lumoLabel = document.getElementById('lumoLabel');
-      const lumoValNumber = (-5.40 + val).toFixed(2);
-      lumoBar.setAttribute('y', lumoY);
-      lumoLabel.setAttribute('y', lumoY + 6);
-      lumoLabel.textContent = (state.matClass === 'organic' ? 'LUMO: ' : 'Ec: ') + lumoValNumber + ' eV';
-
-      if (document.getElementById('lumoVal')) document.getElementById('lumoVal').innerText = lumoValNumber + ' eV';
-      if (document.getElementById('ecVal')) document.getElementById('ecVal').innerText = lumoValNumber + ' eV';
-
-      const midY = (homoY + lumoY) / 2;
-      const arrowTop = document.getElementById('transitionArrowTop');
-      if (arrowTop) {
-        arrowTop.setAttribute('y1', midY - 16);
-        arrowTop.setAttribute('y2', lumoY + 10);
-      }
-      const arrowBot = document.getElementById('transitionArrowBottom');
-      if (arrowBot) {
-        arrowBot.setAttribute('y1', midY + 16);
-        arrowBot.setAttribute('y2', homoY);
-      }
-
-      document.getElementById('egBadgeBg').setAttribute('y', midY - 14); // slightly bigger badge
-      document.getElementById('svgEgText').setAttribute('y', midY + 4);
-
-      const wavePath = document.getElementById('photonWave');
-      wavePath.setAttribute('d', `M 350,${midY} Q 360,${midY-10} 370,${midY} T 390,${midY} T 410,${midY}`);
-      const poly = document.querySelector('#photonParticle polygon');
-      if (poly) poly.setAttribute('points', `413,${midY} 405,${midY-5} 405,${midY+5}`);
-      const photonLabel = document.getElementById('photonLabelText');
-      if (photonLabel) {
-        photonLabel.setAttribute('x', '420');
-        photonLabel.setAttribute('y', midY + 3);
-        photonLabel.textContent = `hν (${wavelength} nm)`;
-      }
-
-      // Solar Spectrum Cutoff updates
-      const cutoffLabel = document.getElementById('solarCutoffLabel');
-      if (cutoffLabel) cutoffLabel.innerHTML = `Cutoff: λ<sub>c</sub> = ${wavelength} nm`;
-      const cutoffSvgText = document.getElementById('solarCutoffSvgText');
-      if (cutoffSvgText) cutoffSvgText.textContent = `λ Cutoff (${wavelength} nm)`;
-      const cutoffLine = document.getElementById('solarCutoffLine');
-      // Map wavelength 280-1500nm to x: 30 to 470
-      const clampedWl = Math.max(280, Math.min(1500, wavelength));
-      const cutoffX = 30 + ((clampedWl - 280) / (1500 - 280)) * (470 - 30);
-      if (cutoffLine) {
-        cutoffLine.setAttribute('x1', cutoffX);
-        cutoffLine.setAttribute('x2', cutoffX);
-      }
-      if (cutoffSvgText) cutoffSvgText.setAttribute('x', Math.min(380, cutoffX + 5));
-
-      document.getElementById('quantumWavelength').innerText = `${val.toFixed(2)} eV (${wavelength} nm)`;
-    }
-
-    async function recalculateMetricsLive() {
-      // 1. Solar or OLED Efficiency
-      if (state.mode === 'solar') {
-        try {
-          const res = await apiPost('/api/solar/efficiency', {
-            eg_eV: state.eg,
-            temp_K: 300.0,
-            concentration: state.concentration
-          });
-          document.getElementById('efficiencyValue').innerText = `${res.pce_pct.toFixed(1)}%`;
-          document.getElementById('efficiencySub').innerText = `Shockley-Queisser Limit (${state.concentration}x Sun)`;
-          document.getElementById('jscVal').innerText = `${res.jsc_mA_cm2.toFixed(1)} mA/cm²`;
-          document.getElementById('vocVal').innerText = `${res.voc_V.toFixed(2)} V`;
-          document.getElementById('ffVal').innerText = `${res.ff_pct.toFixed(1)}%`;
-        } catch (err) {
-          // Robust client-side fallback
-          const sqApprox = Math.max(0, 33.7 * Math.exp(-Math.pow(state.eg - 1.34, 2) / 0.8)).toFixed(1);
-          document.getElementById('efficiencyValue').innerText = `${sqApprox}%`;
-        }
-      } else {
-        try {
-          const res = await apiPost('/api/oled/iqe', {
-            material_preset: state.preset,
-            charge_balance: 0.9
-          });
-          document.getElementById('efficiencyValue').innerText = `${res.iqe_pct.toFixed(1)}%`;
-          document.getElementById('efficiencySub').innerText = res.spin_limit_label;
-        } catch (err) {
-          document.getElementById('efficiencyValue').innerText = `7.2%`;
-          document.getElementById('efficiencySub').innerText = `η<sub>S</sub>=25% (fluorescent singlet limit)`;
-        }
-      }
-
-      // 2. Transport Properties (Continuous across Eg, Disorder, MatClass)
-      try {
-        const transRes = await apiPost('/api/transport/properties', {
-          eg_eV: state.eg,
-          mat_class: state.matClass,
-          disorder_eV: state.disorder,
-          temp_K: 300.0,
-          preset: state.preset
-        });
-        document.getElementById('mobilityValue').innerText = transRes.mobility_formatted;
-        document.getElementById('mobilityType').innerText = transRes.model_used;
-        document.getElementById('canvasMobilitySub').innerText = transRes.mobility_formatted;
-        
-        if (state.matClass === 'organic') {
-          document.getElementById('excitonBindingVal').innerText = `${transRes.exciton_binding_eV.toFixed(3)} eV (${transRes.exciton_binding_meV.toFixed(0)} meV)`;
-        } else {
-          document.getElementById('excitonBindingVal').innerText = `${transRes.exciton_binding_meV.toFixed(1)} meV (< 10 meV)`;
-        }
-        document.getElementById('excitonType').innerText = transRes.exciton_type;
-      } catch (err) {
-        // Fallback
-        if (state.matClass === 'organic') {
-          document.getElementById('mobilityValue').innerText = '1.4 × 10⁻⁴ cm²/(V·s)';
-          document.getElementById('excitonBindingVal').innerText = '0.529 eV (529 meV)';
-        } else {
-          document.getElementById('mobilityValue').innerText = '1,400 cm²/(V·s)';
-          document.getElementById('excitonBindingVal').innerText = '3.8 meV (< 10 meV)';
-        }
-      }
-    }
-
-    function wavelengthToColor(wl) {
-      if (wl < 440) return { name: 'Deep Violet / UV', hex: '#8b5cf6', cie: { x: '0.17', y: '0.04' } };
-      if (wl < 490) return { name: 'Cyan-Blue', hex: '#38bdf8', cie: { x: '0.12', y: '0.22' } };
-      if (wl < 530) return { name: 'Emerald-Green', hex: '#10b981', cie: { x: '0.28', y: '0.64' } };
-      if (wl < 570) return { name: 'Yellow-Green', hex: '#84cc16', cie: { x: '0.41', y: '0.52' } };
-      if (wl < 610) return { name: 'Amber-Yellow', hex: '#f59e0b', cie: { x: '0.58', y: '0.41' } };
-      if (wl < 680) return { name: 'Spectral Red', hex: '#ef4444', cie: { x: '0.68', y: '0.31' } };
-      return { name: 'Infrared / Non-visible', hex: '#64748b', cie: { x: '0.70', y: '0.28' } };
-    }
-
-    function triggerDynamics() {
-      showToast('GPU Drift-Diffusion / Monte-Carlo solver synchronized with live parameters.');
-    }
-
-    function resetDefaults() {
-      setAppMode('oled');
-      setMatClass('organic');
-      document.getElementById('egSlider').value = 2.10;
-      updateEgUI(2.10);
-      recalculateMetricsLive();
-      showToast('Simulation parameters restored to reference standard (300 K).');
-    }
-
-    function saveSnapshot() {
-      showToast(`Snapshot recorded: Eg=${state.eg.toFixed(2)}eV | ${state.preset} (${state.mode.toUpperCase()})`);
-    }
-
-    function showToast(msg) {
-      const t = document.getElementById('toastNotification');
-      document.getElementById('toastMsg').innerText = msg;
-      t.classList.remove('hidden');
-      setTimeout(() => {
-        t.classList.add('hidden');
-      }, 3200);
-    }
-
-    // ==========================================
-    // Clean Canvas Particle Engine
-    // ==========================================
-    class Particle {
-      constructor(canvas, type) {
-        this.canvas = canvas;
-        this.type = type; // 'electron' (drifts right) or 'hole' (drifts left)
-        this.reset();
-      }
-
-      reset() {
-        const w = this.canvas.width;
-        const h = this.canvas.height;
-        this.y = 20 + Math.random() * (h - 40);
-        this.radius = this.type === 'electron' ? 3.5 : 4.0;
-
-        if (this.type === 'electron') {
-          this.x = 20 + Math.random() * 30;
-          this.vx = 0.8 + Math.random() * 1.2;
-          this.color = '#8ed5ff';
-        } else {
-          this.x = w - (20 + Math.random() * 30);
-          this.vx = -(0.5 + Math.random() * 0.9);
-          this.color = '#e1c0ff';
-        }
-        this.vy = (Math.random() - 0.5) * 0.5;
-      }
-
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-
-        // Bounce top/bottom
-        if (this.y < 15 || this.y > this.canvas.height - 15) {
-          this.vy *= -1;
-        }
-
-        // Recombination near center in OLED mode
-        const midX = this.canvas.width / 2;
-        if (state.mode === 'oled' && Math.abs(this.x - midX) < 15) {
-          if (Math.random() < 0.08) {
-            bursts.push(new Burst(this.x, this.y, '#ffc640'));
-            this.reset();
-          }
-        }
-
-        // Re-inject on exiting boundaries
-        if (this.x > this.canvas.width - 25 || this.x < 25) {
-          this.reset();
-        }
-      }
-
-      draw(ctx) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.shadowColor = this.color;
-        ctx.shadowBlur = 6;
-        ctx.fill();
-        ctx.restore();
-      }
-    }
-
-    class Burst {
-      constructor(x, y, color) {
-        this.x = x;
-        this.y = y;
-        this.color = color;
-        this.radius = 2;
-        this.maxRadius = 18;
-        this.alpha = 1.0;
-      }
-
-      update() {
-        this.radius += 0.8;
-        this.alpha -= 0.04;
-      }
-
-      draw(ctx) {
-        if (this.alpha <= 0) return;
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = this.color;
-        ctx.globalAlpha = Math.max(0, this.alpha);
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.restore();
-      }
-    }
-
-    let canvas, ctx, particles = [], bursts = [];
-
-    function initCanvas() {
-      canvas = document.getElementById('transportCanvas');
-      if (!canvas) return;
-      ctx = canvas.getContext('2d');
-
-      function resize() {
-        canvas.width = canvas.parentElement.clientWidth || 600;
-        canvas.height = canvas.parentElement.clientHeight || 176;
-      }
-      window.addEventListener('resize', resize);
-      resize();
-
-      particles = [];
-      for (let i = 0; i < 18; i++) particles.push(new Particle(canvas, 'electron'));
-      for (let i = 0; i < 18; i++) particles.push(new Particle(canvas, 'hole'));
-
-      function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Center Recombination / Dissociation Zone Marker
-        const midX = canvas.width / 2;
-        ctx.fillStyle = state.mode === 'oled' ? 'rgba(255, 198, 64, 0.08)' : 'rgba(142, 213, 255, 0.08)';
-        ctx.fillRect(midX - 40, 10, 80, canvas.height - 20);
-        ctx.strokeStyle = state.mode === 'oled' ? 'rgba(255, 198, 64, 0.3)' : 'rgba(142, 213, 255, 0.3)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([4, 4]);
-        ctx.strokeRect(midX - 40, 10, 80, canvas.height - 20);
-        ctx.setLineDash([]);
-
-        // Label inside zone
-        ctx.fillStyle = state.mode === 'oled' ? '#ffc640' : '#8ed5ff';
-        ctx.font = '10px JetBrains Mono, monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText(state.mode === 'oled' ? 'Exciton Recomb.' : 'Charge Dissoc.', midX, 26);
-
-        // Update & draw particles
-        particles.forEach(p => {
-          p.update();
-          p.draw(ctx);
-        });
-
-        // Update & draw photon bursts
-        for (let i = bursts.length - 1; i >= 0; i--) {
-          bursts[i].update();
-          bursts[i].draw(ctx);
-          if (bursts[i].alpha <= 0) bursts.splice(i, 1);
-        }
-
-        requestAnimationFrame(animate);
-      }
-      animate();
-    }
-
-    // Launch workspace on load
-    window.addEventListener('DOMContentLoaded', init);
-  
+""" + script_content + """
     
     // UI Drawer Logic
     function toggleDrawer() {
@@ -883,3 +398,7 @@
   </script>
 </body>
 </html>
+"""
+
+with open("simulator.html", "w") as f:
+    f.write(new_html)
