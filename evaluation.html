@@ -62,7 +62,7 @@
       </div>
     </div>
     
-    <nav class="hidden md:flex items-center gap-8">
+    <nav class="hidden md:flex items-center gap-4 md:p-8">
       <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="index.html">Overview</a>
       <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="simulator.html">Simulator</a>
       <a class="text-on-surface font-label-md text-sm transition-colors" href="evaluation.html">Decisions</a>
@@ -84,7 +84,7 @@
         
         <!-- Task 1 Dossier -->
         <details class="group bg-surface-container-low rounded-2xl overflow-hidden shadow-lg border border-outline/5" open>
-          <summary class="flex justify-between items-center p-8 cursor-pointer select-none outline-none group-hover:bg-surface-container transition-colors">
+          <summary class="flex justify-between items-center p-4 md:p-8 cursor-pointer select-none outline-none group-hover:bg-surface-container transition-colors">
             <div class="flex flex-col gap-2">
               <div class="flex items-center gap-3">
                 <span class="w-2 h-2 rounded-full bg-primary group-open:animate-ping"></span>
@@ -94,7 +94,7 @@
             </div>
             <span class="material-symbols-outlined text-outline group-open:-scale-y-100 transition-transform">expand_more</span>
           </summary>
-          <div class="p-8 pt-0 border-t border-outline/10">
+          <div class="p-4 md:p-8 pt-0 border-t border-outline/10">
             <p class="font-body-md text-on-surface-variant mt-6 mb-8 font-light text-lg">
               Functional exterior layers control interfacial photon injection, dielectric passivation, and environmental water vapor barrier dynamics. Inspect the performance trade-offs below to select an optimized thin-film coating architecture.
             </p>
@@ -130,7 +130,7 @@
             </div>
 
             <!-- Response Box -->
-            <div class="bg-surface-container-lowest p-6 rounded-xl flex flex-col md:flex-row gap-8 mb-8 border border-outline/5">
+            <div class="bg-surface-container-lowest p-6 rounded-xl flex flex-col md:flex-row gap-4 md:p-8 mb-8 border border-outline/5">
               <div class="flex-1 flex flex-col gap-6">
                 <div>
                   <h4 class="font-headline-md text-xl text-on-surface" id="sim-coating-name">TiO₂/SiO₂ Graded Sol-Gel</h4>
@@ -164,7 +164,7 @@
 
         <!-- Task 2 Dossier -->
         <details class="group bg-surface-container-low rounded-2xl overflow-hidden shadow-lg border border-outline/5">
-          <summary class="flex justify-between items-center p-8 cursor-pointer select-none outline-none group-hover:bg-surface-container transition-colors">
+          <summary class="flex justify-between items-center p-4 md:p-8 cursor-pointer select-none outline-none group-hover:bg-surface-container transition-colors">
             <div class="flex flex-col gap-2">
               <div class="flex items-center gap-3">
                 <span class="w-2 h-2 rounded-full bg-primary group-open:animate-ping"></span>
@@ -174,7 +174,7 @@
             </div>
             <span class="material-symbols-outlined text-outline group-open:-scale-y-100 transition-transform">expand_more</span>
           </summary>
-          <div class="p-8 pt-0 border-t border-outline/10">
+          <div class="p-4 md:p-8 pt-0 border-t border-outline/10">
             <p class="font-body-md text-on-surface-variant mt-6 mb-8 font-light text-lg">
               Examine how crystal symmetry, electronic delocalization, and Coulombic dielectric screening dictate carrier propagation.
             </p>
@@ -209,7 +209,7 @@
 
         <!-- Task 3 Dossier -->
         <details class="group bg-surface-container-low rounded-2xl overflow-hidden shadow-lg border border-outline/5">
-          <summary class="flex justify-between items-center p-8 cursor-pointer select-none outline-none group-hover:bg-surface-container transition-colors">
+          <summary class="flex justify-between items-center p-4 md:p-8 cursor-pointer select-none outline-none group-hover:bg-surface-container transition-colors">
             <div class="flex flex-col gap-2">
               <div class="flex items-center gap-3">
                 <span class="w-2 h-2 rounded-full bg-primary group-open:animate-ping"></span>
@@ -219,7 +219,7 @@
             </div>
             <span class="material-symbols-outlined text-outline group-open:-scale-y-100 transition-transform">expand_more</span>
           </summary>
-          <div class="p-8 pt-0 border-t border-outline/10">
+          <div class="p-4 md:p-8 pt-0 border-t border-outline/10">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 mt-6">
               <button class="py-4 px-4 rounded-xl bg-primary-container text-on-primary-container font-headline-md text-lg transition-all text-center border border-transparent" id="btn-scenario-1" onclick="selectScenario('1')">Utility PV</button>
@@ -228,7 +228,7 @@
               <button class="py-4 px-4 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface font-headline-md text-lg transition-all text-center border border-outline/5" id="btn-scenario-4" onclick="selectScenario('4')">Solid-State Light</button>
             </div>
 
-            <div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col gap-6 mb-8 border border-outline/5">
+            <div class="bg-surface-container-lowest p-4 md:p-8 rounded-xl flex flex-col gap-6 mb-8 border border-outline/5">
               <h3 class="font-headline-md text-2xl text-on-surface" id="scene-title">Utility Scale Rooftop PV</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-readout-md text-lg">
                 <div class="flex flex-col"><span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Target Band Gap</span><span class="text-secondary" id="scene-eg">1.1 - 1.4 eV</span></div>
