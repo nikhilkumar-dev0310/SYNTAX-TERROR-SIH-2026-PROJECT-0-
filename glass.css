@@ -1,13 +1,9 @@
-/* Glassmorphism utilities */
+/* Glassmorphism — frosted glass effect */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Darker glass for dark-mode (forced dark via .dark class on <html>) */
-html.dark .glass {
-  background: rgba(10, 14, 22, 0.45);
-  border-color: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.35),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }

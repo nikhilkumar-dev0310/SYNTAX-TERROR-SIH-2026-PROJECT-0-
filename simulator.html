@@ -78,15 +78,13 @@
       <a class="text-on-surface font-label-md text-sm transition-colors" href="simulator.html">Simulator</a>
       <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="evaluation.html">Decisions</a>
     </nav>
-    <div class="flex items-center gap-2">
-      <span class="px-2 py-0.5 rounded font-label-sm text-xs bg-secondary text-on-secondary font-medium hidden sm:inline-block" id="headerCouplingBadge">EMISSION ACTIVE [OLED]</span>
-    </div>
+  
   </header>
 
   <div class="flex flex-1 relative overflow-hidden">
     
     <!-- Left Drawer (Controls) -->
-    <aside id="drawer" class="absolute top-0 left-0 h-full w-[90vw] sm:w-96 bg-surface-container-low border-r border-outline/10 z-30 overflow-y-auto flex flex-col glass">
+    <aside id="drawer" class="absolute top-0 left-0 h-full w-[90vw] sm:w-96 bg-surface-container-low/70 border-r border-outline/10 z-30 overflow-y-auto flex flex-col glass">
       <div class="p-6 flex flex-col gap-4 md:p-8">
         
         <!-- Mode & Architecture -->
@@ -195,7 +193,7 @@
         <div class="w-full flex flex-col gap-4 md:p-8">
           
           <!-- Band Diagram -->
-          <div class="relative w-full aspect-[600/220]  bg-surface-container-low rounded-3xl p-6 overflow-x-auto overflow-y-hidden shadow-2xl border border-outline/5 glass">
+          <div class="relative w-full aspect-[600/220] bg-surface-container-low/70 rounded-3xl p-6 overflow-x-auto overflow-y-hidden shadow-2xl border border-outline/5 glass">
             <div class="absolute top-6 left-6 font-label-sm text-xs text-on-surface-variant tracking-wider uppercase">Energy Landscape</div>
             <div class="absolute top-6 right-6 px-3 py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-[10px]" id="transportModelBadge">Miller-Abrahams Hopping</div>
             
@@ -241,7 +239,7 @@
           </div>
 
           <!-- Transport Canvas -->
-          <div class="relative w-full aspect-[4/1] bg-surface-container-low rounded-3xl overflow-x-auto overflow-y-hidden shadow-2xl border border-outline/5 glass">
+          <div class="relative w-full aspect-[4/1] bg-surface-container-low/70 rounded-3xl overflow-x-auto overflow-y-hidden shadow-2xl border border-outline/5 glass">
             <canvas id="transportCanvas" class="w-full h-full block"></canvas>
             <div class="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-surface-container-highest to-transparent flex items-center justify-center pointer-events-none">
               <span class="font-label-sm text-[10px] text-primary [writing-mode:vertical-rl] rotate-180 font-bold opacity-50">CATHODE</span>
@@ -815,52 +813,66 @@
       requestAnimationFrame(() => requestAnimationFrame(resizeCanvas));
 
       particles = [];
-      for (let i = 0; i < 18; i++) particles.push(new Particle('electron'));
-      for (let i = 0; i < 18; i++) particles.push(new Particle('hole'));
+      // Interleave Y positions so electrons and holes are guaranteed to overlap in Y from the start
+      for (let i = 0; i < 22; i++) {
+        const e = new Particle('electron');
+        // Spread evenly across height so they meet holes
+        e.y = 10 + (i / 22) * (logicalHeight - 20);
+        e.vx = 1.2 + Math.random() * 1.4; // faster so they reach the zone
+        particles.push(e);
+      }
+      for (let i = 0; i < 22; i++) {
+        const h = new Particle('hole');
+        // Offset by half a slot so they interleave with electrons
+        h.y = 10 + ((i + 0.5) / 22) * (logicalHeight - 20);
+        h.vx = -(1.2 + Math.random() * 1.4);
+        particles.push(h);
+      }
 
       function animate() {
         ctx.clearRect(0, 0, logicalWidth, logicalHeight);
 
         const midX = logicalWidth / 2;
-        ctx.fillStyle = state.mode === 'oled' ? 'rgba(255, 198, 64, 0.08)' : 'rgba(142, 213, 255, 0.08)';
-        ctx.fillRect(midX - 40, 10, 80, logicalHeight - 20);
+        // Wider recomb zone so first wave always enters it
+        const zoneW = Math.max(120, logicalWidth * 0.22);
+        const zoneStart = midX - zoneW / 2;
+        const zoneEnd   = midX + zoneW / 2;
+
+        ctx.fillStyle = state.mode === 'oled' ? 'rgba(255, 198, 64, 0.07)' : 'rgba(142, 213, 255, 0.07)';
+        ctx.fillRect(zoneStart, 10, zoneW, logicalHeight - 20);
         ctx.strokeStyle = state.mode === 'oled' ? 'rgba(255, 198, 64, 0.3)' : 'rgba(142, 213, 255, 0.3)';
         ctx.lineWidth = 1;
         ctx.setLineDash([4, 4]);
-        ctx.strokeRect(midX - 40, 10, 80, logicalHeight - 20);
+        ctx.strokeRect(zoneStart, 10, zoneW, logicalHeight - 20);
         ctx.setLineDash([]);
 
         ctx.fillStyle = state.mode === 'oled' ? '#ffc640' : '#8ed5ff';
         ctx.font = '10px JetBrains Mono, monospace';
         ctx.textAlign = 'center';
-        ctx.fillText(state.mode === 'oled' ? 'Exciton Recomb.' : 'Charge Dissoc.', midX, 26);
+        ctx.fillText(state.mode === 'oled' ? 'Exciton Recomb.' : 'Charge Dissoc.', midX, 22);
 
-        // Update & draw particles
-        particles.forEach(p => {
-          p.update();
-        });
+        // Update particles
+        particles.forEach(p => { p.update(); });
 
-        // Advanced Collision Logic (OLED Recombination)
+        // Collision Logic — runs on ALL particles in recomb zone
         if (state.mode === 'oled') {
-          const recombZoneStart = midX - 40;
-          const recombZoneEnd = midX + 40;
-          const electrons = particles.filter(p => p.type === 'electron' && p.x >= recombZoneStart && p.x <= recombZoneEnd);
-          const holes = particles.filter(p => p.type === 'hole' && p.x >= recombZoneStart && p.x <= recombZoneEnd);
+          const electrons = particles.filter(p => p.type === 'electron' && p.x >= zoneStart && p.x <= zoneEnd);
+          const holes     = particles.filter(p => p.type === 'hole'     && p.x >= zoneStart && p.x <= zoneEnd);
           const consumedHoles = new Set();
-          
+
           electrons.forEach(e => {
             let nearestHole = null;
             let nearestDist = Infinity;
             holes.forEach(h => {
               if (consumedHoles.has(h)) return;
               const dist = Math.hypot(e.x - h.x, e.y - h.y);
-              if (dist < 28 && dist < nearestDist) {
+              if (dist < 40 && dist < nearestDist) {
                 nearestDist = dist;
                 nearestHole = h;
               }
             });
-
-            if (nearestHole && Math.random() < 0.4) {
+            // Very high probability so every encounter emits a photon burst
+            if (nearestHole && Math.random() < 0.7) {
               consumedHoles.add(nearestHole);
               bursts.push(new Burst((e.x + nearestHole.x) / 2, (e.y + nearestHole.y) / 2, '#ffc640'));
               e.reset();
@@ -872,10 +884,7 @@
         particles.forEach(p => p.draw(ctx));
 
         // Draw bursts
-        bursts.forEach(b => {
-          b.update();
-          b.draw(ctx);
-        });
+        bursts.forEach(b => { b.update(); b.draw(ctx); });
         bursts = bursts.filter(b => b.alpha > 0);
 
         requestAnimationFrame(animate);
