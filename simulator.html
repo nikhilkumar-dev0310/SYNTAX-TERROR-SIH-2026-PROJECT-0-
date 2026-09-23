@@ -18,6 +18,7 @@
     .dossier-open .dossier-content { max-height: 2000px; }
   </style>
   <script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="glass.css">
   <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
@@ -49,7 +50,7 @@
 <body class="bg-surface-container-lowest font-body-md text-on-surface antialiased drawer-open flex flex-col h-screen">
 
   <!-- Restrained Header -->
-  <header class="h-16 shrink-0 w-full px-6 flex items-center justify-between border-b border-outline/10 bg-surface-container-lowest z-40 relative">
+  <header class="h-16 shrink-0 w-full px-6 flex items-center justify-between border-b border-outline/10 bg-surface-container-lowest z-40 relative glass">
     <div class="flex items-center gap-4">
       <button onclick="toggleDrawer()" class="p-2 hover:bg-surface-container rounded-full text-on-surface-variant transition-colors">
         <span class="material-symbols-outlined">menu</span>
@@ -78,14 +79,14 @@
       <a class="text-on-surface-variant hover:text-on-surface font-label-md text-sm transition-colors" href="evaluation.html">Decisions</a>
     </nav>
     <div class="flex items-center gap-2">
-      <span class="px-2 py-0.5 rounded font-label-sm text-xs bg-secondary text-on-secondary font-medium" id="headerCouplingBadge">EMISSION ACTIVE [OLED]</span>
+      <span class="px-2 py-0.5 rounded font-label-sm text-xs bg-secondary text-on-secondary font-medium hidden sm:inline-block" id="headerCouplingBadge">EMISSION ACTIVE [OLED]</span>
     </div>
   </header>
 
   <div class="flex flex-1 relative overflow-hidden">
     
     <!-- Left Drawer (Controls) -->
-    <aside id="drawer" class="absolute top-0 left-0 h-full w-[90vw] sm:w-96 bg-surface-container-low border-r border-outline/10 z-30 overflow-y-auto flex flex-col">
+    <aside id="drawer" class="absolute top-0 left-0 h-full w-[90vw] sm:w-96 bg-surface-container-low border-r border-outline/10 z-30 overflow-y-auto flex flex-col glass">
       <div class="p-6 flex flex-col gap-4 md:p-8">
         
         <!-- Mode & Architecture -->
@@ -194,7 +195,7 @@
         <div class="w-full flex flex-col gap-4 md:p-8">
           
           <!-- Band Diagram -->
-          <div class="relative w-full aspect-[600/220]  bg-surface-container-low rounded-3xl p-6 overflow-x-auto overflow-y-hidden shadow-2xl border border-outline/5">
+          <div class="relative w-full aspect-[600/220]  bg-surface-container-low rounded-3xl p-6 overflow-x-auto overflow-y-hidden shadow-2xl border border-outline/5 glass">
             <div class="absolute top-6 left-6 font-label-sm text-xs text-on-surface-variant tracking-wider uppercase">Energy Landscape</div>
             <div class="absolute top-6 right-6 px-3 py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-[10px]" id="transportModelBadge">Miller-Abrahams Hopping</div>
             
@@ -240,7 +241,7 @@
           </div>
 
           <!-- Transport Canvas -->
-          <div class="relative w-full aspect-[4/1] bg-surface-container-low rounded-3xl overflow-x-auto overflow-y-hidden shadow-2xl border border-outline/5">
+          <div class="relative w-full aspect-[4/1] bg-surface-container-low rounded-3xl overflow-x-auto overflow-y-hidden shadow-2xl border border-outline/5 glass">
             <canvas id="transportCanvas" class="w-full h-full block"></canvas>
             <div class="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-surface-container-highest to-transparent flex items-center justify-center pointer-events-none">
               <span class="font-label-sm text-[10px] text-primary [writing-mode:vertical-rl] rotate-180 font-bold opacity-50">CATHODE</span>
@@ -853,19 +854,17 @@
             holes.forEach(h => {
               if (consumedHoles.has(h)) return;
               const dist = Math.hypot(e.x - h.x, e.y - h.y);
-              if (dist < 14 && dist < nearestDist) {
+              if (dist < 28 && dist < nearestDist) {
                 nearestDist = dist;
                 nearestHole = h;
               }
             });
 
-            if (nearestHole && Math.random() < 0.06) {
+            if (nearestHole && Math.random() < 0.4) {
               consumedHoles.add(nearestHole);
               bursts.push(new Burst((e.x + nearestHole.x) / 2, (e.y + nearestHole.y) / 2, '#ffc640'));
-              e.x = 35;
-              e.y = Math.random() * (logicalHeight - 20) + 10;
-              nearestHole.x = logicalWidth - 35;
-              nearestHole.y = Math.random() * (logicalHeight - 20) + 10;
+              e.reset();
+              nearestHole.reset();
             }
           });
         }

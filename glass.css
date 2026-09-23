@@ -1,0 +1,13 @@
+/* Glassmorphism utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Darker glass for dark-mode (forced dark via .dark class on <html>) */
+html.dark .glass {
+  background: rgba(10, 14, 22, 0.45);
+  border-color: rgba(255, 255, 255, 0.08);
+}
