@@ -120,7 +120,7 @@
               <span class="font-label-sm text-xs text-on-surface-variant">eV</span>
             </div>
           </div>
-          <input class="w-full accent-secondary bg-surface-container-lowest h-2 rounded cursor-pointer" id="egSlider" max="3.8" min="0.5" oninput="onEgInput(parseFloat(this.value))" step="0.02" type="range" value="2.10"/>
+          <input class="w-full accent-secondary bg-surface-container-lowest h-2 rounded cursor-pointer" id="egSlider" max="4.2" min="0.5" oninput="onEgInput(parseFloat(this.value))" step="0.01" type="range" value="2.10"/>
         </div>
 
         <hr class="border-outline/10"/>
@@ -142,7 +142,15 @@
                 <span>Thickness</span>
                 <span class="text-on-surface" id="thickDisplay">100 nm</span>
               </div>
-              <input class="w-full accent-primary bg-surface-container-lowest h-1.5 rounded cursor-pointer" id="thickSlider" max="250" min="40" oninput="document.getElementById('thickDisplay').innerText = this.value + ' nm'" type="range" value="100"/>
+              <input class="w-full accent-primary bg-surface-container-lowest h-1.5 rounded cursor-pointer" id="thickSlider" max="250" min="40" oninput="onThickInput(parseFloat(this.value))" type="range" value="100"/>
+            </div>
+            <div class="flex flex-col gap-1 mt-2">
+              <span class="font-label-sm text-xs text-on-surface-variant">Doping (Transport Layers)</span>
+              <div class="grid grid-cols-3 bg-surface-container-lowest p-1 rounded-lg gap-1">
+                <button class="py-1 px-1 rounded font-label-md text-xs text-on-primary-container bg-primary-container transition-all" id="dopingNoneBtn" onclick="setDoping('none')">Intrinsic</button>
+                <button class="py-1 px-1 rounded font-label-md text-xs text-on-surface-variant hover:text-on-surface transition-all" id="dopingPBtn" onclick="setDoping('p-type')">p-doped</button>
+                <button class="py-1 px-1 rounded font-label-md text-xs text-on-surface-variant hover:text-on-surface transition-all" id="dopingNBtn" onclick="setDoping('n-type')">n-doped</button>
+              </div>
             </div>
           </div>
 
@@ -186,7 +194,7 @@
             </div>
             <h2 class="font-display-lg text-[clamp(60px,12vw,100px)] leading-none text-on-surface tracking-tighter" id="efficiencyValue">7.2%</h2>
           </div>
-          <span class="font-label-sm text-sm text-on-surface-variant mt-4" id="efficiencySub">η<sub>S</sub>=25% (fluorescent singlet limit)</span>
+
         </div>
 
         <!-- Huge Visualization Stage -->
@@ -364,20 +372,18 @@
       eg: 2.10,              // Band gap in eV
       disorder: 0.08,        // eV
       concentration: 1.0,    // Suns
-      preset: 'Alq3 (Tris(8-hydroxyquinolinato)aluminium)',
+      thickness: 100,        // nm
+      doping: 'none',        // 'none', 'n-type', 'p-type'
+      preset: 'Alq3 (OLED Electron Transport/Emitter)',
       presets: {
         organic: [
-          { name: 'Alq3 (Tris(8-hydroxyquinolinato)aluminium)', eg: 2.70, homo: -5.7, lumo: -3.0, color: '#8ed5ff', wl: '460 nm', hue: 'Blue' },
-          { name: 'Poly(p-phenylene vinylene) PPV', eg: 2.25, homo: -5.1, lumo: -2.85, color: '#ffc640', wl: '551 nm', hue: 'Yellow-Green' },
-          { name: 'P3HT:PCBM Blend (OPV Benchmark)', eg: 1.90, homo: -5.2, lumo: -3.3, color: '#ffb4ab', wl: '652 nm', hue: 'Orange-Red' },
-          { name: 'Spiro-OMeTAD (HTL Emissive)', eg: 3.00, homo: -5.22, lumo: -2.22, color: '#e1c0ff', wl: '413 nm', hue: 'Violet' },
-          { name: 'Ir(ppy)3 (Green Phosphor Benchmark)', eg: 2.50, homo: -5.30, lumo: -2.80, color: '#10b981', wl: '496 nm', hue: 'Green' }
+          { name: 'Alq3 (OLED Electron Transport/Emitter)', eg: 2.70, homo: -5.7, lumo: -3.0, color: '#10b981', wl: '520 nm', hue: 'Green', disorder: 0.10, thickness: 100 },
+          { name: 'Anthracene (Blue Emitter)', eg: 3.20, homo: -5.8, lumo: -2.6, color: '#8ed5ff', wl: '387 nm', hue: 'Violet/Blue', disorder: 0.05, thickness: 80 },
+          { name: 'Pentacene (Organic Semiconductor)', eg: 1.90, homo: -5.0, lumo: -3.1, color: '#ffb4ab', wl: '652 nm', hue: 'Orange-Red', disorder: 0.15, thickness: 150 }
         ],
         inorganic: [
-          { name: 'Crystalline Silicon (c-Si)', eg: 1.12, homo: -5.17, lumo: -4.05, color: '#87929a', wl: '1107 nm', hue: 'Infrared' },
-          { name: 'Gallium Arsenide (GaAs Direct)', eg: 1.42, homo: -5.49, lumo: -4.07, color: '#ffb4ab', wl: '873 nm', hue: 'Near-IR' },
-          { name: 'Cadmium Telluride (CdTe)', eg: 1.50, homo: -5.80, lumo: -4.30, color: '#ffb4ab', wl: '826 nm', hue: 'Deep-Red' },
-          { name: 'Halide Perovskite (CH3NH3PbI3)', eg: 1.55, homo: -5.45, lumo: -3.90, color: '#ffb4ab', wl: '800 nm', hue: 'Near-IR / Red' }
+          { name: 'Silicon (Standard Solar Cell)', eg: 1.12, homo: -5.17, lumo: -4.05, color: '#87929a', wl: '1107 nm', hue: 'Infrared' },
+          { name: 'Gallium Arsenide (GaAs Direct)', eg: 1.42, homo: -5.49, lumo: -4.07, color: '#ffb4ab', wl: '873 nm', hue: 'Near-IR' }
         ]
       }
     };
@@ -418,8 +424,28 @@
       const list = state.presets[state.matClass];
       const item = list.find(p => p.name === presetName) || list[0];
       state.preset = item.name;
+      
+      // Update Band Gap
+      state.eg = item.eg;
       document.getElementById('egSlider').value = item.eg;
       updateEgUI(item.eg);
+
+      // Apply extra organic parameters if available
+      if (item.disorder) {
+        state.disorder = item.disorder;
+        const dSlider = document.getElementById('disorderSlider');
+        if (dSlider) dSlider.value = item.disorder;
+        const dDisp = document.getElementById('disorderDisplay');
+        if (dDisp) dDisp.innerText = item.disorder.toFixed(2) + ' eV';
+      }
+      if (item.thickness) {
+        state.thickness = item.thickness;
+        const tSlider = document.getElementById('thickSlider');
+        if (tSlider) tSlider.value = item.thickness;
+        const tDisp = document.getElementById('thickDisplay');
+        if (tDisp) tDisp.innerText = item.thickness + ' nm';
+      }
+
       recalculateMetricsLive();
     }
 
@@ -427,7 +453,6 @@
       state.mode = m;
       const oledBtn = document.getElementById('modeOledBtn');
       const solarBtn = document.getElementById('modeSolarBtn');
-      const hdrBadge = document.getElementById('headerCouplingBadge');
       const oledSub = document.getElementById('oledSubPanel');
       const solarSub = document.getElementById('solarSubPanel');
       const pvCard = document.getElementById('pvDetailedCard');
@@ -438,8 +463,6 @@
       if (m === 'oled') {
         oledBtn.className = 'py-1.5 px-2 rounded font-label-md text-label-md text-on-primary-container bg-primary-container font-semibold transition-all text-center';
         solarBtn.className = 'py-1.5 px-2 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all text-center';
-        hdrBadge.innerText = 'EMISSION ACTIVE [OLED]';
-        hdrBadge.className = 'px-2 py-0.5 rounded font-label-sm text-label-sm bg-secondary text-on-secondary font-medium';
         oledSub.classList.remove('hidden');
         solarSub.classList.add('hidden');
         pvCard.classList.add('hidden');
@@ -450,8 +473,6 @@
       } else {
         solarBtn.className = 'py-1.5 px-2 rounded font-label-md text-label-md text-on-primary-container bg-primary-container font-semibold transition-all text-center';
         oledBtn.className = 'py-1.5 px-2 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all text-center';
-        hdrBadge.innerText = 'PHOTO-GENERATION [PV]';
-        hdrBadge.className = 'px-2 py-0.5 rounded font-label-sm text-label-sm bg-primary text-on-primary font-medium';
         oledSub.classList.add('hidden');
         solarSub.classList.remove('hidden');
         pvCard.classList.remove('hidden');
@@ -510,6 +531,29 @@
       }, 120);
     }
 
+    function onThickInput(val) {
+      state.thickness = val;
+      document.getElementById('thickDisplay').innerText = val + ' nm';
+      recalculateMetricsLive();
+    }
+
+    function setDoping(type) {
+      state.doping = type;
+      const noneBtn = document.getElementById('dopingNoneBtn');
+      const pBtn = document.getElementById('dopingPBtn');
+      const nBtn = document.getElementById('dopingNBtn');
+      
+      const activeClass = 'py-1 px-1 rounded font-label-md text-xs text-on-primary-container bg-primary-container transition-all';
+      const inactiveClass = 'py-1 px-1 rounded font-label-md text-xs text-on-surface-variant hover:text-on-surface transition-all';
+      
+      noneBtn.className = type === 'none' ? activeClass : inactiveClass;
+      pBtn.className = type === 'p-type' ? activeClass : inactiveClass;
+      nBtn.className = type === 'n-type' ? activeClass : inactiveClass;
+      
+      initCanvas(); // Respawn particles with new doping speeds/densities
+      recalculateMetricsLive();
+    }
+
     function onConcentrationInput(val) {
       state.concentration = val;
       document.getElementById('fluxDisplay').innerText = `${val.toFixed(1)} Sun (${(val * 1000).toFixed(0)} W/m²)`;
@@ -524,6 +568,7 @@
 
       const wavelength = Math.round(1239.84 / val);
       const colorInfo = wavelengthToColor(wavelength);
+      state.emissionColor = colorInfo.hex;
 
       // Spectral Badge & Swatches
       const badge = document.getElementById('spectralBadge');
@@ -613,7 +658,6 @@
             concentration: state.concentration
           });
           document.getElementById('efficiencyValue').innerText = `${res.pce_pct.toFixed(1)}%`;
-          document.getElementById('efficiencySub').innerText = `Shockley-Queisser Limit (${state.concentration}x Sun)`;
           document.getElementById('jscVal').innerText = `${res.jsc_mA_cm2.toFixed(1)} mA/cm²`;
           document.getElementById('vocVal').innerText = `${res.voc_V.toFixed(2)} V`;
           document.getElementById('ffVal').innerText = `${res.ff_pct.toFixed(1)}%`;
@@ -629,10 +673,8 @@
             charge_balance: 0.9
           });
           document.getElementById('efficiencyValue').innerText = `${res.iqe_pct.toFixed(1)}%`;
-          document.getElementById('efficiencySub').innerText = res.spin_limit_label;
         } catch (err) {
           document.getElementById('efficiencyValue').innerText = `7.2%`;
-          document.getElementById('efficiencySub').innerText = `η<sub>S</sub>=25% (fluorescent singlet limit)`;
         }
       }
 
@@ -710,28 +752,65 @@
     let logicalHeight = 176;
 
     class Particle {
-      constructor(type) {
+      constructor(type, isSeed = false) {
         this.type = type;
+        this.isSeed = isSeed;
         this.reset();
       }
 
       reset() {
-        this.y = 20 + Math.random() * (logicalHeight - 40);
         this.radius = this.type === 'electron' ? 3.5 : 4.0;
+        this.hopCooldown = 0;
 
-        if (this.type === 'electron') {
-          this.x = 20 + Math.random() * 30;
-          this.vx = 0.8 + Math.random() * 1.2;
-          this.color = '#8ed5ff';
+        if (this.isSeed) {
+          // Seed pair deterministic placement
+          this.y = logicalHeight / 2;
+          this.vy = 0;
+          this.vx = this.type === 'electron' ? 1.5 : -1.5;
+          const zoneW = Math.max(120, logicalWidth * 0.22);
+          const midX = logicalWidth / 2;
+          this.x = this.type === 'electron' ? (midX - zoneW/2 - 60) : (midX + zoneW/2 + 60);
+          this.color = this.type === 'electron' ? '#8ed5ff' : '#e1c0ff';
         } else {
-          this.x = logicalWidth - (20 + Math.random() * 30);
-          this.vx = -(0.5 + Math.random() * 0.9);
-          this.color = '#e1c0ff';
+          // Normal stochastic bulk particles
+          this.y = 20 + Math.random() * (logicalHeight - 40);
+          
+          let baseSpeed = 1.0;
+          if (state.matClass === 'organic') {
+             baseSpeed = 1.0 + (100 / state.thickness) * (0.1 / Math.max(0.01, state.disorder));
+          } else {
+             baseSpeed = 2.0; // inorganic default
+          }
+
+          if (this.type === 'electron') {
+            this.x = 20 + Math.random() * 30;
+            if (state.doping === 'n-type') baseSpeed *= 2.5; // majority carrier speed boost
+            if (state.doping === 'p-type') baseSpeed *= 0.4; // minority carrier speed penalty
+            this.vx = baseSpeed * (0.8 + Math.random() * 0.8);
+            this.color = '#8ed5ff';
+          } else {
+            this.x = logicalWidth - (20 + Math.random() * 30);
+            if (state.doping === 'p-type') baseSpeed *= 2.5;
+            if (state.doping === 'n-type') baseSpeed *= 0.4;
+            this.vx = -(baseSpeed * (0.8 + Math.random() * 0.8));
+            this.color = '#e1c0ff';
+          }
+          this.vy = (Math.random() - 0.5) * 0.5;
         }
-        this.vy = (Math.random() - 0.5) * 0.5;
       }
 
       update() {
+        if (state.matClass === 'organic' && !this.isSeed) {
+          if (this.hopCooldown > 0) {
+            this.hopCooldown--;
+            return; // Stay still (hopping transport)
+          }
+          // Cap hopCooldown to reduce extreme desync: Math.floor(Math.random() * 4 + 1)
+          // Make cooldown depend on disorder (higher disorder = longer cooldown)
+          let maxCd = Math.max(1, Math.floor(state.disorder * 40));
+          this.hopCooldown = Math.floor(Math.random() * maxCd + 1);
+        }
+
         this.x += this.vx;
         this.y += this.vy;
 
@@ -749,8 +828,14 @@
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
-        ctx.shadowColor = this.color;
-        ctx.shadowBlur = 6;
+        // Seed particles get an extra highlight
+        if (this.isSeed) {
+          ctx.shadowColor = '#ffffff';
+          ctx.shadowBlur = 10;
+        } else {
+          ctx.shadowColor = this.color;
+          ctx.shadowBlur = 6;
+        }
         ctx.fill();
         ctx.restore();
       }
@@ -813,19 +898,20 @@
       requestAnimationFrame(() => requestAnimationFrame(resizeCanvas));
 
       particles = [];
-      // Interleave Y positions so electrons and holes are guaranteed to overlap in Y from the start
+      
+      // 1. Add guaranteed seed pair
+      particles.push(new Particle('electron', true));
+      particles.push(new Particle('hole', true));
+
+      // 2. Interleave Y positions for the stochastic bulk particles
       for (let i = 0; i < 22; i++) {
         const e = new Particle('electron');
-        // Spread evenly across height so they meet holes
         e.y = 10 + (i / 22) * (logicalHeight - 20);
-        e.vx = 1.2 + Math.random() * 1.4; // faster so they reach the zone
         particles.push(e);
       }
       for (let i = 0; i < 22; i++) {
         const h = new Particle('hole');
-        // Offset by half a slot so they interleave with electrons
         h.y = 10 + ((i + 0.5) / 22) * (logicalHeight - 20);
-        h.vx = -(1.2 + Math.random() * 1.4);
         particles.push(h);
       }
 
@@ -837,6 +923,21 @@
         const zoneW = Math.max(120, logicalWidth * 0.22);
         const zoneStart = midX - zoneW / 2;
         const zoneEnd   = midX + zoneW / 2;
+
+        // Doping Visuals
+        if (state.doping === 'n-type') {
+          // n-type: electron transport side (left) is highly doped
+          ctx.fillStyle = 'rgba(142, 213, 255, 0.05)';
+          ctx.fillRect(0, 0, zoneStart, logicalHeight);
+          ctx.fillStyle = '#8ed5ff';
+          ctx.fillText('n-doped (ETL)', zoneStart / 2, 22);
+        } else if (state.doping === 'p-type') {
+          // p-type: hole transport side (right) is highly doped
+          ctx.fillStyle = 'rgba(225, 192, 255, 0.05)';
+          ctx.fillRect(zoneEnd, 0, logicalWidth - zoneEnd, logicalHeight);
+          ctx.fillStyle = '#e1c0ff';
+          ctx.fillText('p-doped (HTL)', zoneEnd + (logicalWidth - zoneEnd) / 2, 22);
+        }
 
         ctx.fillStyle = state.mode === 'oled' ? 'rgba(255, 198, 64, 0.07)' : 'rgba(142, 213, 255, 0.07)';
         ctx.fillRect(zoneStart, 10, zoneW, logicalHeight - 20);
@@ -871,10 +972,17 @@
                 nearestHole = h;
               }
             });
-            // Very high probability so every encounter emits a photon burst
-            if (nearestHole && Math.random() < 0.7) {
+            // Recombination probability scales with disorder (less disorder = higher chance)
+            // Seed particles have 100% chance to guarantee first contact
+            let recombProb = 0.5;
+            if (state.matClass === 'organic') {
+              recombProb = 0.8 - (state.disorder * 2.0); // e.g. 0.08 disorder -> 0.64 prob
+            }
+            if (e.isSeed || (nearestHole && nearestHole.isSeed)) recombProb = 1.0;
+
+            if (nearestHole && Math.random() < recombProb) {
               consumedHoles.add(nearestHole);
-              bursts.push(new Burst((e.x + nearestHole.x) / 2, (e.y + nearestHole.y) / 2, '#ffc640'));
+              bursts.push(new Burst((e.x + nearestHole.x) / 2, (e.y + nearestHole.y) / 2, state.emissionColor || '#ffc640'));
               e.reset();
               nearestHole.reset();
             }
